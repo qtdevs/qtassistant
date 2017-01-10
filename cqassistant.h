@@ -22,9 +22,9 @@ private:
     QScopedPointer<CqAssistantPrivate> d_ptr;
 
 public:
-    QByteArray conv(const QString &str) const;
-    QString conv(const char *gbkStr) const;
-    QString conv(const QByteArray &str) const;
+    static QByteArray conv(const QString &str);
+    static QString conv(const char *gbkStr);
+    static QString conv(const QByteArray &str);
 
 public:
     bool privateMessageEventFilter(const MessageEvent &ev);

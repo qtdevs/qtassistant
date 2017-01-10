@@ -48,17 +48,17 @@ CqAssistant::~CqAssistant()
     }
 }
 
-QByteArray CqAssistant::conv(const QString &str) const
+QByteArray CqAssistant::conv(const QString &str)
 {
     return str.toLocal8Bit();
 }
 
-QString CqAssistant::conv(const char *gbkStr) const
+QString CqAssistant::conv(const char *gbkStr)
 {
     return QString::fromLocal8Bit(gbkStr);
 }
 
-QString CqAssistant::conv(const QByteArray &str) const
+QString CqAssistant::conv(const QByteArray &str)
 {
     return QString::fromLocal8Bit(str);
 }
@@ -275,20 +275,24 @@ void CqAssistantPrivate::initialize()
     startTimer(10000);
 }
 
+#include <QDateTime>
+
 void CqAssistantPrivate::timerEvent(QTimerEvent *)
 {
-    qDebug("check timer.");
-    /*
+    Q_Q(CqAssistant);
+
     auto deaths = deathHouse->deaths();
     if (!deaths.isEmpty()) {
-        QStringList members;
-        for (auto death : deaths.keys()) {
-            members << QString::number(death.second);
-            q->kickGroupMember(death.first, death.second, false);
-            deathHouse->freeMember(death.first, death.second);
+        qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        QHashIterator<Member, qint64> i(deaths);
+        while (i.hasNext()) {
+            i.next();
+            if ((i.value() + 360) < now) {
+                deathHouse->freeMember(i.key().first, i.key().second);
+                q->kickGroupMember(i.key().first, i.key().second, false);
+                QString msg = "Killed: " + QString::number(i.key().second);
+                q->sendGroupMessage(i.key().first, msg);
+            }
         }
-        QString str = "踢出名单：\n" + members.join("\n");
-        sendGroupMessage(deaths.first().first, str);
     }
-    */
 }

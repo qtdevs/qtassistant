@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(cqapi/cqapi.pri)
 include(datas/datas.pri)
+include(translations/translations.pri)
 
 HEADERS +=\
     cqaevents.h \
@@ -36,10 +37,5 @@ SOURCES += \
 
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json
-
-TRANSLATIONS = \
-    translations/cqassistant_zh.ts
-OTHER_FILES += \
-    translations/cqassistant_zh.ts
 
 DESTDIR = "D:/CQPro/app"

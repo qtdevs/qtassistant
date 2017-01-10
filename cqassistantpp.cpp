@@ -3,6 +3,7 @@
 
 #include <QPointer>
 #include <QCoreApplication>
+#include <QTranslator>
 
 #include "cqapi/cqapi.h"
 
@@ -12,10 +13,6 @@ QPointer<CqAssistant> theAssistant;
 
 void cqHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
 {
-    if (theAssistant.isNull()) {
-        return;
-    }
-
     qint32 priority = 0;
 
     switch (type) {
@@ -36,7 +33,7 @@ void cqHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
         break;
     }
 
-    QByteArray gbkMsg = theAssistant->conv(msg);
+    QByteArray gbkMsg = CqAssistant::conv(msg);
 
     static char log[4096] = {0};
     sprintf(log, "%s (%s:%u)", gbkMsg.constData(), ctx.file, ctx.line);
@@ -60,6 +57,14 @@ CQEVENT(qint32, __systemStartupEvent, 0)()
     int argc = 0;
     QCoreApplication *app = new QCoreApplication(argc, (char **)Q_NULLPTR);
     theAssistant = new CqAssistant(token, app);
+
+    QTranslator *translator = new QTranslator(app);
+    if (translator->load("cqassistant_zh.qm", ":/translations")) {
+        qDebug("Installing Translator...");
+        app->installTranslator(translator);
+    } else {
+        qDebug("Failed Translator...");
+    }
 
     return 0;
 }
