@@ -13,7 +13,7 @@ public:
     virtual ~MemberDeathHousePrivate();
 
 private:
-    QHash<Member, qint64> deaths;
+    QHash<Member, qint64> deathHouse;
 };
 
 #endif // MEMBERDEATHHOUSE_P_H

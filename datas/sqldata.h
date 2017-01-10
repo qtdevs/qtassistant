@@ -21,6 +21,9 @@ public:
     virtual ~SqlData();
 
 public:
+    enum Result { NoChange, Done, SqlError };
+
+public:
     static void initPath(const QString &path);
 };
 

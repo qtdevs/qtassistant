@@ -395,7 +395,7 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
             if (li.level <= MasterLevel::Master5) {
                 masters << q->msgAt(li.uid);
             } else {
-                deathHouse->killMember(ev.from, li.uid);
+                deathHouse->addMember(ev.from, li.uid);
                 members << q->msgAt(li.uid);
             }
         }
@@ -653,7 +653,7 @@ void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
             if (li.level <= level) {
                 masters << q->msgAt(li.uid);
             } else {
-                deathHouse->freeMember(ev.from, li.uid);
+                deathHouse->removeMember(ev.from, li.uid);
                 members << q->msgAt(li.uid);
             }
         }

@@ -16,11 +16,11 @@ public:
     virtual ~MemberDeathHouse();
 
 public:
-    void killMember(qint64 gid, qint64 uid);
-    void freeMember(qint64 gid, qint64 uid);
+    Result addMember(qint64 gid, qint64 uid);
+    Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> deaths() const;
+    QHash<Member, qint64> deathHouse() const;
 };
 
 #endif // MEMBERDEATHHOUSE_H

@@ -11,6 +11,9 @@ class MemberWelcomePrivate : public SqlDataPrivate
 public:
     MemberWelcomePrivate();
     virtual ~MemberWelcomePrivate();
+
+public:
+    QHash<Member, qint64> welcome;
 };
 
 #endif // MEMBERWELCOME_P_H

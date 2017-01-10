@@ -7,8 +7,9 @@
 
 #include "cqapi/cqapi.h"
 
-#include "datas/sqldata.h"
 #include "datas/masterlevels.h"
+#include "datas/memberwelcome.h"
+#include "datas/memberblacklist.h"
 #include "datas/memberdeathhouse.h"
 
 CqCode cqCode(qint32 code)
@@ -240,6 +241,8 @@ CqAssistantPrivate::CqAssistantPrivate()
     , token(-1)
     , currentId(0)
     , levels(Q_NULLPTR)
+    , welcome(Q_NULLPTR)
+    , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
 {
 }
@@ -270,6 +273,8 @@ void CqAssistantPrivate::initialize()
     QDir().mkpath(path);
 
     levels = new MasterLevels(this);
+    welcome = new MemberWelcome(this);
+    blacklist = new MemberBlacklist(this);
     deathHouse = new MemberDeathHouse(this);
 
     startTimer(10000);
@@ -281,14 +286,14 @@ void CqAssistantPrivate::timerEvent(QTimerEvent *)
 {
     Q_Q(CqAssistant);
 
-    auto deaths = deathHouse->deaths();
+    auto deaths = deathHouse->deathHouse();
     if (!deaths.isEmpty()) {
         qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
         QHashIterator<Member, qint64> i(deaths);
         while (i.hasNext()) {
             i.next();
             if ((i.value() + 360) < now) {
-                deathHouse->freeMember(i.key().first, i.key().second);
+                deathHouse->removeMember(i.key().first, i.key().second);
                 q->kickGroupMember(i.key().first, i.key().second, false);
                 QString msg = "Killed: " + QString::number(i.key().second);
                 q->sendGroupMessage(i.key().first, msg);

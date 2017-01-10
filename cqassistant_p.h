@@ -4,6 +4,8 @@
 #include "cqassistant.h"
 
 class MasterLevels;
+class MemberWelcome;
+class MemberBlacklist;
 class MemberDeathHouse;
 
 class CqAssistantPrivate : public QObject
@@ -30,6 +32,8 @@ private:
 
 private:
     MasterLevels *levels;
+    MemberWelcome *welcome;
+    MemberBlacklist *blacklist;
     MemberDeathHouse *deathHouse;
 
 private:

@@ -36,7 +36,7 @@ MemberDeathHouse::MemberDeathHouse(QObject *parent)
                 qint64 gid = query.value(0).toLongLong();
                 qint64 uid = query.value(1).toLongLong();
                 qint64 stamp = query.value(2).toLongLong();
-                d->deaths.insert(Member(gid, uid), stamp);
+                d->deathHouse.insert(Member(gid, uid), stamp);
             }
         } while (false);
     }
@@ -46,60 +46,59 @@ MemberDeathHouse::~MemberDeathHouse()
 {
 }
 
-void MemberDeathHouse::killMember(qint64 gid, qint64 uid)
+SqlData::Result MemberDeathHouse::addMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberDeathHouse);
-
-    Member member(gid, uid);
     QWriteLocker locker(&d->guard);
 
-    if (d->deaths.contains(member)) {
-        return;
+    Member member(gid, uid);
+    if (!d->deathHouse.contains(member)) {
+        qint64 stamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        const char sql[] = "REPLACE INTO [DeathHouse] VALUES(%1, %2, %3);";
+        QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid).arg(stamp);
+        QSqlQuery query = d->query(qtSql);
+        if (query.lastError().isValid()) {
+            qCCritical(qlcMemberDeathHouse, "Update error: %s",
+                       qPrintable(query.lastError().text()));
+            return SqlError;
+        }
+        d->deathHouse.insert(member, stamp);
+        qCInfo(qlcMemberDeathHouse, "Update: gid: %lld, uid: %lld.", gid, uid);
+
+        return Done;
     }
 
-    qint64 stamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
-
-    const char sql[] = "REPLACE INTO [DeathHouse] VALUES(%1, %2, %3);";
-    QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid).arg(stamp);
-    QSqlQuery query = d->query(qtSql);
-    if (query.lastError().isValid()) {
-        qCCritical(qlcMemberDeathHouse, "Update error: %s",
-                   qPrintable(query.lastError().text()));
-        return;
-    }
-    d->deaths.insert(member, stamp);
-
-    qCInfo(qlcMemberDeathHouse, "Update: gid: %lld, uid: %lld.", gid, uid);
+    return NoChange;
 }
 
-void MemberDeathHouse::freeMember(qint64 gid, qint64 uid)
+SqlData::Result MemberDeathHouse::removeMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberDeathHouse);
-
-    Member member(gid, uid);
     QWriteLocker locker(&d->guard);
 
-    if (!d->deaths.contains(member)) {
-        return;
+    Member member(gid, uid);
+    if (d->deathHouse.contains(member)) {
+        const char sql[] = "DELETE FROM [DeathHouse] WHERE [gid] = %1 AND [uid] = %2;";
+        QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
+        QSqlQuery query = d->query(qtSql);
+        if (query.lastError().isValid()) {
+            qCCritical(qlcMemberDeathHouse, "Delete error: %s",
+                       qPrintable(query.lastError().text()));
+            return SqlError;
+        }
+        d->deathHouse.remove(member);
+        qCInfo(qlcMemberDeathHouse, "Delete: gid: %lld, uid: %lld.", gid, uid);
+
+        return Done;
     }
 
-    const char sql[] = "DELETE FROM [DeathHouse] WHERE [gid] = %1 AND [uid] = %2;";
-    QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
-    QSqlQuery query = d->query(qtSql);
-    if (query.lastError().isValid()) {
-        qCCritical(qlcMemberDeathHouse, "Delete error: %s",
-                   qPrintable(query.lastError().text()));
-        return;
-    }
-    d->deaths.remove(member);
-
-    qCInfo(qlcMemberDeathHouse, "Delete: gid: %lld, uid: %lld.", gid, uid);
+    return NoChange;
 }
 
-QHash<Member, qint64> MemberDeathHouse::deaths() const
+QHash<Member, qint64> MemberDeathHouse::deathHouse() const
 {
     Q_D(const MemberDeathHouse);
-    return d->deaths;
+    return d->deathHouse;
 }
 
 // class MemberDeathHousePrivate
