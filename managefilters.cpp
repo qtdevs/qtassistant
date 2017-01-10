@@ -27,11 +27,10 @@ bool CqAssistant::groupRequestEventFilter(const GroupRequestEvent &ev)
     Q_D(CqAssistant);
 
     if (d->blacklist->contains(ev.from, ev.user)) {
-        sendGroupMessage(ev.from, tr("%1 is in the blacklist, reject.").arg(ev.user));
-        // rejectRequest(ev.type, ev.gbkTag);
+        // sendGroupMessage(ev.from, tr("%1 is in the blacklist, reject.").arg(ev.user));
+        rejectRequest(ev.type, ev.gbkTag);
     }
 
-    Q_UNUSED(ev);
     return false;
 }
 

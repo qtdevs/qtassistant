@@ -286,13 +286,28 @@ void CqAssistantPrivate::timerEvent(QTimerEvent *)
 {
     Q_Q(CqAssistant);
 
+    auto welcome = this->welcome->welcome();
+    if (!welcome.isEmpty()) {
+        qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        QHashIterator<Member, qint64> i(welcome);
+        while (i.hasNext()) {
+            i.next();
+            if ((i.value() + 1800000) < now) {
+                this->welcome->removeMember(i.key().first, i.key().second);
+                q->kickGroupMember(i.key().first, i.key().second, false);
+                QString msg = "Killed: " + QString::number(i.key().second);
+                q->sendGroupMessage(i.key().first, msg);
+            }
+        }
+    }
+
     auto deaths = deathHouse->deathHouse();
     if (!deaths.isEmpty()) {
         qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
         QHashIterator<Member, qint64> i(deaths);
         while (i.hasNext()) {
             i.next();
-            if ((i.value() + 360) < now) {
+            if ((i.value() + 360000) < now) {
                 deathHouse->removeMember(i.key().first, i.key().second);
                 q->kickGroupMember(i.key().first, i.key().second, false);
                 QString msg = "Killed: " + QString::number(i.key().second);

@@ -2,6 +2,7 @@
 #include "cqassistant_p.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QStringBuilder>
 #include <QTextStream>
 
@@ -832,46 +833,74 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
                 invalidArgs = true;
                 break;
             }
+        } else if ((arg == QLatin1String("l"))
+                   || (arg == QLatin1String("list"))) {
+            if (argvOption == 0) {
+                argvOption = 3;
+            } else {
+                invalidArgs = true;
+                break;
+            }
         } else {
             invalidArgs = true;
             break;
         }
     }
 
-    if (!invalidArgs && !ll.isEmpty() && (argvOption != 0)) {
+    if (!invalidArgs && (argvOption != 0)) {
         QStringList masters;
         QStringList members;
 
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                masters << q->msgAt(li.uid);
-            } else {
-                if (argvOption == 1) {
-                    welcome->addMember(ev.from, li.uid);
-                } else if (argvOption == 2) {
-                    welcome->removeMember(ev.from, li.uid);
+        if (argvOption == 3) {
+            if (ll.isEmpty()) {
+                QDateTime now = QDateTime::currentDateTime();
+                QHashIterator<Member, qint64> i(welcome->welcome());
+                while (i.hasNext()) {
+                    i.next();
+                    QDateTime stamp = QDateTime::fromMSecsSinceEpoch(i.value()).addSecs(1800);
+                    members << tr("%1 will kicked in %2 minute(s).").arg(q->msgAt(i.key().second)).arg(now.secsTo(stamp) / 60);
                 }
-                members << q->msgAt(li.uid);
+                members.prepend(tr("Welcome List:"));
+                q->sendGroupMessage(ev.from, members.join("\n"));
+
+                return;
+            }
+            q->sendGroupMessage(ev.from, "fuck");
+        } else {
+            if (!ll.isEmpty()) {
+                levels->update(ev.from, ll);
+                for (const LevelInfo &li : ll) {
+                    if (li.level <= level) {
+                        masters << q->msgAt(li.uid);
+                    } else {
+                        if (argvOption == 1) {
+                            welcome->addMember(ev.from, li.uid);
+                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->msgAt(li.uid)));
+                        } else if (argvOption == 2) {
+                            welcome->removeMember(ev.from, li.uid);
+                        }
+                        members << q->msgAt(li.uid);
+                    }
+                }
+
+                QStringList reply;
+                if (!masters.isEmpty()) {
+                    reply << tr("Permission Denied:");
+                    reply << masters;
+                }
+                if (!members.isEmpty()) {
+                    if (argvOption == 1) {
+                        reply << tr("Welcome Add List:");
+                    } else if (argvOption == 2) {
+                        reply << tr("Welcome Delete List:");
+                    }
+                    reply << members;
+                }
+                q->sendGroupMessage(ev.from, reply.join("\n"));
+
+                return;
             }
         }
-
-        QStringList reply;
-        if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
-        }
-        if (!members.isEmpty()) {
-            if (argvOption == 1) {
-                reply << tr("Welcome Add List:");
-            } else if (argvOption == 2) {
-                reply << tr("Welcome Delete List:");
-            }
-            reply << members;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
-
-        return;
     }
 
     q->sendGroupMessage(ev.from, tr("welcome [add|delete] @Member1 [@Member2] [@Member3] ..."));
@@ -920,46 +949,71 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
         } else if ((arg == QLatin1String("g"))
                    || (arg == QLatin1String("global"))) {
             argvGlobal = true;
+        } else if ((arg == QLatin1String("l"))
+                   || (arg == QLatin1String("list"))) {
+            if (argvOption == 0) {
+                argvOption = 3;
+            } else {
+                invalidArgs = true;
+                break;
+            }
         } else {
             invalidArgs = true;
             break;
         }
     }
 
-    if (!invalidArgs && !ll.isEmpty() && (argvOption != 0)) {
-        QStringList masters;
-        QStringList members;
+    QStringList masters;
+    QStringList members;
 
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                masters << q->msgAt(li.uid);
-            } else {
-                if (argvOption == 1) {
-                    blacklist->addMember(ev.from, li.uid);
-                } else if (argvOption == 2) {
-                    blacklist->removeMember(ev.from, li.uid);
+    if (!invalidArgs && (argvOption != 0)) {
+        if (argvOption == 3) {
+            if (ll.isEmpty()) {
+                QHashIterator<Member, qint64> i(blacklist->blacklist());
+                while (i.hasNext()) {
+                    i.next();
+                    members << q->msgAt(i.key().second);
                 }
-                members << q->msgAt(li.uid);
+                members.prepend(tr("Blacklist List:"));
+                q->sendGroupMessage(ev.from, members.join("\n"));
+
+                return;
+            }
+            q->sendGroupMessage(ev.from, tr("fuck%1").arg(ll.count()));
+        } else {
+            if (!ll.isEmpty()) {
+                levels->update(ev.from, ll);
+                for (const LevelInfo &li : ll) {
+                    if (li.level <= level) {
+                        masters << q->msgAt(li.uid);
+                    } else {
+                        if (argvOption == 1) {
+                            blacklist->addMember(ev.from, li.uid);
+                        } else if (argvOption == 2) {
+                            blacklist->removeMember(ev.from, li.uid);
+                        }
+                        members << q->msgAt(li.uid);
+                    }
+                }
+
+                QStringList reply;
+                if (!masters.isEmpty()) {
+                    reply << tr("Permission Denied:");
+                    reply << masters;
+                }
+                if (!members.isEmpty()) {
+                    if (argvOption == 1) {
+                        reply << tr("Blacklist Add List:");
+                    } else if (argvOption == 2) {
+                        reply << tr("Blacklist Delete List:");
+                    }
+                    reply << members;
+                }
+                q->sendGroupMessage(ev.from, reply.join("\n"));
+
+                return;
             }
         }
-
-        QStringList reply;
-        if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
-        }
-        if (!members.isEmpty()) {
-            if (argvOption == 1) {
-                reply << tr("Blacklist Add List:");
-            } else if (argvOption == 2) {
-                reply << tr("Blacklist Delete List:");
-            }
-            reply << members;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
-
-        return;
     }
 
     q->sendGroupMessage(ev.from, tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
