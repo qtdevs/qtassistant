@@ -51,6 +51,9 @@ private:
     void groupUnban(const MessageEvent &ev, const QStringList &args);
     void groupUnkill(const MessageEvent &ev, const QStringList &args);
     void groupUnpower(const MessageEvent &ev, const QStringList &args);
+
+    void groupWelcome(const MessageEvent &ev, const QStringList &args);
+    void groupBlacklist(const MessageEvent &ev, const QStringList &args);
 };
 
 #endif // CQASSISTANT_P_H

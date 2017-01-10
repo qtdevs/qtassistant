@@ -6,6 +6,8 @@
 #include <QTextStream>
 
 #include "datas/masterlevels.h"
+#include "datas/memberwelcome.h"
+#include "datas/memberblacklist.h"
 #include "datas/memberdeathhouse.h"
 
 bool cqStartsWith(const char *str, const char *pre)
@@ -25,6 +27,13 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
 {
     Q_D(CqAssistant);
     QStringList args;
+
+    d->welcome->removeMember(ev.from, ev.sender);
+
+    if (d->blacklist->contains(ev.from, ev.sender)) {
+        sendGroupMessage(ev.from, tr("%1 is in the blacklist, kick out.").arg(ev.sender));
+        kickGroupMember(ev.from, ev.sender, false);
+    }
 
     if ((ev.gbkMsg[0] == '!')) {
         QString msg = conv(ev.gbkMsg).mid(1);
@@ -74,6 +83,15 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
         }
         if (c == QLatin1String("up") || c == QLatin1String("unpower")) {
             d->groupUnpower(ev, args.mid(1));
+            return true;
+        }
+
+        if (c == QLatin1String("wl") || c == QLatin1String("welcome")) {
+            d->groupWelcome(ev, args.mid(1));
+            return true;
+        }
+        if (c == QLatin1String("bl") || c == QLatin1String("blacklist")) {
+            d->groupBlacklist(ev, args.mid(1));
             return true;
         }
     }
@@ -126,13 +144,11 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
             QString uid = arg.mid(10, i - 10);
             ll.append(LevelInfo(uid.toLongLong(),
                                 MasterLevel::Unknown));
-        } else if (arg == QLatin1String("g")) {
+        } else if ((arg == QLatin1String("g"))
+                   || (arg == QLatin1String("global"))) {
             argvGlobal = true;
-        } else if (arg == QLatin1String("global")) {
-            argvGlobal = true;
-        } else if (arg == QLatin1String("l")) {
-            argvList = true;
-        } else if (arg == QLatin1String("list")) {
+        } else if ((arg == QLatin1String("l"))
+                   || (arg == QLatin1String("list"))) {
             argvList = true;
         } else {
             invalidArgs = true;
@@ -443,9 +459,8 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
                                 MasterLevel::Unknown));
         } else if (arg.startsWith("m")) {
             levelValue = arg.mid(1).toInt();
-        } else if (arg == QLatin1String("g")) {
-            argvGlobal = true;
-        } else if (arg == QLatin1String("global")) {
+        } else if ((arg == QLatin1String("g"))
+                   || (arg == QLatin1String("global"))) {
             argvGlobal = true;
         } else {
             invalidArgs = true;
@@ -698,9 +713,8 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
             QString str = arg.mid(10, i - 10);
             ll.append(LevelInfo(str.toLongLong(),
                                 MasterLevel::Unknown));
-        } else if (arg == QLatin1String("g")) {
-            argvGlobal = true;
-        } else if (arg == QLatin1String("global")) {
+        } else if ((arg == QLatin1String("g"))
+                   || (arg == QLatin1String("global"))) {
             argvGlobal = true;
         } else {
             invalidArgs = true;
@@ -777,4 +791,176 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
     }
 
     q->sendGroupMessage(ev.from, tr("unpower [@Member1] [@Member2] [@Member3] ..."));
+}
+
+void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList &args)
+{
+    Q_Q(CqAssistant);
+
+    MasterLevel level = levels->level(ev.from, ev.sender);
+    if (level > MasterLevel::Master1) {
+        QString name = q->msgAt(ev.sender);
+        QString levelName = MasterLevels::levelName(level);
+        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
+        q->sendGroupMessage(ev.from, reply);
+        return;
+    }
+
+    int argvOption = 0;
+
+    LevelInfoList ll;
+    bool invalidArgs = false;
+    for (const QString &arg : args) {
+        if (arg.startsWith("[CQ:at")) {
+            int i = arg.lastIndexOf("]");
+            QString str = arg.mid(10, i - 10);
+            ll.append(LevelInfo(str.toLongLong(),
+                                MasterLevel::Unknown));
+        } else if ((arg == QLatin1String("a"))
+                   || (arg == QLatin1String("add"))) {
+            if (argvOption == 0) {
+                argvOption = 1;
+            } else {
+                invalidArgs = true;
+                break;
+            }
+        } else if ((arg == QLatin1String("d"))
+                   || (arg == QLatin1String("delete"))) {
+            if (argvOption == 0) {
+                argvOption = 2;
+            } else {
+                invalidArgs = true;
+                break;
+            }
+        } else {
+            invalidArgs = true;
+            break;
+        }
+    }
+
+    if (!invalidArgs && !ll.isEmpty() && (argvOption != 0)) {
+        QStringList masters;
+        QStringList members;
+
+        levels->update(ev.from, ll);
+        for (const LevelInfo &li : ll) {
+            if (li.level <= level) {
+                masters << q->msgAt(li.uid);
+            } else {
+                if (argvOption == 1) {
+                    welcome->addMember(ev.from, li.uid);
+                } else if (argvOption == 2) {
+                    welcome->removeMember(ev.from, li.uid);
+                }
+                members << q->msgAt(li.uid);
+            }
+        }
+
+        QStringList reply;
+        if (!masters.isEmpty()) {
+            reply << tr("Permission Denied:");
+            reply << masters;
+        }
+        if (!members.isEmpty()) {
+            if (argvOption == 1) {
+                reply << tr("Welcome Add List:");
+            } else if (argvOption == 2) {
+                reply << tr("Welcome Delete List:");
+            }
+            reply << members;
+        }
+        q->sendGroupMessage(ev.from, reply.join("\n"));
+
+        return;
+    }
+
+    q->sendGroupMessage(ev.from, tr("welcome [add|delete] @Member1 [@Member2] [@Member3] ..."));
+}
+
+void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringList &args)
+{
+    Q_Q(CqAssistant);
+
+    MasterLevel level = levels->level(ev.from, ev.sender);
+    if (level > MasterLevel::Master1) {
+        QString name = q->msgAt(ev.sender);
+        QString levelName = MasterLevels::levelName(level);
+        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
+        q->sendGroupMessage(ev.from, reply);
+        return;
+    }
+
+    int argvOption = 0;
+    bool argvGlobal = false;
+
+    LevelInfoList ll;
+    bool invalidArgs = false;
+    for (const QString &arg : args) {
+        if (arg.startsWith("[CQ:at")) {
+            int i = arg.lastIndexOf("]");
+            QString str = arg.mid(10, i - 10);
+            ll.append(LevelInfo(str.toLongLong(),
+                                MasterLevel::Unknown));
+        } else if ((arg == QLatin1String("a"))
+                   || (arg == QLatin1String("add"))) {
+            if (argvOption == 0) {
+                argvOption = 1;
+            } else {
+                invalidArgs = true;
+                break;
+            }
+        } else if ((arg == QLatin1String("d"))
+                   || (arg == QLatin1String("delete"))) {
+            if (argvOption == 0) {
+                argvOption = 2;
+            } else {
+                invalidArgs = true;
+                break;
+            }
+        } else if ((arg == QLatin1String("g"))
+                   || (arg == QLatin1String("global"))) {
+            argvGlobal = true;
+        } else {
+            invalidArgs = true;
+            break;
+        }
+    }
+
+    if (!invalidArgs && !ll.isEmpty() && (argvOption != 0)) {
+        QStringList masters;
+        QStringList members;
+
+        levels->update(ev.from, ll);
+        for (const LevelInfo &li : ll) {
+            if (li.level <= level) {
+                masters << q->msgAt(li.uid);
+            } else {
+                if (argvOption == 1) {
+                    blacklist->addMember(ev.from, li.uid);
+                } else if (argvOption == 2) {
+                    blacklist->removeMember(ev.from, li.uid);
+                }
+                members << q->msgAt(li.uid);
+            }
+        }
+
+        QStringList reply;
+        if (!masters.isEmpty()) {
+            reply << tr("Permission Denied:");
+            reply << masters;
+        }
+        if (!members.isEmpty()) {
+            if (argvOption == 1) {
+                reply << tr("Blacklist Add List:");
+            } else if (argvOption == 2) {
+                reply << tr("Blacklist Delete List:");
+            }
+            reply << members;
+        }
+        q->sendGroupMessage(ev.from, reply.join("\n"));
+
+        return;
+    }
+
+    q->sendGroupMessage(ev.from, tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
 }
