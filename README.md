@@ -1,0 +1,2 @@
+# qtassistant
+Qt Assistant
