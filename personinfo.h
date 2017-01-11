@@ -16,6 +16,12 @@ public:
 public:
     bool isValid() const;
 
+public:
+    qint64 uid() const;
+    qint32 sex() const;
+    qint32 age() const;
+    QString nickName() const;
+
 private:
     QSharedDataPointer<PersonInfoData> data;
 };

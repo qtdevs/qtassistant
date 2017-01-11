@@ -53,6 +53,10 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
             sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4 : %5 : %6 : %7 : %8 : %9 : %10 : %11 : %12")
                              .arg(mi.gid()).arg(mi.uid()).arg(mi.nickName()).arg(mi.nameCard()).arg(mi.sex()).arg(mi.age()).arg(mi.location())
                              .arg(mi.joinTime().toString()).arg(mi.lastSent().toString()).arg(mi.levelName()).arg(mi.permission()).arg(mi.unfriendly()));
+
+            PersonInfo pi = personInfo(ev.sender);
+            sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4")
+                             .arg(pi.uid()).arg(pi.nickName()).arg(pi.sex()).arg(pi.age()));
         }
 
         if (c == QLatin1String("h") || c == QLatin1String("help")) {

@@ -6,7 +6,13 @@
 class PersonInfoData : public QSharedData
 {
 public:
-PersonInfoData();
+    PersonInfoData();
+
+public:
+    qint64 uid;
+    qint32 sex;
+    qint32 age;
+    QString nickName;
 };
 
 #endif // PERSONINFO_P_H
