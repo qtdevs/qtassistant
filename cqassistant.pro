@@ -28,12 +28,18 @@ include(translations/translations.pri)
 HEADERS +=\
     cqaevents.h \
     cqassistant.h \
-    cqassistant_p.h
+    cqassistant_p.h \
+    memberinfo.h \
+    memberinfo_p.h \
+    personinfo.h \
+    personinfo_p.h
 SOURCES += \
     cqassistant.cpp \
     cqassistantpp.cpp \
     messagefilters.cpp \
-    managefilters.cpp
+    managefilters.cpp \
+    memberinfo.cpp \
+    personinfo.cpp
 
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json

@@ -3,14 +3,26 @@
 
 #include <QObject>
 #include "cqaevents.h"
+#include "memberinfo.h"
+#include "personinfo.h"
 
 enum class CqCode {
     NoError = 0,
     Unknown = 1
 };
 
+// class CqEncoder
+
+class CqEncoder
+{
+public:
+    static QString at(qint64 uid);
+};
+
+// class CqAssistant
+
 class CqAssistantPrivate;
-class CqAssistant : public QObject
+class CqAssistant : public QObject, public CqEncoder
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(CqAssistant)
@@ -63,7 +75,7 @@ protected:
     CqCode adminGroupMember(qint64 gid, qint64 uid, bool enabled);
 
     CqCode renameGroupMember(qint64 gid, qint64 uid, const char *gbkNewNickName);
-    CqCode renameGroupMember(qint64 gid, qint64 uid, const QString &newNickName);
+    CqCode renameGroupMember(qint64 gid, qint64 uid, const QString &newNameCard);
 
 protected:
     CqCode acceptRequest(const char *gbkTag);
@@ -79,13 +91,8 @@ protected:
     CqCode mute(qint64 gid, bool muted);
 
 protected:
-    static QString msgAt(qint64 id);
-
-    /*
-private:
-    const char *memberInfo(qint64 gid, qint64 uid, bool cache = true);
-    const char *strangerInfo(qint64 id, bool cache = true);
-    */
+    MemberInfo memberInfo(qint64 gid, qint64 uid, bool cache = true);
+    PersonInfo personInfo(qint64 uid, bool cache = true);
 };
 
 #endif // CQASSISTANT_H

@@ -48,6 +48,13 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
     if (!args.isEmpty()) {
         QString c = args.value(0);
 
+        if (c == "member") {
+            MemberInfo mi = memberInfo(ev.from, ev.sender);
+            sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4 : %5 : %6 : %7 : %8 : %9 : %10 : %11 : %12")
+                             .arg(mi.gid()).arg(mi.uid()).arg(mi.nickName()).arg(mi.nameCard()).arg(mi.sex()).arg(mi.age()).arg(mi.location())
+                             .arg(mi.joinTime().toString()).arg(mi.lastSent().toString()).arg(mi.levelName()).arg(mi.permission()).arg(mi.unfriendly()));
+        }
+
         if (c == QLatin1String("h") || c == QLatin1String("help")) {
             d->groupHelp(ev, args.mid(1));
             return true;
@@ -165,7 +172,7 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
                 ll = levels->levels(argvGlobal ? 0 : ev.from);
 
                 for (const LevelInfo &li : ll) {
-                    QString name = q->msgAt(li.uid);
+                    QString name = at(li.uid);
                     QString level = MasterLevels::levelName(li.level);
                     members.append(tr("%1: %2").arg(level, name));
                 }
@@ -173,7 +180,7 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
                 q->sendGroupMessage(ev.from, members.join("\n"));
             } else {
                 MasterLevel level = levels->level(argvGlobal ? 0 : ev.from, ev.sender);
-                QString reply = tr("Level: %1 %2").arg(MasterLevels::levelName(level), q->msgAt(ev.sender));
+                QString reply = tr("Level: %1 %2").arg(MasterLevels::levelName(level), at(ev.sender));
                 q->sendGroupMessage(ev.from, reply);
             }
 
@@ -185,7 +192,7 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
             levels->update(argvGlobal ? 0 : ev.from, ll);
 
             for (const LevelInfo &li : ll) {
-                QString name = q->msgAt(li.uid);
+                QString name = at(li.uid);
                 QString level = MasterLevels::levelName(li.level);
                 members.append(tr("%1: %2").arg(level, name));
             }
@@ -205,7 +212,7 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -258,7 +265,7 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
 
         q->renameGroupMember(ev.from, uid, name);
 
-        QString reply = tr("Nickname Changed: %1").arg(q->msgAt(uid));
+        QString reply = tr("Nickname Changed: %1").arg(at(uid));
         q->sendGroupMessage(ev.from, reply);
 
         return;
@@ -285,7 +292,7 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -336,10 +343,10 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= level) {
-                masters << q->msgAt(li.uid);
+                masters << at(li.uid);
             } else {
                 q->banGroupMember(ev.from, li.uid, duration);
-                members << q->msgAt(li.uid);
+                members << at(li.uid);
             }
         }
 
@@ -382,7 +389,7 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master3) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -410,10 +417,10 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= MasterLevel::Master5) {
-                masters << q->msgAt(li.uid);
+                masters << at(li.uid);
             } else {
                 deathHouse->addMember(ev.from, li.uid);
-                members << q->msgAt(li.uid);
+                members << at(li.uid);
             }
         }
 
@@ -440,7 +447,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -494,7 +501,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
             }
 
             if (newLevel <= level) {
-                QString name = q->msgAt(ev.sender);
+                QString name = at(ev.sender);
                 QString levelName = MasterLevels::levelName(level);
                 QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
                 q->sendGroupMessage(ev.from, reply);
@@ -503,7 +510,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
 
             if (argvGlobal) {
                 if (level != MasterLevel::ATField) {
-                    QString name = q->msgAt(ev.sender);
+                    QString name = at(ev.sender);
                     QString levelName = MasterLevels::levelName(level);
                     QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
                     q->sendGroupMessage(ev.from, reply);
@@ -518,7 +525,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
             levels->update(ev.from, ll);
             for (const LevelInfo &li : ll) {
                 if (li.level <= level) {
-                    QString name = q->msgAt(ev.sender);
+                    QString name = at(ev.sender);
                     QString levelName = MasterLevels::levelName(level);
                     QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
                     q->sendGroupMessage(ev.from, reply);
@@ -530,11 +537,11 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
                 levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
 
                 if (newLevel < li.level) {
-                    impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), q->msgAt(li.uid));
+                    impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
                 } else if (newLevel == li.level) {
-                    unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), q->msgAt(li.uid));
+                    unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), at(li.uid));
                 } else {
-                    depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), q->msgAt(li.uid));
+                    depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
                 }
             }
 
@@ -580,7 +587,7 @@ void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -608,10 +615,10 @@ void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= level) {
-                masters << q->msgAt(li.uid);
+                masters << at(li.uid);
             } else {
                 q->banGroupMember(ev.from, li.uid, 0);
-                members << q->msgAt(li.uid);
+                members << at(li.uid);
             }
         }
 
@@ -638,7 +645,7 @@ void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master3) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -667,10 +674,10 @@ void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= level) {
-                masters << q->msgAt(li.uid);
+                masters << at(li.uid);
             } else {
                 deathHouse->removeMember(ev.from, li.uid);
-                members << q->msgAt(li.uid);
+                members << at(li.uid);
             }
         }
 
@@ -697,7 +704,7 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -726,7 +733,7 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
     if (!invalidArgs && !ll.isEmpty()) {
         if (argvGlobal) {
             if (level != MasterLevel::ATField) {
-                QString name = q->msgAt(ev.sender);
+                QString name = at(ev.sender);
                 QString levelName = MasterLevels::levelName(level);
                 QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
                 q->sendGroupMessage(ev.from, reply);
@@ -741,7 +748,7 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= level) {
-                QString name = q->msgAt(ev.sender);
+                QString name = at(ev.sender);
                 QString levelName = MasterLevels::levelName(level);
                 QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
                 q->sendGroupMessage(ev.from, reply);
@@ -755,11 +762,11 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
             levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
 
             if (newLevel < li.level) {
-                impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), q->msgAt(li.uid));
+                impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
             } else if (newLevel == li.level) {
-                unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), q->msgAt(li.uid));
+                unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), at(li.uid));
             } else {
-                depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), q->msgAt(li.uid));
+                depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
             }
         }
 
@@ -800,7 +807,7 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -858,28 +865,27 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
                 while (i.hasNext()) {
                     i.next();
                     QDateTime stamp = QDateTime::fromMSecsSinceEpoch(i.value()).addSecs(1800);
-                    members << tr("%1 will kicked in %2 minute(s).").arg(q->msgAt(i.key().second)).arg(now.secsTo(stamp) / 60);
+                    members << tr("%1 will kicked in %2 minute(s).").arg(at(i.key().second)).arg(now.secsTo(stamp) / 60);
                 }
                 members.prepend(tr("Welcome List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
 
                 return;
             }
-            q->sendGroupMessage(ev.from, "fuck");
         } else {
             if (!ll.isEmpty()) {
                 levels->update(ev.from, ll);
                 for (const LevelInfo &li : ll) {
                     if (li.level <= level) {
-                        masters << q->msgAt(li.uid);
+                        masters << at(li.uid);
                     } else {
                         if (argvOption == 1) {
                             welcome->addMember(ev.from, li.uid);
-                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->msgAt(li.uid)));
+                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(at(li.uid)));
                         } else if (argvOption == 2) {
                             welcome->removeMember(ev.from, li.uid);
                         }
-                        members << q->msgAt(li.uid);
+                        members << at(li.uid);
                     }
                 }
 
@@ -912,7 +918,7 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = q->msgAt(ev.sender);
+        QString name = at(ev.sender);
         QString levelName = MasterLevels::levelName(level);
         QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
         q->sendGroupMessage(ev.from, reply);
@@ -972,27 +978,26 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
                 QHashIterator<Member, qint64> i(blacklist->blacklist());
                 while (i.hasNext()) {
                     i.next();
-                    members << q->msgAt(i.key().second);
+                    members << at(i.key().second);
                 }
                 members.prepend(tr("Blacklist List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
 
                 return;
             }
-            q->sendGroupMessage(ev.from, tr("fuck%1").arg(ll.count()));
         } else {
             if (!ll.isEmpty()) {
                 levels->update(ev.from, ll);
                 for (const LevelInfo &li : ll) {
                     if (li.level <= level) {
-                        masters << q->msgAt(li.uid);
+                        masters << at(li.uid);
                     } else {
                         if (argvOption == 1) {
                             blacklist->addMember(ev.from, li.uid);
                         } else if (argvOption == 2) {
                             blacklist->removeMember(ev.from, li.uid);
                         }
-                        members << q->msgAt(li.uid);
+                        members << at(li.uid);
                     }
                 }
 

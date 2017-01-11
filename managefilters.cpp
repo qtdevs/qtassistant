@@ -42,7 +42,31 @@ bool CqAssistant::friendAddEventFilter(const FriendAddEvent &ev)
 
 bool CqAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
 {
-    Q_UNUSED(ev);
+    Q_D(CqAssistant);
+
+    if (d->blacklist->contains(ev.from, ev.member)) {
+        // sendGroupMessage(ev.from, tr("%1 is in the blacklist, reject.").arg(ev.user));
+        kickGroupMember(ev.from, ev.member, false);
+    } else {
+        d->welcome->addMember(ev.from, ev.member);
+
+        QString nickName;
+        QString location;
+
+        MemberInfo mi = memberInfo(ev.from, ev.member);
+        if (mi.isValid()) {
+            nickName = mi.nickName();
+            location = mi.location();
+        }
+
+        if (!location.isEmpty()) {
+            QString newNameCard = QString::fromLatin1("[%1]%2").arg(location, nickName);
+            renameGroupMember(ev.from, ev.member, newNameCard);
+        }
+
+        sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(at(ev.member)));
+    }
+
     return false;
 }
 

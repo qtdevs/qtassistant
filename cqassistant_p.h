@@ -8,7 +8,7 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
-class CqAssistantPrivate : public QObject
+class CqAssistantPrivate : public QObject, public CqEncoder
 {
     Q_OBJECT
     Q_DECLARE_PUBLIC(CqAssistant)

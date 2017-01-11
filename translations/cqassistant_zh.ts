@@ -4,14 +4,18 @@
 <context>
     <name>CqAssistant</name>
     <message>
-        <location filename="../managefilters.cpp" line="30"/>
         <source>%1 is in the blacklist, reject.</source>
-        <translation>%1 在黑名单中，拒绝申请。</translation>
+        <translation type="vanished">%1 在黑名单中，拒绝申请。</translation>
     </message>
     <message>
         <location filename="../messagefilters.cpp" line="35"/>
         <source>%1 is in the blacklist, kick out.</source>
         <translation>%1 在黑名单中，从群中踢出。</translation>
+    </message>
+    <message>
+        <location filename="../managefilters.cpp" line="34"/>
+        <source>%1, Welcome to join us, please say something in 30 minutes.</source>
+        <translation>%1，欢迎加入我们，请在三十分钟内说些什么。</translation>
     </message>
 </context>
 <context>
@@ -47,7 +51,7 @@
         <location filename="../messagefilters.cpp" line="731"/>
         <location filename="../messagefilters.cpp" line="746"/>
         <location filename="../messagefilters.cpp" line="805"/>
-        <location filename="../messagefilters.cpp" line="917"/>
+        <location filename="../messagefilters.cpp" line="916"/>
         <source>Permission Denied: %1 %2</source>
         <translation>没有权限：%1 %2</translation>
     </message>
@@ -61,8 +65,8 @@
         <location filename="../messagefilters.cpp" line="422"/>
         <location filename="../messagefilters.cpp" line="620"/>
         <location filename="../messagefilters.cpp" line="679"/>
-        <location filename="../messagefilters.cpp" line="888"/>
-        <location filename="../messagefilters.cpp" line="1001"/>
+        <location filename="../messagefilters.cpp" line="887"/>
+        <location filename="../messagefilters.cpp" line="999"/>
         <source>Permission Denied:</source>
         <translation>没有权限：</translation>
     </message>
@@ -172,42 +176,42 @@
         <translation>新人列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="878"/>
+        <location filename="../messagefilters.cpp" line="877"/>
         <source>%1, Welcome to join us, please say something in 30 minutes.</source>
         <translation>%1，欢迎加入我们，请在三十分钟内说些什么。</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="893"/>
+        <location filename="../messagefilters.cpp" line="892"/>
         <source>Welcome Add List:</source>
         <translation>添加到新成员名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="895"/>
+        <location filename="../messagefilters.cpp" line="894"/>
         <source>Welcome Delete List:</source>
         <translation>从新成员名单移出：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="906"/>
+        <location filename="../messagefilters.cpp" line="905"/>
         <source>welcome [add|delete] @Member1 [@Member2] [@Member3] ...</source>
         <translation>welcome [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="977"/>
+        <location filename="../messagefilters.cpp" line="976"/>
         <source>Blacklist List:</source>
         <translation>黑名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="1006"/>
+        <location filename="../messagefilters.cpp" line="1004"/>
         <source>Blacklist Add List:</source>
         <translation>添加到黑名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="1008"/>
+        <location filename="../messagefilters.cpp" line="1006"/>
         <source>Blacklist Delete List:</source>
         <translation>从黑名单移出：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="1019"/>
+        <location filename="../messagefilters.cpp" line="1017"/>
         <source>blacklist [add|delete] @Member1 [@Member2] [@Member3] ...</source>
         <translation>blacklist [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>

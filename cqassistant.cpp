@@ -24,6 +24,13 @@ CqCode cqCode(qint32 code)
     return CqCode::Unknown;
 }
 
+// class CqEncoder
+
+QString CqEncoder::at(qint64 uid)
+{
+    return QString::fromLatin1("[CQ:at,qq=%1]").arg(uid);
+}
+
 // class CqAssistant
 
 CqAssistant::CqAssistant(qint32 token, QObject *parent)
@@ -164,9 +171,9 @@ CqCode CqAssistant::renameGroupMember(qint64 gid, qint64 uid, const char *gbkNew
     return cqCode(CQ_setGroupCard(d_ptr->token, gid, uid, gbkNewNickName));
 }
 
-CqCode CqAssistant::renameGroupMember(qint64 gid, qint64 uid, const QString &newNickName)
+CqCode CqAssistant::renameGroupMember(qint64 gid, qint64 uid, const QString &newNameCard)
 {
-    return cqCode(CQ_setGroupCard(d_ptr->token, gid, uid, conv(newNickName).constData()));
+    return cqCode(CQ_setGroupCard(d_ptr->token, gid, uid, conv(newNameCard).constData()));
 }
 
 CqCode CqAssistant::acceptRequest(const char *gbkTag)
@@ -216,22 +223,15 @@ CqCode CqAssistant::mute(qint64 gid, bool muted)
     return cqCode(CQ_setGroupWholeBan(d_ptr->token, gid, muted));
 }
 
-QString CqAssistant::msgAt(qint64 id)
+MemberInfo CqAssistant::memberInfo(qint64 gid, qint64 uid, bool cache)
 {
-    return QString::fromLatin1("[CQ:at,qq=%1]").arg(id);
+    return MemberInfo(CQ_getGroupMemberInfoV2(d_ptr->token, gid, uid, !cache));
 }
 
-/*
-const char *CqAssistant::memberInfo(qint64 gid, qint64 uid, bool cache)
+PersonInfo CqAssistant::personInfo(qint64 uid, bool cache)
 {
-    return CQ_getGroupMemberInfoV2(d_ptr->token, gid, uid, !cache);
+    return PersonInfo(CQ_getStrangerInfo(d_ptr->token, uid, !cache));
 }
-
-const char *CqAssistant::strangerInfo(qint64 id, bool cache)
-{
-    return CQ_getStrangerInfo(d_ptr->token, id, !cache);
-}
-*/
 
 // class CqAssistantPrivate
 
