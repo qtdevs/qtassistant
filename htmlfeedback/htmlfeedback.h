@@ -21,6 +21,18 @@ public:
     QImage drawWarning(const QString &html, int width) const;
     QImage drawPrompt(const QString &html, int width) const;
     QImage drawSuccess(const QString &html, int width) const;
+
+public:
+    enum Style {
+        Primary,
+        Danger,
+        Warning,
+        Prompt,
+        Success,
+    };
+
+public:
+    QImage draw(const QString &html, int width, Style style) const;
 };
 
 #endif // HTMLFEEDBACK_H

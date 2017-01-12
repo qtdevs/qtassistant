@@ -174,37 +174,18 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
     if (!invalidArgs) {
         if (ll.isEmpty()) {
             if (argvList) {
-                QStringList members;
-                members.append(tr("Level List:"));
                 ll = levels->levels(argvGlobal ? 0 : ev.from);
-
-                for (const LevelInfo &li : ll) {
-                    QString name = at(li.uid);
-                    QString level = MasterLevels::levelName(li.level);
-                    members.append(tr("%1: %2").arg(level, name));
-                }
-
-                q->sendGroupMessage(ev.from, members.join("\n"));
+                showPromptList(ev.from, argvGlobal ? tr("Global Level List") : tr("Local Level List"), ll, true);
             } else {
                 MasterLevel level = levels->level(argvGlobal ? 0 : ev.from, ev.sender);
-                QString reply = tr("Level: %1 %2").arg(MasterLevels::levelName(level), at(ev.sender));
-                q->sendGroupMessage(ev.from, reply);
+                ll.append(LevelInfo(ev.sender, level));
+                showPromptList(ev.from, argvGlobal ? tr("Global Level") : tr("Local Level"), ll, true);
             }
 
             return;
         } else if (false == argvList) {
-
-            QStringList members;
-            members.append(tr("Level List:"));
             levels->update(argvGlobal ? 0 : ev.from, ll);
-
-            for (const LevelInfo &li : ll) {
-                QString name = at(li.uid);
-                QString level = MasterLevels::levelName(li.level);
-                members.append(tr("%1: %2").arg(level, name));
-            }
-
-            q->sendGroupMessage(ev.from, members.join("\n"));
+            showPromptList(ev.from, argvGlobal ? tr("Global Level List") : tr("Local Level List"), ll, true);
 
             return;
         }
@@ -338,29 +319,25 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
             duration = 60;
         }
 
-        QStringList masters;
-        QStringList members;
+        LevelInfoList masters;
 
         levels->update(ev.from, ll);
         for (const LevelInfo &li : ll) {
             if (li.level <= level) {
-                masters << at(li.uid);
-            } else {
-                q->banGroupMember(ev.from, li.uid, duration);
-                members << at(li.uid);
+                masters << li;
             }
         }
 
-        QStringList reply;
         if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
+            // masters.prepend(tr("You have no rights to ban the following members:"));
+            // permissionDenied(ev.from, ev.sender, level, masters.join("<br />"));
+            return;
         }
-        if (!members.isEmpty()) {
-            reply << tr("Ban List:");
-            reply << members;
+
+        for (const LevelInfo &li : ll) {
+            q->banGroupMember(ev.from, li.uid, duration);
         }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
+        showSuccessList(ev.from, tr("The following member has beed banned:"), ll, false);
 
         return;
     }

@@ -15,18 +15,6 @@ public:
 private:
     HtmlFeedback *q_ptr;
 
-public:
-    enum Style {
-        Primary,
-        Danger,
-        Warning,
-        Prompt,
-        Success,
-    };
-
-public:
-    QImage draw(const QString &html, int width, Style style) const;
-
 private:
     QString primarySheet;
     QString dangerSheet;

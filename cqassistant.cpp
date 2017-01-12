@@ -363,3 +363,67 @@ void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel le
     QString fileName = q->saveImage(feedback);
     q->sendGroupMessage(gid, image(fileName));
 }
+
+void CqAssistantPrivate::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+{
+    feedbackList(gid, title, members, level, HtmlFeedback::Primary);
+}
+
+void CqAssistantPrivate::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+{
+    feedbackList(gid, title, members, level, HtmlFeedback::Danger);
+}
+
+void CqAssistantPrivate::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+{
+    feedbackList(gid, title, members, level, HtmlFeedback::Warning);
+}
+
+void CqAssistantPrivate::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+{
+    feedbackList(gid, title, members, level, HtmlFeedback::Prompt);
+}
+
+void CqAssistantPrivate::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+{
+    feedbackList(gid, title, members, level, HtmlFeedback::Success);
+}
+
+void CqAssistantPrivate::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
+{
+    Q_Q(CqAssistant);
+
+    for (int i = 0, part = 0; i < members.count();) {
+        QString html;
+        do {
+            int cc = i + 4;
+            QTextStream ds(&html);
+            ds << "<html><body><span class=\"t\">" << title;
+            if (members.count() > 5) {
+                ds << tr("(Part %1)").arg(++part);
+            }
+            ds << "</span><div>";
+            for (; i < members.count(); ++i) {
+                const LevelInfo &li = members.at(i);
+                MemberInfo mi = q->memberInfo(gid, li.uid);
+                ds << "<p class=\"c\">";
+                if (level) {
+                    ds << MasterLevels::levelName(li.level) << tr(": ");
+                }
+                if (!mi.nameCard().isEmpty()) {
+                    ds << mi.nameCard() << "</p>";
+                } else {
+                    ds << mi.nickName() << "</p>";
+                }
+                if (i == cc) {
+                    break;
+                }
+            }
+            ds << "</div></body></html>";
+        } while (false);
+
+        QImage feedback = htmlFeedback->draw(html, 400, style);
+        QString fileName = q->saveImage(feedback);
+        q->sendGroupMessage(gid, image(fileName));
+    }
+}

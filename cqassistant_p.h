@@ -8,7 +8,7 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
-class HtmlFeedback;
+#include "htmlfeedback/htmlfeedback.h"
 
 class CqAssistantPrivate : public QObject, public CqEncoder
 {
@@ -59,6 +59,14 @@ private:
 
 private:
     void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
+
+    void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+
+    void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
 
 private:
     HtmlFeedback *htmlFeedback;
