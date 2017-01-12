@@ -4,7 +4,6 @@
 #
 #-------------------------------------------------
 
-QT      -= gui
 QT      += sql network
 TEMPLATE = lib
 
@@ -24,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(cqapi/cqapi.pri)
 include(datas/datas.pri)
 include(translations/translations.pri)
+include(htmlfeedback/htmlfeedback.pri)
 
 HEADERS +=\
     cqaevents.h \

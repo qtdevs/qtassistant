@@ -8,6 +8,8 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
+class HtmlFeedback;
+
 class CqAssistantPrivate : public QObject, public CqEncoder
 {
     Q_OBJECT
@@ -54,6 +56,13 @@ private:
 
     void groupWelcome(const MessageEvent &ev, const QStringList &args);
     void groupBlacklist(const MessageEvent &ev, const QStringList &args);
+
+private:
+    void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
+
+private:
+    HtmlFeedback *htmlFeedback;
+    QString imagePath;
 };
 
 #endif // CQASSISTANT_P_H

@@ -3,7 +3,10 @@
 
 #include <QDir>
 #include <QThread>
+#include <QPixmap>
 #include <QStringBuilder>
+#include <QTextStream>
+#include <QUuid>
 
 #include "cqapi/cqapi.h"
 
@@ -11,6 +14,8 @@
 #include "datas/memberwelcome.h"
 #include "datas/memberblacklist.h"
 #include "datas/memberdeathhouse.h"
+
+#include "htmlfeedback/htmlfeedback.h"
 
 CqCode cqCode(qint32 code)
 {
@@ -29,6 +34,11 @@ CqCode cqCode(qint32 code)
 QString CqEncoder::at(qint64 uid)
 {
     return QString::fromLatin1("[CQ:at,qq=%1]").arg(uid);
+}
+
+QString CqEncoder::image(const QString &name)
+{
+    return QString::fromLatin1("[CQ:image,file=%1]").arg(name);
 }
 
 // class CqAssistant
@@ -121,32 +131,32 @@ QString CqAssistant::usrFilePath(const QString &name) const
     return QDir::cleanPath(d_ptr->basePath % "/" % currentId % "/" % name);
 }
 
-CqCode CqAssistant::sendPrivateMessage(qint64 uid, const char *gbkMsg)
+CqCode CqAssistant::sendPrivateMessage(qint64 uid, const char *gbkMsg) const
 {
     return cqCode(CQ_sendPrivateMsg(d_ptr->token, uid, gbkMsg));
 }
 
-CqCode CqAssistant::sendGroupMessage(qint64 gid, const char *gbkMsg)
+CqCode CqAssistant::sendGroupMessage(qint64 gid, const char *gbkMsg) const
 {
     return cqCode(CQ_sendGroupMsg(d_ptr->token, gid, gbkMsg));
 }
 
-CqCode CqAssistant::sendDiscussMessage(qint64 did, const char *gbkMsg)
+CqCode CqAssistant::sendDiscussMessage(qint64 did, const char *gbkMsg) const
 {
     return cqCode(CQ_sendDiscussMsg(d_ptr->token, did, gbkMsg));
 }
 
-CqCode CqAssistant::sendPrivateMessage(qint64 uid, const QString &msg)
+CqCode CqAssistant::sendPrivateMessage(qint64 uid, const QString &msg) const
 {
     return sendPrivateMessage(uid, conv(msg).constData());
 }
 
-CqCode CqAssistant::sendGroupMessage(qint64 gid, const QString &msg)
+CqCode CqAssistant::sendGroupMessage(qint64 gid, const QString &msg) const
 {
     return sendGroupMessage(gid, conv(msg).constData());
 }
 
-CqCode CqAssistant::sendDiscussMessage(qint64 did, const QString &msg)
+CqCode CqAssistant::sendDiscussMessage(qint64 did, const QString &msg) const
 {
     return sendDiscussMessage(did, conv(msg).constData());
 }
@@ -233,6 +243,25 @@ PersonInfo CqAssistant::personInfo(qint64 uid, bool cache)
     return PersonInfo(CQ_getStrangerInfo(d_ptr->token, uid, !cache));
 }
 
+QString CqAssistant::saveImage(const QImage &p) const
+{
+    Q_D(const CqAssistant);
+
+    QString uuid = QString::fromLatin1(QUuid::createUuid().toRfc4122().toHex());
+    QString name = QString("%1/%2.png").arg(d->imagePath, uuid);
+    if (p.save(name, "PNG")) {
+        return uuid % ".png";
+    }
+
+    return QString();
+}
+
+QImage CqAssistant::loadImage(const QString &f) const
+{
+    Q_UNUSED(f);
+    return QImage();
+}
+
 // class CqAssistantPrivate
 
 CqAssistantPrivate::CqAssistantPrivate()
@@ -244,6 +273,7 @@ CqAssistantPrivate::CqAssistantPrivate()
     , welcome(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
+    , htmlFeedback(Q_NULLPTR)
 {
 }
 
@@ -276,6 +306,9 @@ void CqAssistantPrivate::initialize()
     welcome = new MemberWelcome(this);
     blacklist = new MemberBlacklist(this);
     deathHouse = new MemberDeathHouse(this);
+
+    htmlFeedback = new HtmlFeedback(this);
+    imagePath = QDir::cleanPath(basePath % "/../../data/image");
 
     startTimer(10000);
 }
@@ -315,4 +348,18 @@ void CqAssistantPrivate::timerEvent(QTimerEvent *)
             }
         }
     }
+}
+
+void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
+{
+    Q_UNUSED(uid);
+
+    Q_Q(CqAssistant);
+
+    QString content = reason.isEmpty() ? tr("As %1, you have no rights.").arg(MasterLevels::levelName(level)) : reason;
+    QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("Permission Denied"), content);
+
+    QImage feedback = htmlFeedback->drawDanger(html, 400);
+    QString fileName = q->saveImage(feedback);
+    q->sendGroupMessage(gid, image(fileName));
 }

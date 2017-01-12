@@ -2,7 +2,7 @@
 #include "cqassistant_p.h"
 
 #include <QPointer>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QTranslator>
 
 #include "cqapi/cqapi.h"
@@ -55,7 +55,7 @@ CQEVENT(qint32, Initialize, 4)(qint32 authCode)
 CQEVENT(qint32, __systemStartupEvent, 0)()
 {
     int argc = 0;
-    QCoreApplication *app = new QCoreApplication(argc, (char **)Q_NULLPTR);
+    QGuiApplication *app = new QGuiApplication(argc, (char **)Q_NULLPTR);
     theAssistant = new CqAssistant(token, app);
 
     QTranslator *translator = new QTranslator(app);
@@ -71,7 +71,7 @@ CQEVENT(qint32, __systemStartupEvent, 0)()
 
 CQEVENT(qint32, __systemShutdownEvent, 0)()
 {
-    delete QCoreApplication::instance();
+    delete QGuiApplication::instance();
 
     return 0;
 }

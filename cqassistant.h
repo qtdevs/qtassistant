@@ -6,6 +6,8 @@
 #include "memberinfo.h"
 #include "personinfo.h"
 
+#include "datas/masterlevels.h"
+
 enum class CqCode {
     NoError = 0,
     Unknown = 1
@@ -17,6 +19,7 @@ class CqEncoder
 {
 public:
     static QString at(qint64 uid);
+    static QString image(const QString &name);
 };
 
 // class CqAssistant
@@ -62,13 +65,13 @@ protected:
     QString usrFilePath(const QString &name) const;
 
 protected:
-    CqCode sendPrivateMessage(qint64 uid, const char *gbkMsg);
-    CqCode sendGroupMessage(qint64 gid, const char *gbkMsg);
-    CqCode sendDiscussMessage(qint64 did, const char *gbkMsg);
+    CqCode sendPrivateMessage(qint64 uid, const char *gbkMsg) const;
+    CqCode sendGroupMessage(qint64 gid, const char *gbkMsg) const;
+    CqCode sendDiscussMessage(qint64 did, const char *gbkMsg) const;
 
-    CqCode sendPrivateMessage(qint64 uid, const QString &msg);
-    CqCode sendGroupMessage(qint64 gid, const QString &msg);
-    CqCode sendDiscussMessage(qint64 did, const QString &msg);
+    CqCode sendPrivateMessage(qint64 uid, const QString &msg) const;
+    CqCode sendGroupMessage(qint64 gid, const QString &msg) const;
+    CqCode sendDiscussMessage(qint64 did, const QString &msg) const;
 
     CqCode banGroupMember(qint64 gid, qint64 uid, int duration);
     CqCode kickGroupMember(qint64 gid, qint64 uid, bool lasting);
@@ -93,6 +96,10 @@ protected:
 protected:
     MemberInfo memberInfo(qint64 gid, qint64 uid, bool cache = true);
     PersonInfo personInfo(qint64 uid, bool cache = true);
+
+protected:
+    QString saveImage(const QImage &p) const;
+    QImage loadImage(const QString &f) const;
 };
 
 #endif // CQASSISTANT_H

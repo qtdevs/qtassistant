@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QStringBuilder>
 #include <QTextStream>
+#include <QPixmap>
 
 #include "datas/masterlevels.h"
 #include "datas/memberwelcome.h"
@@ -57,6 +58,8 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
             PersonInfo pi = personInfo(ev.sender);
             sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4")
                              .arg(pi.uid()).arg(pi.nickName()).arg(pi.sex()).arg(pi.age()));
+
+            d->permissionDenied(ev.from, ev.sender, MasterLevel::Unknown, "");
         }
 
         if (c == QLatin1String("h") || c == QLatin1String("help")) {
@@ -216,10 +219,7 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -296,10 +296,7 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -393,10 +390,7 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master3) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -451,10 +445,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -591,10 +582,7 @@ void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master5) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -649,10 +637,7 @@ void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master3) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -811,10 +796,7 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -922,10 +904,7 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (level > MasterLevel::Master1) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/htmlfeedback">
+        <file>css/danger.css</file>
+        <file>css/primary.css</file>
+        <file>css/prompt.css</file>
+        <file>css/success.css</file>
+        <file>css/warning.css</file>
+    </qresource>
+</RCC>
