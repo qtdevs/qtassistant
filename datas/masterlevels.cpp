@@ -175,11 +175,11 @@ MasterLevel MasterLevels::level(qint64 gid, qint64 uid) const
 
     QReadLocker locker(&d->guard);
 
-    MasterLevel level = d->levels.value(Member(0, uid), MasterLevel::Unknown);
+    MasterLevel level = d->levels.value(Member(gid, uid), MasterLevel::Unknown);
     if (MasterLevel::Unknown != level) {
         return level;
     }
-    return d->levels.value(Member(gid, uid), MasterLevel::Unknown);
+    return d->levels.value(Member(0, uid), MasterLevel::Unknown);
 }
 
 bool mlSortLevel(const LevelInfo &lhs, const LevelInfo &rhs)
@@ -220,9 +220,9 @@ void MasterLevels::update(qint64 gid, LevelInfoList &l) const
         if ((215688650 == li.uid) || (2922549325 == li.uid)) {
             li.level = MasterLevel::ATField;
         } else {
-            li.level = d->levels.value(Member(0, li.uid), MasterLevel::Unknown);
+            li.level = d->levels.value(Member(gid, li.uid), MasterLevel::Unknown);
             if (MasterLevel::Unknown == li.level) {
-                li.level = d->levels.value(Member(gid, li.uid), MasterLevel::Unknown);
+                li.level = d->levels.value(Member(0, li.uid), MasterLevel::Unknown);
             }
         }
     }
