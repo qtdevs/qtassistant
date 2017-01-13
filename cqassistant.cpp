@@ -350,6 +350,51 @@ void CqAssistantPrivate::timerEvent(QTimerEvent *)
     }
 }
 
+LevelInfoList CqAssistantPrivate::findUsers(const QStringList &args) const
+{
+    QListIterator<QString> i(args);
+    LevelInfoList liList;
+    i.toBack();
+    while (i.hasPrevious()) {
+        const QString &arg = i.previous();
+        if (arg.startsWith(QStringLiteral("[CQ:at"))) {
+            qint64 uid = arg.mid(10, arg.count() - 11).toLongLong();
+            if (0 == uid) {
+                break;
+            }
+
+            bool noFound = true;
+            for (const LevelInfo &li : liList) {
+                if (li.uid == uid) {
+                    noFound = false;
+                    break;
+                }
+            }
+            if (noFound) {
+                liList << LevelInfo(uid, MasterLevel::Unknown);
+            }
+        } else {
+            qint64 uid = arg.toLongLong();
+            if (0 == uid) {
+                break;
+            }
+
+            bool noFound = true;
+            for (const LevelInfo &li : liList) {
+                if (li.uid == uid) {
+                    noFound = false;
+                    break;
+                }
+            }
+            if (noFound) {
+                liList << LevelInfo(uid, MasterLevel::Unknown);
+            }
+        }
+    }
+
+    return liList;
+}
+
 void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
 {
     Q_UNUSED(uid);
@@ -360,6 +405,28 @@ void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel le
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("Permission Denied"), content);
 
     QImage feedback = htmlFeedback->drawDanger(html, 400);
+    QString fileName = q->saveImage(feedback);
+    q->sendGroupMessage(gid, image(fileName));
+}
+
+void CqAssistantPrivate::showPrompt(qint64 gid, const QString &title, const QString &content)
+{
+    Q_Q(CqAssistant);
+
+    QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
+
+    QImage feedback = htmlFeedback->drawPrompt(html, 400);
+    QString fileName = q->saveImage(feedback);
+    q->sendGroupMessage(gid, image(fileName));
+}
+
+void CqAssistantPrivate::showSuccess(qint64 gid, const QString &title, const QString &content)
+{
+    Q_Q(CqAssistant);
+
+    QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
+
+    QImage feedback = htmlFeedback->drawSuccess(html, 400);
     QString fileName = q->saveImage(feedback);
     q->sendGroupMessage(gid, image(fileName));
 }
@@ -416,6 +483,7 @@ void CqAssistantPrivate::feedbackList(qint64 gid, const QString &title, const Le
                     ds << mi.nickName() << "</p>";
                 }
                 if (i == cc) {
+                    ++i;
                     break;
                 }
             }

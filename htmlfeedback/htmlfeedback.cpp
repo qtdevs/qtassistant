@@ -99,7 +99,7 @@ QImage HtmlFeedback::draw(const QString &html, int width, Style style) const
     painter.setFont(d->awesomeFont);
     QRect swRect(0, 0, sw, pixmap.height());
     painter.fillRect(swRect, backgroundColor.darker(120));
-    painter.drawText(swRect, Qt::AlignCenter, promptChar);
+    // painter.drawText(swRect, Qt::AlignCenter, promptChar);
     // Content
     painter.translate(sw + cm, cm);
     htmlDoc.drawContents(&painter);

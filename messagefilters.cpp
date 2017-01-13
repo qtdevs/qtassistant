@@ -124,74 +124,91 @@ bool CqAssistant::discussMessageEventFilter(const MessageEvent &ev)
 
 void CqAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
 
     Q_UNUSED(args);
 
-    QString help;
+    QString usage;
+    QTextStream ts(&usage);
 
-    help += QString::fromUtf8("命令清单: \n");
-    help += QString::fromUtf8("--帮助信息: h,help\n");
-    help += QString::fromUtf8("--查询等级: l,level\n");
-    help += QString::fromUtf8("--修改昵称: r,rename\n");
-    help += QString::fromUtf8("--禁言命令: b,ban\n");
-    help += QString::fromUtf8("--取消禁言: ub,unban\n");
-    help += QString::fromUtf8("--踢出命令: k,kill\n");
-    help += QString::fromUtf8("--取消踢出: uk,unkill\n");
-    help += QString::fromUtf8("--提权命令: p,power\n");
-    help += QString::fromUtf8("--取消提权: up,unpower\n");
+    ts << "<pre>";
+    ts << QString::fromUtf8("  帮助信息(5+): <code>h,help</code>\n");
+    ts << QString::fromUtf8("  查询等级(5+): <code>l,level</code>\n");
+    ts << QString::fromUtf8("  修改昵称(5+): <code>r,rename</code>\n");
+    ts << QString::fromUtf8("  禁言命令(5+): <code>b,ban</code>\n");
+    ts << QString::fromUtf8("  取消禁言(5+): <code>ub,unban</code>\n");
+    ts << QString::fromUtf8("  踢出命令(3+): <code>k,kill</code>\n");
+    ts << QString::fromUtf8("  取消踢出(3+): <code>uk,unkill</code>\n");
+    ts << QString::fromUtf8("  提权命令(1+): <code>p,power</code>\n");
+    ts << QString::fromUtf8("  取消提权(1+): <code>up,unpower</code>\n");
 
-    q->sendGroupMessage(ev.from, help);
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(ev.from, "全部命令清单", usage);
 }
 
 void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    MasterLevel level = levels->level(ev.from, ev.sender);
 
-    bool argvGlobal = false;
-    bool argvList = false;
+    LevelInfoList ll = findUsers(args);
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString uid = arg.mid(10, i - 10);
-            ll.append(LevelInfo(uid.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if ((arg == QLatin1String("g"))
-                   || (arg == QLatin1String("global"))) {
-            argvGlobal = true;
-        } else if ((arg == QLatin1String("l"))
-                   || (arg == QLatin1String("list"))) {
-            argvList = true;
+    // Parse Command Lines
+
+    bool argvListRead = false;
+    bool argvGlobalRead = false;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if ((argv == QLatin1String("g"))
+                   || (argv == QLatin1String("global"))) {
+            if (argvGlobalRead) {
+                invalidArg = true;
+                break;
+            }
+            argvGlobalRead = true;
+        } else if ((argv == QLatin1String("l"))
+                   || (argv == QLatin1String("list"))) {
+            if (argvListRead) {
+                invalidArg = true;
+                break;
+            }
+            argvListRead = true;
         } else {
-            invalidArgs = true;
+            invalidArg = true;
             break;
         }
     }
-
-    if (!invalidArgs) {
-        if (ll.isEmpty()) {
-            if (argvList) {
-                ll = levels->levels(argvGlobal ? 0 : ev.from);
-                showPromptList(ev.from, argvGlobal ? tr("Global Level List") : tr("Local Level List"), ll, true);
-            } else {
-                MasterLevel level = levels->level(argvGlobal ? 0 : ev.from, ev.sender);
-                ll.append(LevelInfo(ev.sender, level));
-                showPromptList(ev.from, argvGlobal ? tr("Global Level") : tr("Local Level"), ll, true);
-            }
-
-            return;
-        } else if (false == argvList) {
-            levels->update(argvGlobal ? 0 : ev.from, ll);
-            showPromptList(ev.from, argvGlobal ? tr("Global Level List") : tr("Local Level List"), ll, true);
-
-            return;
-        }
+    if (invalidArg) {
+        groupLevelHelp(ev.from);
+        return;
     }
 
-    q->sendGroupMessage(ev.from, "usage");
+    if (ll.isEmpty()) {
+        if (argvListRead) {
+            if (MasterLevel::Unknown != level) {
+                ll = levels->levels(argvGlobalRead ? 0 : ev.from);
+                showPromptList(ev.from, argvGlobalRead ? tr("Global Level List") : tr("Local Level List"), ll, true);
+            }
+        } else {
+            MasterLevel level = levels->level(argvGlobalRead ? 0 : ev.from, ev.sender);
+            ll.append(LevelInfo(ev.sender, level));
+            showPromptList(ev.from, argvGlobalRead ? tr("Global Level") : tr("Local Level"), ll, true);
+        }
+    } else if (!argvListRead) {
+        if (MasterLevel::Unknown != level) {
+            levels->update(argvGlobalRead ? 0 : ev.from, ll);
+            showPromptList(ev.from, argvGlobalRead ? tr("Global Level List") : tr("Local Level List"), ll, true);
+        }
+    }
 }
 
 void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &args)
@@ -199,6 +216,9 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
     Q_Q(CqAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -249,26 +269,8 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
         }
 
         q->renameGroupMember(ev.from, uid, name);
-
-        QString reply = tr("Nickname Changed: %1").arg(at(uid));
-        q->sendGroupMessage(ev.from, reply);
-
-        return;
+        showSuccess(ev.from, tr("Rename"), tr("Nickname Changed: %1").arg(name));
     }
-
-    do {
-        QString usage;
-        QTextStream ts(&usage);
-
-        ts << QString::fromUtf8("用法: \n");
-        ts << QString::fromUtf8("  sudo rename @成员 新昵称\n");
-        ts << QString::fromUtf8("举例:\n");
-        ts << QString::fromUtf8("  sudo rename @[北京]猫大 [北京]大猫\n");
-
-        ts.flush();
-
-        q->sendGroupMessage(ev.from, usage);
-    } while (false);
 }
 
 void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &args)
@@ -276,281 +278,264 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
     Q_Q(CqAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupBanHelp(ev.from);
+        return;
+    }
+
+    // Parse Command Lines
+
     int ds = 0;
     int hs = 0;
     int ms = 0;
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if (arg.endsWith("d")) {
-            ds = arg.left(arg.length() - 1).toInt();
-        } else if (arg.endsWith("h")) {
-            hs = arg.left(arg.length() - 1).toInt();
-        } else if (arg.endsWith("m")) {
-            ms = arg.left(arg.length() - 1).toInt();
-        } else if (arg.startsWith("d")) {
-            ds = arg.mid(1).toInt();
-        } else if (arg.startsWith("h")) {
-            hs = arg.mid(1).toInt();
-        } else if (arg.startsWith("m")) {
-            ms = arg.mid(1).toInt();
+    bool dsRead = false;
+    bool hsRead = false;
+    bool msRead = false;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if (argv.endsWith('d')) {
+            if (dsRead) {
+                invalidArg = true;
+                break;
+            }
+            dsRead = true;
+
+            ds = argv.left(argv.length() - 1).toInt();
+            if ((ds <= 0) || (ds > 30)) {
+                invalidArg = true;
+                break;
+            }
+        } else if (argv.endsWith('h')) {
+            if (hsRead) {
+                invalidArg = true;
+                break;
+            }
+            hsRead = true;
+
+            hs = argv.left(argv.length() - 1).toInt();
+            if ((hs <= 0) || (hs > 24)) {
+                invalidArg = true;
+                break;
+            }
+        } else if (argv.endsWith('m')) {
+            if (msRead) {
+                invalidArg = true;
+                break;
+            }
+            msRead = true;
+
+            ms = argv.left(argv.length() - 1).toInt();
+            if ((ms <= 0) || (ms > 60)) {
+                invalidArg = true;
+                break;
+            }
         } else {
-            invalidArgs = true;
+            invalidArg = true;
             break;
         }
     }
-
-    if (!invalidArgs && !ll.isEmpty()) {
-        int duration = ds * 86400 + hs * 3600 + ms * 60;
-        if (duration > 86400 * 30) {
-            duration = 86400 * 30;
-        } else if (duration <= 60) {
-            duration = 60;
-        }
-
-        LevelInfoList masters;
-
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                masters << li;
-            }
-        }
-
-        if (!masters.isEmpty()) {
-            // masters.prepend(tr("You have no rights to ban the following members:"));
-            // permissionDenied(ev.from, ev.sender, level, masters.join("<br />"));
-            return;
-        }
-
-        for (const LevelInfo &li : ll) {
-            q->banGroupMember(ev.from, li.uid, duration);
-        }
-        showSuccessList(ev.from, tr("The following member has beed banned:"), ll, false);
-
+    if (invalidArg) {
+        groupBanHelp(ev.from);
         return;
     }
 
-    do {
-        QString usage;
-        QTextStream ts(&usage);
+    int duration = ds * 86400 + hs * 3600 + ms * 60;
+    if (duration > 86400 * 30) {
+        duration = 86400 * 30;
+    } else if (duration <= 60) {
+        duration = 60;
+    }
 
-        ts << QString::fromUtf8("用法: \n");
-        ts << QString::fromUtf8("  sudo ban [天数d] [时数h] [分数m] @成员1 [@成员2] [@成员3] ...\n");
-        ts << QString::fromUtf8("  可同时多人禁言，最长时间不能超过 30 天，最短时间不能 1 分钟。\n");
-        ts << QString::fromUtf8("举例:\n");
-        ts << QString::fromUtf8("  将 @[北京]猫大 禁言两天\n");
-        ts << QString::fromUtf8("  sudo ban @[北京]猫大 2d\n");
-        ts << QString::fromUtf8("  将 @[北京]猫大 @[广州]猫咪 禁言一天六小时三十分钟\n");
-        ts << QString::fromUtf8("  sudo ban 1d 6h 30m @[北京]猫大 @[广州]猫咪\n");
+    // Master Level Checks
 
-        ts.flush();
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            masters << li;
+        }
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to ban the following masters"), masters, true);
+        return;
+    }
 
-        q->sendGroupMessage(ev.from, usage);
-    } while (false);
+    for (const LevelInfo &li : ll) {
+        q->banGroupMember(ev.from, li.uid, duration);
+    }
+    showSuccessList(ev.from, tr("The following members have been banned"), ll, false);
 }
 
 void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
-
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master3) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else {
-            invalidArgs = true;
-            break;
-        }
-    }
-
-    if (!invalidArgs && !ll.isEmpty()) {
-        QStringList masters;
-        QStringList members;
-
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= MasterLevel::Master5) {
-                masters << at(li.uid);
-            } else {
-                deathHouse->addMember(ev.from, li.uid);
-                members << at(li.uid);
-            }
-        }
-
-        QStringList reply;
-        if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
-        }
-        if (!members.isEmpty()) {
-            reply << tr("Kill List:");
-            reply << members;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
-
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupKillHelp(ev.from);
         return;
     }
 
-    q->sendGroupMessage(ev.from, tr("kill @Member1 [@Member2] [@Member3] ..."));
+    // Parse Command Lines
+
+    if (args.count() != ll.count()) {
+        groupKillHelp(ev.from);
+        return;
+    }
+
+    // Master Level Checks
+
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= MasterLevel::Master5) {
+            masters << li;
+        }
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to kill the following masters"), masters, true);
+        return;
+    }
+
+    for (const LevelInfo &li : ll) {
+        deathHouse->addMember(ev.from, li.uid);
+    }
+
+    showSuccessList(ev.from, tr("The following members have been killed soon"), ll, true);
 }
 
 void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
-
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    int levelValue = 0;
-    bool argvGlobal = false;
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupPowerHelp(ev.from);
+        return;
+    }
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if (arg.startsWith("m")) {
-            levelValue = arg.mid(1).toInt();
-        } else if ((arg == QLatin1String("g"))
-                   || (arg == QLatin1String("global"))) {
-            argvGlobal = true;
+    // Parse Command Lines
+
+    int argvLevel = 0;
+    int argvGlobal = 0;
+
+    bool argvLevelRead = false;
+    bool argvGlobalRead = false;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if (argv.startsWith('m')) {
+            if (argvLevelRead) {
+                invalidArg = true;
+                break;
+            }
+            argvLevelRead = true;
+
+            argvLevel = argv.mid(1).toInt();
+            if ((argvLevel < 1) || (argvLevel > 5)) {
+                invalidArg = true;
+                break;
+            }
+        } else if ((argv == QLatin1String("g"))
+                   || (argv == QLatin1String("global"))) {
+            if (argvGlobalRead) {
+                invalidArg = true;
+                break;
+            }
+            argvGlobalRead = true;
+
+            argvGlobal = 1;
         } else {
-            invalidArgs = true;
+            invalidArg = true;
             break;
         }
     }
+    if (invalidArg) {
+        groupPowerHelp(ev.from);
+        return;
+    }
 
-    do {
-        if (!invalidArgs && !ll.isEmpty()) {
-            MasterLevel newLevel = MasterLevel::Unknown;
-            switch (levelValue) {
-            case 1:
-                newLevel = MasterLevel::Master1;
-                break;
-            case 2:
-                newLevel = MasterLevel::Master2;
-                break;
-            case 3:
-                newLevel = MasterLevel::Master3;
-                break;
-            case 4:
-                newLevel = MasterLevel::Master4;
-                break;
-            case 5:
-                newLevel = MasterLevel::Master5;
-                break;
-            }
-            if (MasterLevel::Unknown == newLevel) {
-                break;
-            }
+    MasterLevel newLevel = MasterLevel::Unknown;
+    switch (argvLevel) {
+    case 1:
+        newLevel = MasterLevel::Master1;
+        break;
+    case 2:
+        newLevel = MasterLevel::Master2;
+        break;
+    case 3:
+        newLevel = MasterLevel::Master3;
+        break;
+    case 4:
+        newLevel = MasterLevel::Master4;
+        break;
+    case 5:
+        newLevel = MasterLevel::Master5;
+        break;
+    }
+    if (MasterLevel::Unknown == newLevel) {
+        groupPowerHelp(ev.from);
+        return;
+    }
 
-            if (newLevel <= level) {
-                QString name = at(ev.sender);
-                QString levelName = MasterLevels::levelName(level);
-                QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-                q->sendGroupMessage(ev.from, reply);
-                return;
-            }
+    // Master Level Checks
 
-            if (argvGlobal) {
-                if (level != MasterLevel::ATField) {
-                    QString name = at(ev.sender);
-                    QString levelName = MasterLevels::levelName(level);
-                    QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-                    q->sendGroupMessage(ev.from, reply);
-                    return;
-                }
-            }
+    if (newLevel <= level) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    } else if (argvGlobal && (level != MasterLevel::ATField)) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
 
-            QStringList impowers;
-            QStringList unchanges;
-            QStringList depowers;
-
-            levels->update(ev.from, ll);
-            for (const LevelInfo &li : ll) {
-                if (li.level <= level) {
-                    QString name = at(ev.sender);
-                    QString levelName = MasterLevels::levelName(level);
-                    QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-                    q->sendGroupMessage(ev.from, reply);
-                    return;
-                }
-            }
-
-            for (const LevelInfo &li : ll) {
-                levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
-
-                if (newLevel < li.level) {
-                    impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
-                } else if (newLevel == li.level) {
-                    unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), at(li.uid));
-                } else {
-                    depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
-                }
-            }
-
-            QStringList reply;
-            if (!impowers.isEmpty()) {
-                if (argvGlobal) {
-                    reply << tr("Impower List(Global):");
-                } else {
-                    reply << tr("Impower List:");
-                }
-                reply << impowers;
-            }
-            if (!unchanges.isEmpty()) {
-                if (argvGlobal) {
-                    reply << tr("Unchange List(Global):");
-                } else {
-                    reply << tr("Unchange List:");
-                }
-                reply << unchanges;
-            }
-            if (!depowers.isEmpty()) {
-                if (argvGlobal) {
-                    reply << tr("Depower List(Global):");
-                } else {
-                    reply << tr("Depower List:");
-                }
-                reply << depowers;
-            }
-            q->sendGroupMessage(ev.from, reply.join("\n"));
-
-            return;
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            masters << li;
         }
-    } while (false);
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to kill the following masters"), masters, true);
+        return;
+    }
 
-    q->sendGroupMessage(ev.from, tr("power m[1-5] @Member1 [@Member2] [@Member3] ..."));
-
-    return;
+    for (LevelInfo &li : ll) {
+        levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
+        li.level = newLevel;
+    }
+    showSuccessList(ev.from, tr("The following members have been repowered"), ll, true);
 }
 
 void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &args)
@@ -558,213 +543,163 @@ void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
     Q_Q(CqAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else {
-            invalidArgs = true;
-            break;
-        }
-    }
-
-    if (!invalidArgs && !ll.isEmpty()) {
-        QStringList masters;
-        QStringList members;
-
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                masters << at(li.uid);
-            } else {
-                q->banGroupMember(ev.from, li.uid, 0);
-                members << at(li.uid);
-            }
-        }
-
-        QStringList reply;
-        if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
-        }
-        if (!members.isEmpty()) {
-            reply << tr("Unban List:");
-            reply << members;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
-
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupUnbanHelp(ev.from);
         return;
     }
 
-    q->sendGroupMessage(ev.from, tr("unban [@Member1] [@Member2] [@Member3] ..."));
+    // Parse Command Lines
+
+    if (args.count() != ll.count()) {
+        groupUnbanHelp(ev.from);
+        return;
+    }
+
+    // Master Level Checks
+
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            masters << li;
+        }
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to unban the following masters"), masters, true);
+        return;
+    }
+
+    for (const LevelInfo &li : ll) {
+        q->banGroupMember(ev.from, li.uid, 0);
+    }
+    showSuccessList(ev.from, tr("The following members have been unbanned"), ll, false);
 }
 
 void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
-
     MasterLevel level = levels->level(ev.from, ev.sender);
-    if (level > MasterLevel::Master3) {
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+
+    if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else {
-            invalidArgs = true;
-            break;
-        }
-    }
-
-    if (!invalidArgs && !ll.isEmpty()) {
-        QStringList masters;
-        QStringList members;
-
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                masters << at(li.uid);
-            } else {
-                deathHouse->removeMember(ev.from, li.uid);
-                members << at(li.uid);
-            }
-        }
-
-        QStringList reply;
-        if (!masters.isEmpty()) {
-            reply << tr("Permission Denied:");
-            reply << masters;
-        }
-        if (!members.isEmpty()) {
-            reply << tr("Unkill List:");
-            reply << members;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
-
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupUnkillHelp(ev.from);
         return;
     }
 
-    q->sendGroupMessage(ev.from, tr("unkill [@Member1] [@Member2] [@Member3] ..."));
+    // Parse Command Lines
+
+    if (args.count() != ll.count()) {
+        groupUnkillHelp(ev.from);
+        return;
+    }
+
+    // Master Level Checks
+
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            masters << li;
+        }
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to unkill the following masters"), masters, true);
+        return;
+    }
+
+    for (const LevelInfo &li : ll) {
+        deathHouse->removeMember(ev.from, li.uid);
+    }
+    showSuccessList(ev.from, tr("The following members have been unkilled"), ll, false);
 }
 
 void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
-
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master1) {
-        QString name = at(ev.sender);
-        QString levelName = MasterLevels::levelName(level);
-        QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-        q->sendGroupMessage(ev.from, reply);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    bool argvGlobal = false;
+    LevelInfoList ll = findUsers(args);
+    if (ll.isEmpty()) {
+        groupUnpowerHelp(ev.from);
+        return;
+    }
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if ((arg == QLatin1String("g"))
-                   || (arg == QLatin1String("global"))) {
-            argvGlobal = true;
+    // Parse Command Lines
+
+    int argvGlobal = 0;
+
+    bool argvGlobalRead = false;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if ((argv == QLatin1String("g"))
+                || (argv == QLatin1String("global"))) {
+            if (argvGlobalRead) {
+                invalidArg = true;
+                break;
+            }
+            argvGlobalRead = true;
+
+            argvGlobal = 1;
         } else {
-            invalidArgs = true;
+            invalidArg = true;
             break;
         }
     }
-
-    if (!invalidArgs && !ll.isEmpty()) {
-        if (argvGlobal) {
-            if (level != MasterLevel::ATField) {
-                QString name = at(ev.sender);
-                QString levelName = MasterLevels::levelName(level);
-                QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-                q->sendGroupMessage(ev.from, reply);
-                return;
-            }
-        }
-
-        QStringList impowers;
-        QStringList unchanges;
-        QStringList depowers;
-
-        levels->update(ev.from, ll);
-        for (const LevelInfo &li : ll) {
-            if (li.level <= level) {
-                QString name = at(ev.sender);
-                QString levelName = MasterLevels::levelName(level);
-                QString reply = tr("Permission Denied: %1 %2").arg(levelName, name);
-                q->sendGroupMessage(ev.from, reply);
-                return;
-            }
-        }
-
-        MasterLevel newLevel = MasterLevel::Unknown;
-
-        for (const LevelInfo &li : ll) {
-            levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
-
-            if (newLevel < li.level) {
-                impowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
-            } else if (newLevel == li.level) {
-                unchanges << tr("%1: %3").arg(MasterLevels::levelName(li.level), at(li.uid));
-            } else {
-                depowers << tr("%1 > %2: %3").arg(MasterLevels::levelName(li.level), MasterLevels::levelName(newLevel), at(li.uid));
-            }
-        }
-
-        QStringList reply;
-        if (!impowers.isEmpty()) {
-            if (argvGlobal) {
-                reply << tr("Impower List(Global):");
-            } else {
-                reply << tr("Impower List:");
-            }
-            reply << impowers;
-        }
-        if (!unchanges.isEmpty()) {
-            if (argvGlobal) {
-                reply << tr("Unchange List(Global):");
-            } else {
-                reply << tr("Unchange List:");
-            }
-            reply << unchanges;
-        }
-        if (!depowers.isEmpty()) {
-            if (argvGlobal) {
-                reply << tr("Depower List(Global):");
-            } else {
-                reply << tr("Depower List:");
-            }
-            reply << depowers;
-        }
-        q->sendGroupMessage(ev.from, reply.join("\n"));
+    if (invalidArg) {
+        groupUnpowerHelp(ev.from);
+        return;
     }
 
-    q->sendGroupMessage(ev.from, tr("unpower [@Member1] [@Member2] [@Member3] ..."));
+    // Master Level Checks
+
+    if (argvGlobal && (level != MasterLevel::ATField)) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
+    LevelInfoList masters;
+    levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            masters << li;
+        }
+    }
+    if (!masters.isEmpty()) {
+        showDangerList(ev.from, tr("You have no rights to unpower the following masters"), masters, true);
+        return;
+    }
+
+    for (const LevelInfo &li : ll) {
+        levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, MasterLevel::Unknown);
+    }
+    showSuccessList(ev.from, tr("The following members have been unpowered"), ll, true);
 }
 
 void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList &args)
@@ -772,6 +707,9 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
     Q_Q(CqAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -880,6 +818,9 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
     Q_Q(CqAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -982,4 +923,135 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
     }
 
     q->sendGroupMessage(ev.from, tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
+}
+
+void CqAssistantPrivate::groupHelpHelp(qint64 gid)
+{
+    Q_UNUSED(gid);
+}
+
+void CqAssistantPrivate::groupLevelHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo level [成员]</code>\n");
+    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "等级查询操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupRenameHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo rename [成员] [新名片]</code>\n");
+    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "改名操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupBanHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo ban [参数] [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << QString::fromUtf8("参数列表:\n");
+    ts << QString::fromUtf8("<code>  [1-30]d </code>禁言天数\n");
+    ts << QString::fromUtf8("<code>  [1-24]h </code>禁言时数\n");
+    ts << QString::fromUtf8("<code>  [1-60]m </code>禁言分数\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "禁言操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupKillHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo kill [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 三级管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "踢出操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupPowerHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo power [参数] [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 首席管理以上\n");
+    ts << QString::fromUtf8("参数列表:\n");
+    ts << QString::fromUtf8("<code>  m[1-5] </code>权限等级\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "赋权操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupUnbanHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo unban [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "解禁操作的用法", usage);
+}
+
+void CqAssistantPrivate::groupUnkillHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo unkill [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 三级管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "取消踢出的用法", usage);
+}
+
+void CqAssistantPrivate::groupUnpowerHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString::fromUtf8("<code>sudo unpower [成员]...</code>\n");
+    ts << QString::fromUtf8("权限要求: 首席管理以上\n");
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, "降权操作的用法", usage);
 }

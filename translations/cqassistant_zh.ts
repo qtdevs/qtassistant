@@ -33,17 +33,11 @@
         <translation type="vanished">等级：%1 %2</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="478"/>
-        <location filename="../messagefilters.cpp" line="487"/>
-        <location filename="../messagefilters.cpp" line="502"/>
-        <location filename="../messagefilters.cpp" line="675"/>
-        <location filename="../messagefilters.cpp" line="704"/>
-        <location filename="../messagefilters.cpp" line="719"/>
         <source>Permission Denied: %1 %2</source>
-        <translation>没有权限：%1 %2</translation>
+        <translation type="vanished">没有权限：%1 %2</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="253"/>
+        <location filename="../messagefilters.cpp" line="296"/>
         <source>Nickname Changed: %1</source>
         <translation>昵称改变：%1</translation>
     </message>
@@ -52,11 +46,8 @@
         <translation type="vanished">你没有权限去禁言下列成员：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="404"/>
-        <location filename="../messagefilters.cpp" line="596"/>
-        <location filename="../messagefilters.cpp" line="652"/>
-        <location filename="../messagefilters.cpp" line="857"/>
-        <location filename="../messagefilters.cpp" line="966"/>
+        <location filename="../messagefilters.cpp" line="819"/>
+        <location filename="../messagefilters.cpp" line="931"/>
         <source>Permission Denied:</source>
         <translation>没有权限：</translation>
     </message>
@@ -65,189 +56,223 @@
         <translation type="vanished">禁言列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="178"/>
-        <location filename="../messagefilters.cpp" line="188"/>
+        <location filename="../messagefilters.cpp" line="223"/>
+        <location filename="../messagefilters.cpp" line="233"/>
         <source>Global Level List</source>
         <translation>全局管理列表</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="178"/>
-        <location filename="../messagefilters.cpp" line="188"/>
+        <location filename="../messagefilters.cpp" line="223"/>
+        <location filename="../messagefilters.cpp" line="233"/>
         <source>Local Level List</source>
         <translation>本地管理列表</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="182"/>
+        <location filename="../messagefilters.cpp" line="228"/>
         <source>Global Level</source>
         <translation>全局等级</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="182"/>
+        <location filename="../messagefilters.cpp" line="228"/>
         <source>Local Level</source>
         <translation>本地等级</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="340"/>
         <source>The following member has beed banned:</source>
-        <translation>下列成员已经被禁言：</translation>
+        <translation type="vanished">下列成员已经被禁言：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="408"/>
         <source>Kill List:</source>
-        <translation>踢出列表：</translation>
+        <translation type="vanished">踢出列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="416"/>
         <source>kill @Member1 [@Member2] [@Member3] ...</source>
-        <translation>kill @成员1 [@成员2] [@成员3] ...</translation>
+        <translation type="vanished">kill @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="512"/>
-        <location filename="../messagefilters.cpp" line="516"/>
-        <location filename="../messagefilters.cpp" line="731"/>
-        <location filename="../messagefilters.cpp" line="735"/>
         <source>%1 &gt; %2: %3</source>
-        <translation>%1 &gt; %2：%3</translation>
+        <translation type="vanished">%1 &gt; %2：%3</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="514"/>
-        <location filename="../messagefilters.cpp" line="733"/>
         <source>%1: %3</source>
-        <translation>%1：%3</translation>
+        <translation type="vanished">%1：%3</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="523"/>
-        <location filename="../messagefilters.cpp" line="742"/>
         <source>Impower List(Global):</source>
-        <translation>提权列表（全局）：</translation>
+        <translation type="vanished">提权列表（全局）：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="525"/>
-        <location filename="../messagefilters.cpp" line="744"/>
         <source>Impower List:</source>
-        <translation>提权列表：</translation>
+        <translation type="vanished">提权列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="531"/>
-        <location filename="../messagefilters.cpp" line="750"/>
         <source>Unchange List(Global):</source>
-        <translation>未改变列表（全局）：</translation>
+        <translation type="vanished">未改变列表（全局）：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="533"/>
-        <location filename="../messagefilters.cpp" line="752"/>
         <source>Unchange List:</source>
-        <translation>未改变列表：</translation>
+        <translation type="vanished">未改变列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="539"/>
-        <location filename="../messagefilters.cpp" line="758"/>
         <source>Depower List(Global):</source>
-        <translation>降权列表（全局）：</translation>
+        <translation type="vanished">降权列表（全局）：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="541"/>
-        <location filename="../messagefilters.cpp" line="760"/>
         <source>Depower List:</source>
-        <translation>降权列表：</translation>
+        <translation type="vanished">降权列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="551"/>
         <source>power m[1-5] @Member1 [@Member2] [@Member3] ...</source>
-        <translation>power m[1-5] @成员1 [@成员2] [@成员3] ...</translation>
+        <translation type="vanished">power m[1-5] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="600"/>
         <source>Unban List:</source>
-        <translation>解禁列表：</translation>
+        <translation type="vanished">解禁列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="608"/>
         <source>unban [@Member1] [@Member2] [@Member3] ...</source>
-        <translation>unban @成员1 [@成员2] [@成员3] ...</translation>
+        <translation type="vanished">unban @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="656"/>
         <source>Unkill List:</source>
-        <translation>取消列表：</translation>
+        <translation type="vanished">取消列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="664"/>
         <source>unkill [@Member1] [@Member2] [@Member3] ...</source>
-        <translation>unkill @成员1 [@成员2] [@成员3] ...</translation>
+        <translation type="vanished">unkill @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="767"/>
         <source>unpower [@Member1] [@Member2] [@Member3] ...</source>
-        <translation>unpower @成员1 [@成员2] [@成员3] ...</translation>
+        <translation type="vanished">unpower @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="831"/>
+        <location filename="../messagefilters.cpp" line="793"/>
         <source>%1 will kicked in %2 minute(s).</source>
         <translation>%1 会在 %2 分钟后被踢出。</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="833"/>
+        <location filename="../messagefilters.cpp" line="397"/>
+        <source>You have no rights to ban the following masters</source>
+        <translation>你无权禁言下列成员</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="296"/>
+        <source>Rename</source>
+        <translation>重命名</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="404"/>
+        <source>The following members have been banned</source>
+        <translation>下列成员已经被禁言</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="441"/>
+        <location filename="../messagefilters.cpp" line="554"/>
+        <source>You have no rights to kill the following masters</source>
+        <translation>你无权踢出下列成员</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="449"/>
+        <source>The following members have been killed soon</source>
+        <translation>下列成员已经被添加到踢出队列</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="562"/>
+        <source>The following members have been repowered</source>
+        <translation>下列成员权限已经改变</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="602"/>
+        <source>You have no rights to unban the following masters</source>
+        <translation>你无权解禁下列成员</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="609"/>
+        <source>The following members have been unbanned</source>
+        <translation>下列成员已经解禁</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="647"/>
+        <source>You have no rights to unkill the following masters</source>
+        <translation>你无权将下列用户移除踢出队列</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="654"/>
+        <source>The following members have been unkilled</source>
+        <translation>下列成员已经被移除出踢出队列</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="719"/>
+        <source>You have no rights to unpower the following masters</source>
+        <translation>你无权降权下列用户</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="726"/>
+        <source>The following members have been unpowered</source>
+        <translation>下列用户已经被降权</translation>
+    </message>
+    <message>
+        <location filename="../messagefilters.cpp" line="795"/>
         <source>Welcome List:</source>
         <translation>新人列表：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="847"/>
+        <location filename="../messagefilters.cpp" line="809"/>
         <source>%1, Welcome to join us, please say something in 30 minutes.</source>
         <translation>%1，欢迎加入我们，请在三十分钟内说些什么。</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="862"/>
+        <location filename="../messagefilters.cpp" line="824"/>
         <source>Welcome Add List:</source>
         <translation>添加到新成员名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="864"/>
+        <location filename="../messagefilters.cpp" line="826"/>
         <source>Welcome Delete List:</source>
         <translation>从新成员名单移出：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="875"/>
+        <location filename="../messagefilters.cpp" line="837"/>
         <source>welcome [add|delete] @Member1 [@Member2] [@Member3] ...</source>
         <translation>welcome [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="943"/>
+        <location filename="../messagefilters.cpp" line="908"/>
         <source>Blacklist List:</source>
         <translation>黑名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="971"/>
+        <location filename="../messagefilters.cpp" line="936"/>
         <source>Blacklist Add List:</source>
         <translation>添加到黑名单：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="973"/>
+        <location filename="../messagefilters.cpp" line="938"/>
         <source>Blacklist Delete List:</source>
         <translation>从黑名单移出：</translation>
     </message>
     <message>
-        <location filename="../messagefilters.cpp" line="984"/>
+        <location filename="../messagefilters.cpp" line="949"/>
         <source>blacklist [add|delete] @Member1 [@Member2] [@Member3] ...</source>
         <translation>blacklist [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../cqassistant.cpp" line="359"/>
+        <location filename="../cqassistant.cpp" line="404"/>
         <source>As %1, you have no rights.</source>
         <translation>作为一个%1，你没有权利执行此命令。</translation>
     </message>
     <message>
-        <location filename="../cqassistant.cpp" line="360"/>
+        <location filename="../cqassistant.cpp" line="405"/>
         <source>Permission Denied</source>
         <translation>没有相关权限</translation>
     </message>
     <message>
-        <location filename="../cqassistant.cpp" line="403"/>
+        <location filename="../cqassistant.cpp" line="470"/>
         <source>(Part %1)</source>
         <translation>（第%1部分）</translation>
     </message>
     <message>
-        <location filename="../cqassistant.cpp" line="411"/>
+        <location filename="../cqassistant.cpp" line="478"/>
         <source>: </source>
         <translation>：</translation>
     </message>

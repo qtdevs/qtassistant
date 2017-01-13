@@ -42,6 +42,9 @@ private:
     void timerEvent(QTimerEvent *) Q_DECL_FINAL;
 
 private:
+    LevelInfoList findUsers(const QStringList &args) const;
+
+private:
     void groupHelp(const MessageEvent &ev, const QStringList &args);
     void groupLevel(const MessageEvent &ev, const QStringList &args);
     void groupRename(const MessageEvent &ev, const QStringList &args);
@@ -58,7 +61,26 @@ private:
     void groupBlacklist(const MessageEvent &ev, const QStringList &args);
 
 private:
+    void groupHelpHelp(qint64 gid);
+    void groupLevelHelp(qint64 gid);
+    void groupRenameHelp(qint64 gid);
+
+    void groupBanHelp(qint64 gid);
+    void groupKillHelp(qint64 gid);
+    void groupPowerHelp(qint64 gid);
+
+    void groupUnbanHelp(qint64 gid);
+    void groupUnkillHelp(qint64 gid);
+    void groupUnpowerHelp(qint64 gid);
+
+private:
     void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
+
+    //void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    //void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    //void showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showPrompt(qint64 gid, const QString &title, const QString &content);
+    void showSuccess(qint64 gid, const QString &title, const QString &content);
 
     void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
     void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
