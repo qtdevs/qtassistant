@@ -1,7 +1,7 @@
 #ifndef CQPORTAL_H
 #define CQPORTAL_H
 
-#include "cqglobaldefs.h"
+#include "cqglobalvalues.h"
 #include "cqpersoninfo.h"
 #include "cqmemberinfo.h"
 
@@ -17,10 +17,6 @@ protected:
     QScopedPointer<CqPortalPrivate> d_ptr;
 public:
     virtual ~CqPortal();
-
-public:
-    virtual void initialize();
-    virtual void cleanup();
 
 public:
     static QByteArray convert(const QString &str);
@@ -97,7 +93,5 @@ public:
     QString saveImage(const QImage &data) const;
     QImage loadImage(const QString &name) const;
 };
-
-CqPortal *_q_CreateInstance(QObject *parent);
 
 #endif // CQPORTAL_H

@@ -1,7 +1,7 @@
 #ifndef CQSQLITE_H
 #define CQSQLITE_H
 
-#include "cqglobaldefs.h"
+#include "cqglobalvalues.h"
 
 class CqSqlitePrivate;
 class CqSqlite : public QObject

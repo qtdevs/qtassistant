@@ -2,30 +2,12 @@
 #include "cqportal_p.h"
 
 #include <QDir>
-#include <QTimer>
-#include <QThread>
 #include <QPixmap>
 #include <QStringBuilder>
 #include <QUuid>
 
 #include "cqsqlite_p.h"
 #include "cqapi/cqapi.h"
-
-// class CqThread
-
-CqThread::CqThread(CqPortal *portal)
-    : QThread(portal)
-{
-    Q_CHECK_PTR(portal);
-    this->portal = portal;
-}
-
-void CqThread::run()
-{
-    portal->initialize();
-    QThread::run();
-    portal->cleanup();
-}
 
 // class CqPortal
 
@@ -35,6 +17,8 @@ CqPortal::CqPortal(CqPortalPrivate &dd, QObject *parent)
 {
     Q_D(CqPortal);
 
+    Q_ASSERT(CqPortalPrivate::instance == Q_NULLPTR);
+    CqPortalPrivate::instance = this;
     d->q_ptr = this;
 
     d->currentId = CQ_getLoginQQ(d->accessToken);
@@ -43,34 +27,15 @@ CqPortal::CqPortal(CqPortalPrivate &dd, QObject *parent)
     d->basePath = QDir::cleanPath(path);
     d->imagePath = QDir::cleanPath(path % "/../../data/image");
 
-    d->initThread();
+    QString sqlitePath = d->basePath % '/' % QString::number(d->currentId);
+    CqSqlitePrivate::basePath = QDir::cleanPath(sqlitePath);
+    QDir().mkpath(CqSqlitePrivate::basePath);
 }
 
 CqPortal::~CqPortal()
 {
-    Q_D(CqPortal);
-
-    if (d->agent->isRunning()) {
-        d->agent->quit();
-        d->agent->wait();
-    }
-}
-
-void CqPortal::initialize()
-{
-    Q_D(CqPortal);
-
-    if (d->currentId == 0) {
-        return;
-    }
-
-    QString path = d->basePath % '/' % QString::number(d->currentId);
-    CqSqlitePrivate::basePath = QDir::cleanPath(path);
-    QDir().mkpath(CqSqlitePrivate::basePath);
-}
-
-void CqPortal::cleanup()
-{
+    Q_ASSERT(CqPortalPrivate::instance == this);
+    CqPortalPrivate::instance = Q_NULLPTR;
 }
 
 QByteArray CqPortal::convert(const QString &str)
@@ -316,10 +281,10 @@ QImage CqPortal::loadImage(const QString &name) const
 // class CqPortalPrivate
 
 qint32 CqPortalPrivate::accessToken = -1;
+CqPortal *CqPortalPrivate::instance = Q_NULLPTR;
 
 CqPortalPrivate::CqPortalPrivate()
     : q_ptr(Q_NULLPTR)
-    , agent(Q_NULLPTR)
     , currentId(0)
 {
 }
@@ -338,21 +303,4 @@ CqPortal::Result CqPortalPrivate::result(qint32 r)
     }
 
     return CqPortal::Unknown;
-}
-
-void CqPortalPrivate::initThread()
-{
-    Q_Q(CqPortal);
-
-    agent = new QThread(q);
-
-    connect(agent, &QThread::started,
-            this, [=] { q->initialize(); });
-
-    moveToThread(agent);
-    agent->start();
-}
-
-void CqPortalPrivate::cleanup()
-{
 }

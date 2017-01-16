@@ -16,10 +16,6 @@ public:
     virtual ~CqAssistant();
 
 public:
-    void initialize() Q_DECL_FINAL;
-    void cleanup() Q_DECL_FINAL;
-
-public:
     bool privateMessageEventFilter(const MessageEvent &ev) Q_DECL_OVERRIDE;
     bool groupMessageEventFilter(const MessageEvent &ev) Q_DECL_OVERRIDE;
     bool discussMessageEventFilter(const MessageEvent &ev) Q_DECL_OVERRIDE;

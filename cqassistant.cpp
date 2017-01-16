@@ -28,21 +28,12 @@ CqPortal *_q_CreateInstance(QObject *parent)
 CqAssistant::CqAssistant(QObject *parent)
     : CqPortal(*new CqAssistantPrivate(), parent)
 {
+    Q_D(CqAssistant);
+
     QTranslator *translator = new QTranslator(qApp);
     if (translator->load("cqassistant_zh.qm", ":/translations")) {
         qApp->installTranslator(translator);
     }
-}
-
-CqAssistant::~CqAssistant()
-{
-}
-
-void CqAssistant::initialize()
-{
-    Q_D(CqAssistant);
-
-    CqPortal::initialize();
 
     d->levels = new MasterLevels(d);
     d->welcome = new MemberWelcome(d);
@@ -54,11 +45,9 @@ void CqAssistant::initialize()
     d->timerId = d->startTimer(10000);
 }
 
-void CqAssistant::cleanup()
+CqAssistant::~CqAssistant()
 {
     Q_D(CqAssistant);
-
-    CqPortal::cleanup();
 
     d->killTimer(d->timerId);
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT      += sql network
+QT      += widgets
 TEMPLATE = lib
 
 TARGET   = org.qtdevs.assistant
@@ -31,7 +31,8 @@ HEADERS +=\
 SOURCES += \
     cqassistant.cpp \
     messagefilters.cpp \
-    managefilters.cpp
+    managefilters.cpp \
+    main.cpp
 
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json
