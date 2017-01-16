@@ -1,3 +1,7 @@
+/*! \class CqSqlite
+ * \brief 数据存储类
+ */
+
 #include "cqsqlite.h"
 #include "cqsqlite_p.h"
 

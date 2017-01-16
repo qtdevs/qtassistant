@@ -1,3 +1,7 @@
+/*! \class CqPortal
+ * \brief 插件入口类
+ */
+
 #include "cqportal.h"
 #include "cqportal_p.h"
 
