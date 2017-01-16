@@ -2,11 +2,10 @@
 #define MEMBERDEATHHOUSE_H
 
 #include <QHash>
-
-#include "sqldata.h"
+#include "cqsqlite.h"
 
 class MemberDeathHousePrivate;
-class MemberDeathHouse : public SqlData
+class MemberDeathHouse : public CqSqlite
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MemberDeathHouse)

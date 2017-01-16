@@ -12,7 +12,7 @@ Q_LOGGING_CATEGORY(qlcMasterLevels, "MasterLevels")
 // class MasterLevels
 
 MasterLevels::MasterLevels(QObject *parent)
-    : SqlData(*new MasterLevelsPrivate(), parent)
+    : CqSqlite(*new MasterLevelsPrivate(), parent)
 {
     Q_D(MasterLevels);
 

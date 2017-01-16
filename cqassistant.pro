@@ -20,26 +20,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-include(cqapi/cqapi.pri)
 include(datas/datas.pri)
 include(translations/translations.pri)
 include(htmlfeedback/htmlfeedback.pri)
+include(cqcore/cqcore.pri)
 
 HEADERS +=\
-    cqaevents.h \
     cqassistant.h \
-    cqassistant_p.h \
-    memberinfo.h \
-    memberinfo_p.h \
-    personinfo.h \
-    personinfo_p.h
+    cqassistant_p.h
 SOURCES += \
     cqassistant.cpp \
-    cqassistantpp.cpp \
     messagefilters.cpp \
-    managefilters.cpp \
-    memberinfo.cpp \
-    personinfo.cpp
+    managefilters.cpp
 
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json

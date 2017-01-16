@@ -1,14 +1,15 @@
 #include "cqassistant.h"
 #include "cqassistant_p.h"
 
+#include <QDateTime>
 #include <QDir>
 #include <QThread>
 #include <QPixmap>
 #include <QStringBuilder>
 #include <QTextStream>
 #include <QUuid>
-
-#include "cqapi/cqapi.h"
+#include <QCoreApplication>
+#include <QTranslator>
 
 #include "datas/masterlevels.h"
 #include "datas/memberwelcome.h"
@@ -17,259 +18,55 @@
 
 #include "htmlfeedback/htmlfeedback.h"
 
-CqCode cqCode(qint32 code)
+CqPortal *_q_CreateInstance(QObject *parent)
 {
-    switch (code) {
-    case 1:
-        break;
-    default:
-        return CqCode::Unknown;
-    }
-
-    return CqCode::Unknown;
-}
-
-// class CqEncoder
-
-QString CqEncoder::at(qint64 uid)
-{
-    return QString::fromLatin1("[CQ:at,qq=%1]").arg(uid);
-}
-
-QString CqEncoder::image(const QString &name)
-{
-    return QString::fromLatin1("[CQ:image,file=%1]").arg(name);
+    return new CqAssistant(parent);
 }
 
 // class CqAssistant
 
-CqAssistant::CqAssistant(qint32 token, QObject *parent)
-    : QObject(parent)
-    , d_ptr(new CqAssistantPrivate())
+CqAssistant::CqAssistant(QObject *parent)
+    : CqPortal(*new CqAssistantPrivate(), parent)
 {
-    d_ptr->q_ptr = this;
-    d_ptr->token = token;
-    d_ptr->initThread();
-
-    d_ptr->currentId = CQ_getLoginQQ(token);
-    QString path = conv(CQ_getAppDirectory(token));
-    d_ptr->basePath = QDir::cleanPath(path);
+    QTranslator *translator = new QTranslator(qApp);
+    if (translator->load("cqassistant_zh.qm", ":/translations")) {
+        qApp->installTranslator(translator);
+    }
 }
 
 CqAssistant::~CqAssistant()
 {
+}
+
+void CqAssistant::initialize()
+{
     Q_D(CqAssistant);
 
-    if (d->agent->isRunning()) {
-        d->agent->quit();
-        d->agent->wait();
-    }
+    CqPortal::initialize();
+
+    d->levels = new MasterLevels(d);
+    d->welcome = new MemberWelcome(d);
+    d->blacklist = new MemberBlacklist(d);
+    d->deathHouse = new MemberDeathHouse(d);
+
+    d->htmlFeedback = new HtmlFeedback(d);
+
+    d->timerId = d->startTimer(10000);
 }
 
-QByteArray CqAssistant::conv(const QString &str)
+void CqAssistant::cleanup()
 {
-    return str.toLocal8Bit();
-}
+    Q_D(CqAssistant);
 
-QString CqAssistant::conv(const char *gbkStr)
-{
-    return QString::fromLocal8Bit(gbkStr);
-}
+    CqPortal::cleanup();
 
-QString CqAssistant::conv(const QByteArray &str)
-{
-    return QString::fromLocal8Bit(str);
-}
-
-qint64 CqAssistant::currentId() const
-{
-    return d_ptr->currentId;
-}
-
-QString CqAssistant::basePath() const
-{
-    return d_ptr->basePath;
-}
-
-QString CqAssistant::appFilePath(const char *srcName) const
-{
-    if ((srcName[0] == '/') || (srcName[0] == '\\')) {
-        return QDir::cleanPath(d_ptr->basePath % QString::fromUtf8(srcName));
-    }
-
-    return QDir::cleanPath(d_ptr->basePath % QStringLiteral("/") % QString::fromUtf8(srcName));
-}
-
-QString CqAssistant::appFilePath(const QString &name) const
-{
-    if (name.startsWith(QLatin1Char('/')) || name.startsWith(QLatin1Char('\\'))) {
-        return QDir::cleanPath(d_ptr->basePath % name);
-    }
-
-    return QDir::cleanPath(d_ptr->basePath % QStringLiteral("/") % name);
-}
-
-QString CqAssistant::usrFilePath(const char *srcName) const
-{
-    QString currentId = QString::number(d_ptr->currentId);
-
-    if ((srcName[0] == '/') || (srcName[0] == '\\')) {
-        return QDir::cleanPath(d_ptr->basePath % "/" % currentId % QString::fromUtf8(srcName));
-    }
-
-    return QDir::cleanPath(d_ptr->basePath % "/" % currentId % "/" % QString::fromUtf8(srcName));
-}
-
-QString CqAssistant::usrFilePath(const QString &name) const
-{
-    QString currentId = QString::number(d_ptr->currentId);
-
-    if (name.startsWith(QLatin1Char('/')) || name.startsWith(QLatin1Char('\\'))) {
-        return QDir::cleanPath(d_ptr->basePath % "/" % currentId % name);
-    }
-
-    return QDir::cleanPath(d_ptr->basePath % "/" % currentId % "/" % name);
-}
-
-CqCode CqAssistant::sendPrivateMessage(qint64 uid, const char *gbkMsg) const
-{
-    return cqCode(CQ_sendPrivateMsg(d_ptr->token, uid, gbkMsg));
-}
-
-CqCode CqAssistant::sendGroupMessage(qint64 gid, const char *gbkMsg) const
-{
-    return cqCode(CQ_sendGroupMsg(d_ptr->token, gid, gbkMsg));
-}
-
-CqCode CqAssistant::sendDiscussMessage(qint64 did, const char *gbkMsg) const
-{
-    return cqCode(CQ_sendDiscussMsg(d_ptr->token, did, gbkMsg));
-}
-
-CqCode CqAssistant::sendPrivateMessage(qint64 uid, const QString &msg) const
-{
-    return sendPrivateMessage(uid, conv(msg).constData());
-}
-
-CqCode CqAssistant::sendGroupMessage(qint64 gid, const QString &msg) const
-{
-    return sendGroupMessage(gid, conv(msg).constData());
-}
-
-CqCode CqAssistant::sendDiscussMessage(qint64 did, const QString &msg) const
-{
-    return sendDiscussMessage(did, conv(msg).constData());
-}
-
-CqCode CqAssistant::banGroupMember(qint64 gid, qint64 uid, int duration)
-{
-    return cqCode(CQ_setGroupBan(d_ptr->token, gid, uid, duration));
-}
-
-CqCode CqAssistant::kickGroupMember(qint64 gid, qint64 uid, bool lasting)
-{
-    return cqCode(CQ_setGroupKick(d_ptr->token, gid, uid, lasting));
-}
-
-CqCode CqAssistant::adminGroupMember(qint64 gid, qint64 uid, bool enabled)
-{
-    return cqCode(CQ_setGroupAdmin(d_ptr->token, gid, uid, enabled));
-}
-
-CqCode CqAssistant::renameGroupMember(qint64 gid, qint64 uid, const char *gbkNewNickName)
-{
-    return cqCode(CQ_setGroupCard(d_ptr->token, gid, uid, gbkNewNickName));
-}
-
-CqCode CqAssistant::renameGroupMember(qint64 gid, qint64 uid, const QString &newNameCard)
-{
-    return cqCode(CQ_setGroupCard(d_ptr->token, gid, uid, conv(newNameCard).constData()));
-}
-
-CqCode CqAssistant::acceptRequest(const char *gbkTag)
-{
-    return cqCode(CQ_setFriendAddRequest(d_ptr->token, gbkTag, REQUEST_ALLOW, ""));
-}
-
-CqCode CqAssistant::rejectRequest(const char *gbkTag)
-{
-    return cqCode(CQ_setFriendAddRequest(d_ptr->token, gbkTag, REQUEST_DENY, ""));
-}
-
-CqCode CqAssistant::acceptRequest(qint32 type, const char *gbkTag)
-{
-    if (1 == type) {
-        return cqCode(CQ_setGroupAddRequestV2(d_ptr->token, gbkTag, REQUEST_GROUPADD, REQUEST_ALLOW, ""));
-    } else if (2 == type) {
-        return cqCode(CQ_setGroupAddRequestV2(d_ptr->token, gbkTag, REQUEST_GROUPINVITE, REQUEST_ALLOW, ""));
-    }
-
-    return CqCode::Unknown;
-}
-
-CqCode CqAssistant::rejectRequest(qint32 type, const char *gbkTag)
-{
-    if (1 == type) {
-        return cqCode(CQ_setGroupAddRequestV2(d_ptr->token, gbkTag, REQUEST_GROUPADD, REQUEST_DENY, ""));
-    } else if (2 == type) {
-        return cqCode(CQ_setGroupAddRequestV2(d_ptr->token, gbkTag, REQUEST_GROUPINVITE, REQUEST_DENY, ""));
-    }
-
-    return CqCode::Unknown;
-}
-
-CqCode CqAssistant::leaveGroup(qint64 gid)
-{
-    return cqCode(CQ_setGroupLeave(d_ptr->token, gid, false));
-}
-
-CqCode CqAssistant::leaveDiscuss(qint64 did)
-{
-    return cqCode(CQ_setDiscussLeave(d_ptr->token, did));
-}
-
-CqCode CqAssistant::mute(qint64 gid, bool muted)
-{
-    return cqCode(CQ_setGroupWholeBan(d_ptr->token, gid, muted));
-}
-
-MemberInfo CqAssistant::memberInfo(qint64 gid, qint64 uid, bool cache)
-{
-    return MemberInfo(CQ_getGroupMemberInfoV2(d_ptr->token, gid, uid, !cache));
-}
-
-PersonInfo CqAssistant::personInfo(qint64 uid, bool cache)
-{
-    return PersonInfo(CQ_getStrangerInfo(d_ptr->token, uid, !cache));
-}
-
-QString CqAssistant::saveImage(const QImage &p) const
-{
-    Q_D(const CqAssistant);
-
-    QString uuid = QString::fromLatin1(QUuid::createUuid().toRfc4122().toHex());
-    QString name = QString("%1/%2.png").arg(d->imagePath, uuid);
-    if (p.save(name, "PNG")) {
-        return uuid % ".png";
-    }
-
-    return QString();
-}
-
-QImage CqAssistant::loadImage(const QString &f) const
-{
-    Q_UNUSED(f);
-    return QImage();
+    d->killTimer(d->timerId);
 }
 
 // class CqAssistantPrivate
 
 CqAssistantPrivate::CqAssistantPrivate()
-    : q_ptr(Q_NULLPTR)
-    , agent(Q_NULLPTR)
-    , token(-1)
-    , currentId(0)
-    , levels(Q_NULLPTR)
+    : levels(Q_NULLPTR)
     , welcome(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
@@ -280,40 +77,6 @@ CqAssistantPrivate::CqAssistantPrivate()
 CqAssistantPrivate::~CqAssistantPrivate()
 {
 }
-
-void CqAssistantPrivate::initThread()
-{
-    agent = new QThread(this);
-
-    moveToThread(agent);
-    connect(agent, &QThread::started,
-            this, &CqAssistantPrivate::initialize);
-
-    agent->start();
-}
-
-void CqAssistantPrivate::initialize()
-{
-    if (currentId == 0) {
-        return;
-    }
-
-    QString path = basePath % "/" % QString::number(currentId);
-    SqlData::initPath(QDir::cleanPath(path));
-    QDir().mkpath(path);
-
-    levels = new MasterLevels(this);
-    welcome = new MemberWelcome(this);
-    blacklist = new MemberBlacklist(this);
-    deathHouse = new MemberDeathHouse(this);
-
-    htmlFeedback = new HtmlFeedback(this);
-    imagePath = QDir::cleanPath(basePath % "/../../data/image");
-
-    startTimer(10000);
-}
-
-#include <QDateTime>
 
 void CqAssistantPrivate::timerEvent(QTimerEvent *)
 {
@@ -406,7 +169,7 @@ void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel le
 
     QImage feedback = htmlFeedback->drawDanger(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, image(fileName));
+    q->sendGroupMessage(gid, q->image(fileName));
 }
 
 void CqAssistantPrivate::showPrompt(qint64 gid, const QString &title, const QString &content)
@@ -417,7 +180,7 @@ void CqAssistantPrivate::showPrompt(qint64 gid, const QString &title, const QStr
 
     QImage feedback = htmlFeedback->drawPrompt(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, image(fileName));
+    q->sendGroupMessage(gid, q->image(fileName));
 }
 
 void CqAssistantPrivate::showSuccess(qint64 gid, const QString &title, const QString &content)
@@ -428,7 +191,7 @@ void CqAssistantPrivate::showSuccess(qint64 gid, const QString &title, const QSt
 
     QImage feedback = htmlFeedback->drawSuccess(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, image(fileName));
+    q->sendGroupMessage(gid, q->image(fileName));
 }
 
 void CqAssistantPrivate::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
@@ -472,7 +235,7 @@ void CqAssistantPrivate::feedbackList(qint64 gid, const QString &title, const Le
             ds << "</span><div>";
             for (; i < members.count(); ++i) {
                 const LevelInfo &li = members.at(i);
-                MemberInfo mi = q->memberInfo(gid, li.uid);
+                CqMemberInfo mi = q->memberInfo(gid, li.uid);
                 ds << "<p class=\"c\">";
                 if (level) {
                     ds << MasterLevels::levelName(li.level) << tr(": ");
@@ -492,6 +255,6 @@ void CqAssistantPrivate::feedbackList(qint64 gid, const QString &title, const Le
 
         QImage feedback = htmlFeedback->draw(html, 400, style);
         QString fileName = q->saveImage(feedback);
-        q->sendGroupMessage(gid, image(fileName));
+        q->sendGroupMessage(gid, q->image(fileName));
     }
 }

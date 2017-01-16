@@ -2,11 +2,10 @@
 #define MEMBERWELCOME_H
 
 #include <QHash>
-
-#include "sqldata.h"
+#include "cqsqlite.h"
 
 class MemberWelcomePrivate;
-class MemberWelcome : public SqlData
+class MemberWelcome : public CqSqlite
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MemberWelcome)

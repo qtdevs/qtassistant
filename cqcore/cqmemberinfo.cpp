@@ -1,22 +1,22 @@
-#include "memberinfo.h"
-#include "memberinfo_p.h"
+#include "cqmemberinfo.h"
+#include "cqmemberinfo_p.h"
 
 #include <QDataStream>
 
-#include "cqassistant.h"
+#include "cqportal.h"
 
-// class MemberInfo
+// class CqMemberInfo
 
-MemberInfo::MemberInfo(const char *mi)
-    : data(new MemberInfoData())
+CqMemberInfo::CqMemberInfo(const char *info)
+    : data(new CqMemberInfoData())
 {
-    if (Q_NULLPTR == mi) {
+    if (Q_NULLPTR == info) {
         return;
     }
 
     /// README: https://cqp.cc/t/26287
     /// README: https://cqp.cc/t/25702
-    QByteArray datas = QByteArray::fromBase64(mi);
+    QByteArray datas = QByteArray::fromBase64(info);
     QDataStream ds(datas);
 
     ds >> data->gid;
@@ -32,7 +32,7 @@ MemberInfo::MemberInfo(const char *mi)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqAssistant::conv(name);
+        data->nickName = CqPortal::convert(name);
     } while (false);
 
     do {
@@ -40,7 +40,7 @@ MemberInfo::MemberInfo(const char *mi)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nameCard = CqAssistant::conv(name);
+        data->nameCard = CqPortal::convert(name);
     } while (false);
 
     ds >> data->sex;
@@ -51,7 +51,7 @@ MemberInfo::MemberInfo(const char *mi)
         ds >> size;
         QByteArray location(size, 0);
         ds.readRawData(location.data(), size);
-        data->location = CqAssistant::conv(location);
+        data->location = CqPortal::convert(location);
     } while (false);
 
     do {
@@ -71,97 +71,97 @@ MemberInfo::MemberInfo(const char *mi)
         ds >> size;
         QByteArray levelName(size, 0);
         ds.readRawData(levelName.data(), size);
-        data->levelName = CqAssistant::conv(levelName);
+        data->levelName = CqPortal::convert(levelName);
     } while (false);
 
     ds >> data->permission;
     ds >> data->unfriendly;
 }
 
-MemberInfo::MemberInfo(const MemberInfo &other)
+CqMemberInfo::CqMemberInfo(const CqMemberInfo &other)
     : data(other.data)
 {
 }
 
-MemberInfo &MemberInfo::operator=(const MemberInfo &rhs)
+CqMemberInfo &CqMemberInfo::operator=(const CqMemberInfo &rhs)
 {
     if (this != &rhs)
         data.operator=(rhs.data);
     return *this;
 }
 
-MemberInfo::~MemberInfo()
+CqMemberInfo::~CqMemberInfo()
 {
 }
 
-bool MemberInfo::isValid() const
+bool CqMemberInfo::isValid() const
 {
-    return data->gid != 0;
+    return (data->gid != 0);
 }
 
-qint64 MemberInfo::gid() const
+qint64 CqMemberInfo::gid() const
 {
     return data->gid;
 }
 
-qint64 MemberInfo::uid() const
+qint64 CqMemberInfo::uid() const
 {
     return data->uid;
 }
 
-qint32 MemberInfo::sex() const
+qint32 CqMemberInfo::sex() const
 {
     return data->sex;
 }
 
-qint32 MemberInfo::age() const
+qint32 CqMemberInfo::age() const
 {
     return data->age;
 }
 
-QString MemberInfo::nickName() const
+QString CqMemberInfo::nickName() const
 {
     return data->nickName;
 }
 
-QString MemberInfo::nameCard() const
+QString CqMemberInfo::nameCard() const
 {
     return data->nameCard;
 }
 
-QString MemberInfo::location() const
+QString CqMemberInfo::location() const
 {
     return data->location;
 }
 
-QString MemberInfo::levelName() const
+QString CqMemberInfo::levelName() const
 {
     return data->levelName;
 }
 
-qint32 MemberInfo::permission() const
+qint32 CqMemberInfo::permission() const
 {
     return data->permission;
 }
 
-qint32 MemberInfo::unfriendly() const
+qint32 CqMemberInfo::unfriendly() const
 {
     return data->unfriendly;
 }
 
-QDateTime MemberInfo::joinTime() const
+QDateTime CqMemberInfo::joinTime() const
 {
     return data->joinTime;
 }
 
-QDateTime MemberInfo::lastSent() const
+QDateTime CqMemberInfo::lastSent() const
 {
     return data->lastSent;
 }
 
-// class MemberInfoData
+// class CqMemberInfoData
 
-MemberInfoData::MemberInfoData()
+CqMemberInfoData::CqMemberInfoData()
     : gid(0)
     , uid(0)
     , sex(0)

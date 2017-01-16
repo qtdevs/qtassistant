@@ -1,7 +1,11 @@
-#ifndef QCPEVENTS_H
-#define QCPEVENTS_H
+#ifndef CQGLOBALDEFS_H
+#define CQGLOBALDEFS_H
 
-#include <QtGlobal>
+#include <QObject>
+#include <QVector>
+
+typedef QPair<qint64, qint64> Member;
+typedef QVector<Member>       MemberList;
 
 struct MessageEvent
 {
@@ -71,4 +75,4 @@ struct MemberLeaveEvent
     qint64 member;
 };
 
-#endif // QCPEVENTS_H
+#endif // CQGLOBALDEFS_H

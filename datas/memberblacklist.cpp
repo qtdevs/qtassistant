@@ -13,7 +13,7 @@ Q_LOGGING_CATEGORY(qlcMemberBlacklist, "MemberBlacklist")
 // class MemberBlacklist
 
 MemberBlacklist::MemberBlacklist(QObject *parent)
-    : SqlData(*new MemberBlacklistPrivate(), parent)
+    : CqSqlite(*new MemberBlacklistPrivate(), parent)
 {
     Q_D(MemberBlacklist);
 
@@ -46,7 +46,7 @@ MemberBlacklist::~MemberBlacklist()
 {
 }
 
-SqlData::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberBlacklist);
     QWriteLocker locker(&d->guard);
@@ -71,7 +71,7 @@ SqlData::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-SqlData::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberBlacklist);
     QWriteLocker locker(&d->guard);

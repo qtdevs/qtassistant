@@ -1,6 +1,7 @@
 #ifndef CQASSISTANT_P_H
 #define CQASSISTANT_P_H
 
+#include "cqportal_p.h"
 #include "cqassistant.h"
 
 class MasterLevels;
@@ -8,9 +9,10 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
+#include "datas/masterlevels.h"
 #include "htmlfeedback/htmlfeedback.h"
 
-class CqAssistantPrivate : public QObject, public CqEncoder
+class CqAssistantPrivate : public CqPortalPrivate
 {
     Q_OBJECT
     Q_DECLARE_PUBLIC(CqAssistant)
@@ -18,19 +20,6 @@ class CqAssistantPrivate : public QObject, public CqEncoder
 public:
     CqAssistantPrivate();
     virtual ~CqAssistantPrivate();
-private:
-    CqAssistant *q_ptr;
-
-private:
-    void initThread();
-    void initialize();
-private:
-    QThread *agent;
-    qint32   token;
-
-private:
-    qint64 currentId;
-    QString basePath;
 
 private:
     MasterLevels *levels;
@@ -40,6 +29,8 @@ private:
 
 private:
     void timerEvent(QTimerEvent *) Q_DECL_FINAL;
+private:
+    int timerId;
 
 private:
     LevelInfoList findUsers(const QStringList &args) const;
@@ -92,7 +83,6 @@ private:
 
 private:
     HtmlFeedback *htmlFeedback;
-    QString imagePath;
 };
 
 #endif // CQASSISTANT_P_H

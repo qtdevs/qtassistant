@@ -1,10 +1,10 @@
 #ifndef MEMBERWELCOME_P_H
 #define MEMBERWELCOME_P_H
 
-#include "sqldata_p.h"
+#include "cqsqlite_p.h"
 #include "memberwelcome.h"
 
-class MemberWelcomePrivate : public SqlDataPrivate
+class MemberWelcomePrivate : public CqSqlitePrivate
 {
     Q_DECLARE_PUBLIC(MemberWelcome)
 

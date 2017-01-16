@@ -13,7 +13,7 @@ Q_LOGGING_CATEGORY(qlcMemberDeathHouse, "MemberDeathHouse")
 // class MemberDeathHouse
 
 MemberDeathHouse::MemberDeathHouse(QObject *parent)
-    : SqlData(*new MemberDeathHousePrivate(), parent)
+    : CqSqlite(*new MemberDeathHousePrivate(), parent)
 {
     Q_D(MemberDeathHouse);
 
@@ -46,7 +46,7 @@ MemberDeathHouse::~MemberDeathHouse()
 {
 }
 
-SqlData::Result MemberDeathHouse::addMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberDeathHouse::addMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberDeathHouse);
     QWriteLocker locker(&d->guard);
@@ -71,7 +71,7 @@ SqlData::Result MemberDeathHouse::addMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-SqlData::Result MemberDeathHouse::removeMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberDeathHouse::removeMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberDeathHouse);
     QWriteLocker locker(&d->guard);

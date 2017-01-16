@@ -1,17 +1,17 @@
-#ifndef MEMBERINFO_H
-#define MEMBERINFO_H
+#ifndef CQMEMBERINFO_H
+#define CQMEMBERINFO_H
 
 #include <QDateTime>
 #include <QSharedDataPointer>
 
-class MemberInfoData;
-class MemberInfo
+class CqMemberInfoData;
+class CqMemberInfo
 {
 public:
-    MemberInfo(const char *mi);
-    MemberInfo(const MemberInfo &other);
-    MemberInfo &operator=(const MemberInfo &rhs);
-    ~MemberInfo();
+    CqMemberInfo(const char *info);
+    CqMemberInfo(const CqMemberInfo &other);
+    CqMemberInfo &operator=(const CqMemberInfo &rhs);
+    ~CqMemberInfo();
 
 public:
     bool isValid() const;
@@ -31,7 +31,7 @@ public:
     QDateTime lastSent() const;
 
 private:
-    QSharedDataPointer<MemberInfoData> data;
+    QSharedDataPointer<CqMemberInfoData> data;
 };
 
-#endif // MEMBERINFO_H
+#endif // CQMEMBERINFO_H

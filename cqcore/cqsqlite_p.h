@@ -1,20 +1,20 @@
-#ifndef SQLDATA_P_H
-#define SQLDATA_P_H
+#ifndef CQSQLITE_P_H
+#define CQSQLITE_P_H
 
 #include <QReadWriteLock>
 #include <QSqlDatabase>
 
-#include "sqldata.h"
+#include "cqsqlite.h"
 
-class SqlDataPrivate
+class CqSqlitePrivate
 {
-    Q_DECLARE_PUBLIC(SqlData)
+    Q_DECLARE_PUBLIC(CqSqlite)
 
 public:
-    SqlDataPrivate();
-    virtual ~SqlDataPrivate();
+    CqSqlitePrivate();
+    virtual ~CqSqlitePrivate();
 protected:
-    SqlData *q_ptr;
+    CqSqlite *q_ptr;
 
 public:
     static QString basePath;
@@ -35,7 +35,7 @@ public:
 private:
     QString fileName;
     QStringList prepareSqls;
-    QSqlDatabase qdb;
+    QSqlDatabase dbs;
 };
 
-#endif // SQLDATA_P_H
+#endif // CQSQLITE_P_H

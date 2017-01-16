@@ -2,7 +2,7 @@
 #define MASTERLEVELS_H
 
 #include <QHash>
-#include "sqldata.h"
+#include "cqsqlite.h"
 
 enum class MasterLevel {
     ATField = -1,
@@ -29,7 +29,7 @@ public:
 typedef QList<LevelInfo> LevelInfoList;
 
 class MasterLevelsPrivate;
-class MasterLevels : public SqlData
+class MasterLevels : public CqSqlite
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MasterLevels)

@@ -1,12 +1,12 @@
-#ifndef MEMBERINFO_P_H
-#define MEMBERINFO_P_H
+#ifndef CQMEMBERINFO_P_H
+#define CQMEMBERINFO_P_H
 
-#include "memberinfo.h"
+#include "cqmemberinfo.h"
 
-class MemberInfoData : public QSharedData
+class CqMemberInfoData : public QSharedData
 {
 public:
-    MemberInfoData();
+    CqMemberInfoData();
 
 public:
     qint64 gid;
@@ -23,4 +23,4 @@ public:
     QDateTime lastSent;
 };
 
-#endif // MEMBERINFO_P_H
+#endif // CQMEMBERINFO_P_H

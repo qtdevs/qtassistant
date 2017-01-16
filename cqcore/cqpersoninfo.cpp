@@ -1,22 +1,22 @@
-#include "personinfo.h"
-#include "personinfo_p.h"
+#include "cqpersoninfo.h"
+#include "cqpersoninfo_p.h"
 
 #include <QDataStream>
 
-#include "cqassistant.h"
+#include "cqportal.h"
 
-// class PersonInfo
+// class CqPersonInfo
 
-PersonInfo::PersonInfo(const char *pi)
-    : data(new PersonInfoData())
+CqPersonInfo::CqPersonInfo(const char *info)
+    : data(new CqPersonInfoData())
 {
-    if (Q_NULLPTR == pi) {
+    if (Q_NULLPTR == info) {
         return;
     }
 
     /// README: https://cqp.cc/t/26287
     /// README: https://cqp.cc/t/25702
-    QByteArray datas = QByteArray::fromBase64(pi);
+    QByteArray datas = QByteArray::fromBase64(info);
     QDataStream ds(datas);
 
     ds >> data->uid;
@@ -29,57 +29,57 @@ PersonInfo::PersonInfo(const char *pi)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqAssistant::conv(name);
+        data->nickName = CqPortal::convert(name);
     } while (false);
 
     ds >> data->sex;
     ds >> data->age;
 }
 
-PersonInfo::PersonInfo(const PersonInfo &other)
+CqPersonInfo::CqPersonInfo(const CqPersonInfo &other)
     : data(other.data)
 {
 }
 
-PersonInfo &PersonInfo::operator=(const PersonInfo &rhs)
+CqPersonInfo &CqPersonInfo::operator=(const CqPersonInfo &rhs)
 {
     if (this != &rhs)
         data.operator=(rhs.data);
     return *this;
 }
 
-PersonInfo::~PersonInfo()
+CqPersonInfo::~CqPersonInfo()
 {
 }
 
-bool PersonInfo::isValid() const
+bool CqPersonInfo::isValid() const
 {
     return (data->uid != 0);
 }
 
-qint64 PersonInfo::uid() const
+qint64 CqPersonInfo::uid() const
 {
     return data->uid;
 }
 
-qint32 PersonInfo::sex() const
+qint32 CqPersonInfo::sex() const
 {
     return data->sex;
 }
 
-qint32 PersonInfo::age() const
+qint32 CqPersonInfo::age() const
 {
     return data->age;
 }
 
-QString PersonInfo::nickName() const
+QString CqPersonInfo::nickName() const
 {
     return data->nickName;
 }
 
-// class PersonInfoData
+// class CqPersonInfoData
 
-PersonInfoData::PersonInfoData()
+CqPersonInfoData::CqPersonInfoData()
     : uid(0)
     , sex(0)
     , age(0)

@@ -13,7 +13,7 @@ Q_LOGGING_CATEGORY(qlcMemberWelcome, "Welcome")
 // class MemberWelcome
 
 MemberWelcome::MemberWelcome(QObject *parent)
-    : SqlData(*new MemberWelcomePrivate(), parent)
+    : CqSqlite(*new MemberWelcomePrivate(), parent)
 {
     Q_D(MemberWelcome);
 
@@ -46,7 +46,7 @@ MemberWelcome::~MemberWelcome()
 {
 }
 
-SqlData::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberWelcome);
     QWriteLocker locker(&d->guard);
@@ -71,7 +71,7 @@ SqlData::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-SqlData::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
+CqSqlite::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberWelcome);
     QWriteLocker locker(&d->guard);

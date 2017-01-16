@@ -2,11 +2,10 @@
 #define MEMBERBLACKLIST_H
 
 #include <QHash>
-
-#include "sqldata.h"
+#include "cqsqlite.h"
 
 class MemberBlacklistPrivate;
-class MemberBlacklist : public SqlData
+class MemberBlacklist : public CqSqlite
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MemberBlacklist)

@@ -53,7 +53,7 @@ bool CqAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
         QString nickName;
         QString location;
 
-        MemberInfo mi = memberInfo(ev.from, ev.member);
+        CqMemberInfo mi = memberInfo(ev.from, ev.member);
         if (mi.isValid()) {
             nickName = mi.nickName();
             location = mi.location();
