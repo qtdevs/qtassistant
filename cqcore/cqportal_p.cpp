@@ -5,11 +5,9 @@
 #include <process.h>
 #include "cqapi/cqapi.h"
 
-#define APPINFO CQAPIVERTEXT ",org.qtdevs.assistant"
-
 CQEVENT(const char *, AppInfo, 0)()
 {
-    return APPINFO;
+    return CQAPIVERTEXT "," TARGET;
 }
 
 void qtHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)

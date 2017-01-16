@@ -2,6 +2,8 @@ QT *= sql
 
 INCLUDEPATH += $$PWD
 
+DEFINES += TARGET=\\\"$$TARGET\\\"
+
 HEADERS += $$PWD/cqapi/cqapi.h
 LIBS    += -l$$PWD/cqapi/cqapi
 
