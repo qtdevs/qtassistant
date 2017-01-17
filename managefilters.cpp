@@ -64,7 +64,7 @@ bool CqAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
             renameGroupMember(ev.from, ev.member, newNameCard);
         }
 
-        sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(at(ev.member)));
+        sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(cqAt(ev.member)));
     }
 
     return false;

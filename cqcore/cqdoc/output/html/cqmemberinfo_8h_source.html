@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.13"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CqCore: C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqmemberinfo.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">CqCore
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqmemberinfo.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef CQMEMBERINFO_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define CQMEMBERINFO_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QDateTime&gt;</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QSharedDataPointer&gt;</span></div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">class </span>CqMemberInfoData;</div><div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="class_cq_member_info.html">    8</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_cq_member_info.html">CqMemberInfo</a></div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="class_cq_member_info.html#ae7c66c6bbc64ad58e2b9c0272a8e7e20">CqMemberInfo</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *info);</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="class_cq_member_info.html#ae7c66c6bbc64ad58e2b9c0272a8e7e20">CqMemberInfo</a>(<span class="keyword">const</span> <a class="code" href="class_cq_member_info.html">CqMemberInfo</a> &amp;other);</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="class_cq_member_info.html">CqMemberInfo</a> &amp;<a class="code" href="class_cq_member_info.html#a1baa202e131ab2d8b85033ed3a39cf10">operator=</a>(<span class="keyword">const</span> <a class="code" href="class_cq_member_info.html">CqMemberInfo</a> &amp;rhs);</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="class_cq_member_info.html#a325627a29285398b3d481cf478a547e8">~CqMemberInfo</a>();</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_cq_member_info.html#ab6e298de2fa031a45dd4602a95076939">isValid</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    qint64 <a class="code" href="class_cq_member_info.html#a2fd52357406f80bf74bc9e6bc5798a40">gid</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    qint64 <a class="code" href="class_cq_member_info.html#a21804c77b521395e4f11b44bc06fda76">uid</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    qint32 <a class="code" href="class_cq_member_info.html#a54eb430f72685aba68e383d85a757134">sex</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    qint32 <a class="code" href="class_cq_member_info.html#aae56da225ce5c34f2eee73350046eecf">age</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    QString <a class="code" href="class_cq_member_info.html#a9382d16d89753377bea0494cde165a4c">nickName</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    QString <a class="code" href="class_cq_member_info.html#aa0d6db3ca52955bcf7f06f54a501af04">nameCard</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    QString <a class="code" href="class_cq_member_info.html#a8728ad36c89920b712afba9cc386eb5b">location</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    QString <a class="code" href="class_cq_member_info.html#aff3f48cb2118f19c66b9f7c18089a426">levelName</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    qint32 <a class="code" href="class_cq_member_info.html#ad025f07b9804b505b06855ac0cd7c9aa">permission</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    qint32 <a class="code" href="class_cq_member_info.html#aee2a2f52e7203bd91da7de45028275c3">unfriendly</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    QDateTime <a class="code" href="class_cq_member_info.html#a1809d88479f467a554d9d80942568b5b">joinTime</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    QDateTime <a class="code" href="class_cq_member_info.html#a2b2052527d335882a271948bb3be0725">lastSent</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">private</span>:</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    QSharedDataPointer&lt;CqMemberInfoData&gt; data;</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#endif // CQMEMBERINFO_H</span></div><div class="ttc" id="class_cq_member_info_html_a2fd52357406f80bf74bc9e6bc5798a40"><div class="ttname"><a href="class_cq_member_info.html#a2fd52357406f80bf74bc9e6bc5798a40">CqMemberInfo::gid</a></div><div class="ttdeci">qint64 gid() const</div><div class="ttdoc">返回群组号码 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:137</div></div>
+<div class="ttc" id="class_cq_member_info_html_a2b2052527d335882a271948bb3be0725"><div class="ttname"><a href="class_cq_member_info.html#a2b2052527d335882a271948bb3be0725">CqMemberInfo::lastSent</a></div><div class="ttdeci">QDateTime lastSent() const</div><div class="ttdoc">返回最后发送时间 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:247</div></div>
+<div class="ttc" id="class_cq_member_info_html_aee2a2f52e7203bd91da7de45028275c3"><div class="ttname"><a href="class_cq_member_info.html#aee2a2f52e7203bd91da7de45028275c3">CqMemberInfo::unfriendly</a></div><div class="ttdeci">qint32 unfriendly() const</div><div class="ttdoc">返回失信状态 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:227</div></div>
+<div class="ttc" id="class_cq_member_info_html_a9382d16d89753377bea0494cde165a4c"><div class="ttname"><a href="class_cq_member_info.html#a9382d16d89753377bea0494cde165a4c">CqMemberInfo::nickName</a></div><div class="ttdeci">QString nickName() const</div><div class="ttdoc">返回昵称 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:177</div></div>
+<div class="ttc" id="class_cq_member_info_html_ad025f07b9804b505b06855ac0cd7c9aa"><div class="ttname"><a href="class_cq_member_info.html#ad025f07b9804b505b06855ac0cd7c9aa">CqMemberInfo::permission</a></div><div class="ttdeci">qint32 permission() const</div><div class="ttdoc">返回成员权限 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:217</div></div>
+<div class="ttc" id="class_cq_member_info_html_a21804c77b521395e4f11b44bc06fda76"><div class="ttname"><a href="class_cq_member_info.html#a21804c77b521395e4f11b44bc06fda76">CqMemberInfo::uid</a></div><div class="ttdeci">qint64 uid() const</div><div class="ttdoc">返回成员号码 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:147</div></div>
+<div class="ttc" id="class_cq_member_info_html_a54eb430f72685aba68e383d85a757134"><div class="ttname"><a href="class_cq_member_info.html#a54eb430f72685aba68e383d85a757134">CqMemberInfo::sex</a></div><div class="ttdeci">qint32 sex() const</div><div class="ttdoc">返回性别 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:157</div></div>
+<div class="ttc" id="class_cq_member_info_html_a325627a29285398b3d481cf478a547e8"><div class="ttname"><a href="class_cq_member_info.html#a325627a29285398b3d481cf478a547e8">CqMemberInfo::~CqMemberInfo</a></div><div class="ttdeci">~CqMemberInfo()</div><div class="ttdoc">析构函数 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:118</div></div>
+<div class="ttc" id="class_cq_member_info_html"><div class="ttname"><a href="class_cq_member_info.html">CqMemberInfo</a></div><div class="ttdoc">成员信息 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.h:8</div></div>
+<div class="ttc" id="class_cq_member_info_html_a1baa202e131ab2d8b85033ed3a39cf10"><div class="ttname"><a href="class_cq_member_info.html#a1baa202e131ab2d8b85033ed3a39cf10">CqMemberInfo::operator=</a></div><div class="ttdeci">CqMemberInfo &amp; operator=(const CqMemberInfo &amp;rhs)</div><div class="ttdoc">赋值函数 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:106</div></div>
+<div class="ttc" id="class_cq_member_info_html_a8728ad36c89920b712afba9cc386eb5b"><div class="ttname"><a href="class_cq_member_info.html#a8728ad36c89920b712afba9cc386eb5b">CqMemberInfo::location</a></div><div class="ttdeci">QString location() const</div><div class="ttdoc">返回地区 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:197</div></div>
+<div class="ttc" id="class_cq_member_info_html_ae7c66c6bbc64ad58e2b9c0272a8e7e20"><div class="ttname"><a href="class_cq_member_info.html#ae7c66c6bbc64ad58e2b9c0272a8e7e20">CqMemberInfo::CqMemberInfo</a></div><div class="ttdeci">CqMemberInfo(const char *info)</div><div class="ttdoc">构造函数 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:20</div></div>
+<div class="ttc" id="class_cq_member_info_html_aff3f48cb2118f19c66b9f7c18089a426"><div class="ttname"><a href="class_cq_member_info.html#aff3f48cb2118f19c66b9f7c18089a426">CqMemberInfo::levelName</a></div><div class="ttdeci">QString levelName() const</div><div class="ttdoc">返回等级 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:207</div></div>
+<div class="ttc" id="class_cq_member_info_html_aae56da225ce5c34f2eee73350046eecf"><div class="ttname"><a href="class_cq_member_info.html#aae56da225ce5c34f2eee73350046eecf">CqMemberInfo::age</a></div><div class="ttdeci">qint32 age() const</div><div class="ttdoc">返回年龄 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:167</div></div>
+<div class="ttc" id="class_cq_member_info_html_aa0d6db3ca52955bcf7f06f54a501af04"><div class="ttname"><a href="class_cq_member_info.html#aa0d6db3ca52955bcf7f06f54a501af04">CqMemberInfo::nameCard</a></div><div class="ttdeci">QString nameCard() const</div><div class="ttdoc">返回名片 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:187</div></div>
+<div class="ttc" id="class_cq_member_info_html_a1809d88479f467a554d9d80942568b5b"><div class="ttname"><a href="class_cq_member_info.html#a1809d88479f467a554d9d80942568b5b">CqMemberInfo::joinTime</a></div><div class="ttdeci">QDateTime joinTime() const</div><div class="ttdoc">返回加入群组时间 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:237</div></div>
+<div class="ttc" id="class_cq_member_info_html_ab6e298de2fa031a45dd4602a95076939"><div class="ttname"><a href="class_cq_member_info.html#ab6e298de2fa031a45dd4602a95076939">CqMemberInfo::isValid</a></div><div class="ttdeci">bool isValid() const</div><div class="ttdoc">验证有效信息 </div><div class="ttdef"><b>Definition:</b> cqmemberinfo.cpp:127</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.13
+</small></address>
+</body>
+</html>

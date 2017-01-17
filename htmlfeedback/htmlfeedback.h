@@ -16,11 +16,11 @@ private:
     QScopedPointer<HtmlFeedbackPrivate> d_ptr;
 
 public:
-    QImage drawPrimary(const QString &html, int width) const;
-    QImage drawDanger(const QString &html, int width) const;
-    QImage drawWarning(const QString &html, int width) const;
-    QImage drawPrompt(const QString &html, int width) const;
-    QImage drawSuccess(const QString &html, int width) const;
+    QPixmap drawPrimary(const QString &html, int width) const;
+    QPixmap drawDanger(const QString &html, int width) const;
+    QPixmap drawWarning(const QString &html, int width) const;
+    QPixmap drawPrompt(const QString &html, int width) const;
+    QPixmap drawSuccess(const QString &html, int width) const;
 
 public:
     enum Style {
@@ -32,7 +32,7 @@ public:
     };
 
 public:
-    QImage draw(const QString &html, int width, Style style) const;
+    QPixmap draw(const QString &html, int width, Style style) const;
 };
 
 #endif // HTMLFEEDBACK_H

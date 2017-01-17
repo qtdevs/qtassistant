@@ -24,8 +24,9 @@ public:
     static QString convert(const QByteArray &str);
 
 public:
-    static QString at(qint64 uid);
-    static QString image(const QString &name);
+    static QString cqAt(qint64 uid);
+
+    static QString cqImage(const QString &name);
 
 public:
     qint64 currentId() const;
@@ -90,8 +91,8 @@ public:
     CqMemberInfo memberInfo(qint64 gid, qint64 uid, bool cached = true);
 
 public:
-    QString saveImage(const QImage &data) const;
-    QImage loadImage(const QString &name) const;
+    QString saveImage(const QPixmap &data) const;
+    QPixmap loadImage(const QString &name) const;
 };
 
 #endif // CQPORTAL_H

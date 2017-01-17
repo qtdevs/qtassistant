@@ -766,7 +766,7 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
                 while (i.hasNext()) {
                     i.next();
                     QDateTime stamp = QDateTime::fromMSecsSinceEpoch(i.value()).addSecs(1800);
-                    members << tr("%1 will kicked in %2 minute(s).").arg(q->at(i.key().second)).arg(now.secsTo(stamp) / 60);
+                    members << tr("%1 will kicked in %2 minute(s).").arg(q->cqAt(i.key().second)).arg(now.secsTo(stamp) / 60);
                 }
                 members.prepend(tr("Welcome List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
@@ -778,15 +778,15 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
                 levels->update(ev.from, ll);
                 for (const LevelInfo &li : ll) {
                     if (li.level <= level) {
-                        masters << q->at(li.uid);
+                        masters << q->cqAt(li.uid);
                     } else {
                         if (argvOption == 1) {
                             welcome->addMember(ev.from, li.uid);
-                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->at(li.uid)));
+                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->cqAt(li.uid)));
                         } else if (argvOption == 2) {
                             welcome->removeMember(ev.from, li.uid);
                         }
-                        members << q->at(li.uid);
+                        members << q->cqAt(li.uid);
                     }
                 }
 
@@ -879,7 +879,7 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
                 QHashIterator<Member, qint64> i(blacklist->blacklist());
                 while (i.hasNext()) {
                     i.next();
-                    members << q->at(i.key().second);
+                    members << q->cqAt(i.key().second);
                 }
                 members.prepend(tr("Blacklist List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
@@ -891,14 +891,14 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
                 levels->update(ev.from, ll);
                 for (const LevelInfo &li : ll) {
                     if (li.level <= level) {
-                        masters << q->at(li.uid);
+                        masters << q->cqAt(li.uid);
                     } else {
                         if (argvOption == 1) {
                             blacklist->addMember(ev.from, li.uid);
                         } else if (argvOption == 2) {
                             blacklist->removeMember(ev.from, li.uid);
                         }
-                        members << q->at(li.uid);
+                        members << q->cqAt(li.uid);
                     }
                 }
 

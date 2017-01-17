@@ -35,5 +35,3 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user
-
-cqcore/cqdoc/doc/

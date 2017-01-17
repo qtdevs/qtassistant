@@ -156,9 +156,9 @@ void CqAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel le
     QString content = reason.isEmpty() ? tr("As %1, you have no rights.").arg(MasterLevels::levelName(level)) : reason;
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("Permission Denied"), content);
 
-    QImage feedback = htmlFeedback->drawDanger(html, 400);
+    QPixmap feedback = htmlFeedback->drawDanger(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, q->image(fileName));
+    q->sendGroupMessage(gid, q->cqImage(fileName));
 }
 
 void CqAssistantPrivate::showPrompt(qint64 gid, const QString &title, const QString &content)
@@ -167,9 +167,9 @@ void CqAssistantPrivate::showPrompt(qint64 gid, const QString &title, const QStr
 
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
-    QImage feedback = htmlFeedback->drawPrompt(html, 400);
+    QPixmap feedback = htmlFeedback->drawPrompt(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, q->image(fileName));
+    q->sendGroupMessage(gid, q->cqImage(fileName));
 }
 
 void CqAssistantPrivate::showSuccess(qint64 gid, const QString &title, const QString &content)
@@ -178,9 +178,9 @@ void CqAssistantPrivate::showSuccess(qint64 gid, const QString &title, const QSt
 
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
-    QImage feedback = htmlFeedback->drawSuccess(html, 400);
+    QPixmap feedback = htmlFeedback->drawSuccess(html, 400);
     QString fileName = q->saveImage(feedback);
-    q->sendGroupMessage(gid, q->image(fileName));
+    q->sendGroupMessage(gid, q->cqImage(fileName));
 }
 
 void CqAssistantPrivate::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
@@ -242,8 +242,8 @@ void CqAssistantPrivate::feedbackList(qint64 gid, const QString &title, const Le
             ds << "</div></body></html>";
         } while (false);
 
-        QImage feedback = htmlFeedback->draw(html, 400, style);
+        QPixmap feedback = htmlFeedback->draw(html, 400, style);
         QString fileName = q->saveImage(feedback);
-        q->sendGroupMessage(gid, q->image(fileName));
+        q->sendGroupMessage(gid, q->cqImage(fileName));
     }
 }

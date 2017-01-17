@@ -27,9 +27,8 @@ protected:
     bool openDatabase();
 
 protected:
-    QSqlQuery query(const QByteArray &sql);
     QSqlQuery query(const QString &sql);
-    QSqlQuery query(const char *sql);
+    QSqlQuery query(const char *srcSql);
 };
 
 #endif // CQSQLITE_H

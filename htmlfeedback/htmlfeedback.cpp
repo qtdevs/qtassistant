@@ -18,32 +18,32 @@ HtmlFeedback::~HtmlFeedback()
 {
 }
 
-QImage HtmlFeedback::drawPrimary(const QString &html, int width) const
+QPixmap HtmlFeedback::drawPrimary(const QString &html, int width) const
 {
     return draw(html, width, HtmlFeedback::Primary);
 }
 
-QImage HtmlFeedback::drawDanger(const QString &html, int width) const
+QPixmap HtmlFeedback::drawDanger(const QString &html, int width) const
 {
     return draw(html, width, HtmlFeedback::Danger);
 }
 
-QImage HtmlFeedback::drawWarning(const QString &html, int width) const
+QPixmap HtmlFeedback::drawWarning(const QString &html, int width) const
 {
     return draw(html, width, HtmlFeedback::Warning);
 }
 
-QImage HtmlFeedback::drawPrompt(const QString &html, int width) const
+QPixmap HtmlFeedback::drawPrompt(const QString &html, int width) const
 {
     return draw(html, width, HtmlFeedback::Prompt);
 }
 
-QImage HtmlFeedback::drawSuccess(const QString &html, int width) const
+QPixmap HtmlFeedback::drawSuccess(const QString &html, int width) const
 {
     return draw(html, width, HtmlFeedback::Success);
 }
 
-QImage HtmlFeedback::draw(const QString &html, int width, Style style) const
+QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
 {
     Q_D(const HtmlFeedback);
 
@@ -90,7 +90,7 @@ QImage HtmlFeedback::draw(const QString &html, int width, Style style) const
     htmlDoc.setHtml(html);
 
     QSizeF size = htmlDoc.size();
-    QImage pixmap(width, size.height() + cm * 2, QImage::Format_RGB32);
+    QPixmap pixmap(width, size.height() + cm * 2);
     pixmap.fill(backgroundColor);
 
     QPainter painter(&pixmap);
