@@ -95,10 +95,27 @@ CqSqlite::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-QHash<Member, qint64> MemberWelcome::welcome() const
+QHash<Member, qint64> MemberWelcome::members() const
 {
     Q_D(const MemberWelcome);
+
     return d->welcome;
+}
+
+void MemberWelcome::expiredMembers(MemberList &members)
+{
+    Q_D(MemberWelcome);
+    QWriteLocker locker(&d->guard);
+
+    qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    QMutableHashIterator<Member, qint64> iter(d->welcome);
+    while (iter.hasNext()) {
+        iter.next();
+        if ((iter.value() + 1800000) < now) {
+            members << iter.key();
+            iter.remove();
+        }
+    }
 }
 
 // class MemberWelcomePrivate

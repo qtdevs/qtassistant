@@ -2,6 +2,7 @@
 #define MEMBERWELCOME_H
 
 #include <QHash>
+
 #include "cqsqlite.h"
 
 class MemberWelcomePrivate;
@@ -19,7 +20,8 @@ public:
     Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> welcome() const;
+    QHash<Member, qint64> members() const;
+    void expiredMembers(MemberList &members);
 };
 
 #endif // MEMBERWELCOME_H

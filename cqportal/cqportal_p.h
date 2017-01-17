@@ -3,9 +3,8 @@
 
 #include "cqportal.h"
 
-class CqPortalPrivate : public QObject
+class CqPortalPrivate
 {
-    Q_OBJECT
     Q_DECLARE_PUBLIC(CqPortal)
 
 public:

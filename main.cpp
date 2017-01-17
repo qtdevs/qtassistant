@@ -1,14 +1,14 @@
 #include <QtCore>
 #include <QtWidgets>
 
-#include "cqassistant.h"
+#include "qtassistant.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    CqAssistant assistant;
+    QtAssistant assistant;
     Q_UNUSED(assistant);
 
     QWidget mainWindow;

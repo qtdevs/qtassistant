@@ -2,6 +2,7 @@
 #define MEMBERBLACKLIST_H
 
 #include <QHash>
+
 #include "cqsqlite.h"
 
 class MemberBlacklistPrivate;

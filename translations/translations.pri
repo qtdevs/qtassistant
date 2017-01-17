@@ -1,7 +1,7 @@
 TSFILES += \
-    $$PWD/cqassistant_zh.ts
+    $$PWD/qtassistant_zh.ts
+RESOURCES += \
+    $$PWD/translations.qrc
 
 TRANSLATIONS = $$TSFILES
 OTHER_FILES = $$TSFILES
-RESOURCES += \
-    $$PWD/translations.qrc

@@ -1,25 +1,24 @@
-#ifndef CQASSISTANT_P_H
-#define CQASSISTANT_P_H
+#ifndef QtAssistant_P_H
+#define QtAssistant_P_H
 
 #include "cqportal_p.h"
-#include "cqassistant.h"
+#include "qtassistant.h"
 
 class MasterLevels;
 class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
-#include "datas/masterlevels.h"
+#include "sqldatas/masterlevels.h"
 #include "htmlfeedback/htmlfeedback.h"
 
-class CqAssistantPrivate : public CqPortalPrivate
+class QtAssistantPrivate : public CqPortalPrivate
 {
-    Q_OBJECT
-    Q_DECLARE_PUBLIC(CqAssistant)
+    Q_DECLARE_PUBLIC(QtAssistant)
 
 public:
-    CqAssistantPrivate();
-    virtual ~CqAssistantPrivate();
+    QtAssistantPrivate();
+    virtual ~QtAssistantPrivate();
 
 private:
     MasterLevels *levels;
@@ -27,10 +26,7 @@ private:
     MemberBlacklist *blacklist;
     MemberDeathHouse *deathHouse;
 
-private:
-    void timerEvent(QTimerEvent *) Q_DECL_FINAL;
-private:
-    int timerId;
+    int checkTimerId;
 
 private:
     LevelInfoList findUsers(const QStringList &args) const;
@@ -85,4 +81,4 @@ private:
     HtmlFeedback *htmlFeedback;
 };
 
-#endif // CQASSISTANT_P_H
+#endif // QtAssistant_P_H

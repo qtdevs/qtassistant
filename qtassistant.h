@@ -1,19 +1,19 @@
-#ifndef CQASSISTANT_H
-#define CQASSISTANT_H
+#ifndef QTASSISTANT_H
+#define QTASSISTANT_H
 
 #include "cqportal.h"
 
-// class CqAssistant
+// class QtAssistant
 
-class CqAssistantPrivate;
-class CqAssistant : public CqPortal
+class QtAssistantPrivate;
+class QtAssistant : public CqPortal
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(CqAssistant)
+    Q_DECLARE_PRIVATE(QtAssistant)
 
 public:
-    explicit CqAssistant(QObject *parent = Q_NULLPTR);
-    virtual ~CqAssistant();
+    explicit QtAssistant(QObject *parent = Q_NULLPTR);
+    virtual ~QtAssistant();
 
 public:
     bool privateMessageEventFilter(const MessageEvent &ev) Q_DECL_OVERRIDE;
@@ -27,6 +27,9 @@ public:
     bool friendAddEventFilter(const FriendAddEvent &ev) Q_DECL_OVERRIDE;
     bool memberJoinEventFilter(const MemberJoinEvent &ev) Q_DECL_OVERRIDE;
     bool memberLeaveEventFilter(const MemberLeaveEvent &ev) Q_DECL_OVERRIDE;
+
+private:
+    void timerEvent(QTimerEvent *) Q_DECL_FINAL;
 };
 
-#endif // CQASSISTANT_H
+#endif // QTASSISTANT_H

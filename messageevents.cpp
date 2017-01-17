@@ -1,5 +1,5 @@
-#include "cqassistant.h"
-#include "cqassistant_p.h"
+#include "qtassistant.h"
+#include "qtassistant_p.h"
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -7,45 +7,43 @@
 #include <QTextStream>
 #include <QPixmap>
 
-#include "datas/masterlevels.h"
-#include "datas/memberwelcome.h"
-#include "datas/memberblacklist.h"
-#include "datas/memberdeathhouse.h"
+#include "sqldatas/masterlevels.h"
+#include "sqldatas/memberwelcome.h"
+#include "sqldatas/memberblacklist.h"
+#include "sqldatas/memberdeathhouse.h"
 
-bool cqStartsWith(const char *str, const char *pre)
-{
-    return (strncmp(str, pre, strlen(pre)) == 0);
-}
+// class QtAssistant
 
-// class CqAssistant
-
-bool CqAssistant::privateMessageEventFilter(const MessageEvent &ev)
+bool QtAssistant::privateMessageEventFilter(const MessageEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
+bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
 {
-    Q_D(CqAssistant);
-    QStringList args;
+    Q_D(QtAssistant);
 
+    // 黑名单检查，如果发现匹配，直接踢出。
+    if (d->blacklist->contains(ev.from, ev.sender)) {
+        kickGroupMember(ev.from, ev.sender, false);
+        return true;
+    }
+
+    // 移出新手监控，不再进行监视。
     d->welcome->removeMember(ev.from, ev.sender);
 
-    if (d->blacklist->contains(ev.from, ev.sender)) {
-        sendGroupMessage(ev.from, tr("%1 is in the blacklist, kick out.").arg(ev.sender));
-        kickGroupMember(ev.from, ev.sender, false);
-    }
-
+    // 分离参数。
+    QStringList args;
     if ((ev.gbkMsg[0] == '!')) {
-        QString msg = convert(ev.gbkMsg).mid(1);
-        args = msg.split(' ', QString::SkipEmptyParts);
-    }
-    if (cqStartsWith(ev.gbkMsg, "sudo")) {
-        QString msg = convert(ev.gbkMsg).mid(4);
-        args = msg.split(' ', QString::SkipEmptyParts);
+        QString msgs = convert(ev.gbkMsg).mid(1);
+        args = msgs.split(' ', QString::SkipEmptyParts);
+    } else if (strncmp(ev.gbkMsg, "sudo", 4) == 0) {
+        QString msgs = convert(ev.gbkMsg).mid(4);
+        args = msgs.split(' ', QString::SkipEmptyParts);
     }
 
+    // 命令派发。
     if (!args.isEmpty()) {
         QString c = args.value(0);
 
@@ -114,15 +112,15 @@ bool CqAssistant::groupMessageEventFilter(const MessageEvent &ev)
     return false;
 }
 
-bool CqAssistant::discussMessageEventFilter(const MessageEvent &ev)
+bool QtAssistant::discussMessageEventFilter(const MessageEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-// class CqAssistantPrivate
+// class QtAssistantPrivate
 
-void CqAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &args)
 {
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -152,8 +150,10 @@ void CqAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &ar
     showPrompt(ev.from, "全部命令清单", usage);
 }
 
-void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &args)
 {
+    Q_Q(QtAssistant);
+
     MasterLevel level = levels->level(ev.from, ev.sender);
 
     LevelInfoList ll = findUsers(args);
@@ -169,7 +169,7 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
         const auto &argv = args.at(i);
 
         if ((argv == QLatin1String("g"))
-                   || (argv == QLatin1String("global"))) {
+                || (argv == QLatin1String("global"))) {
             if (argvGlobalRead) {
                 invalidArg = true;
                 break;
@@ -196,24 +196,28 @@ void CqAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
         if (argvListRead) {
             if (MasterLevel::Unknown != level) {
                 ll = levels->levels(argvGlobalRead ? 0 : ev.from);
-                showPromptList(ev.from, argvGlobalRead ? tr("Global Level List") : tr("Local Level List"), ll, true);
+                if (argvGlobalRead) {
+                    showPromptList(ev.from, q->tr("Global Level List"), ll, true);
+                } else {
+                    showPromptList(ev.from, q->tr("Local Level List"), ll, true);
+                }
             }
         } else {
             MasterLevel level = levels->level(argvGlobalRead ? 0 : ev.from, ev.sender);
             ll.append(LevelInfo(ev.sender, level));
-            showPromptList(ev.from, argvGlobalRead ? tr("Global Level") : tr("Local Level"), ll, true);
+            showPromptList(ev.from, argvGlobalRead ? q->tr("Global Level") : q->tr("Local Level"), ll, true);
         }
     } else if (!argvListRead) {
         if (MasterLevel::Unknown != level) {
             levels->update(argvGlobalRead ? 0 : ev.from, ll);
-            showPromptList(ev.from, argvGlobalRead ? tr("Global Level List") : tr("Local Level List"), ll, true);
+            showPromptList(ev.from, argvGlobalRead ? q->tr("Global Level List") : q->tr("Local Level List"), ll, true);
         }
     }
 }
 
-void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    Q_Q(QtAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -269,13 +273,13 @@ void CqAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
         }
 
         q->renameGroupMember(ev.from, uid, name);
-        showSuccess(ev.from, tr("Rename"), tr("Nickname Changed: %1").arg(name));
+        showSuccess(ev.from, q->tr("Rename"), q->tr("Nickname Changed: %1").arg(name));
     }
 }
 
-void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    Q_Q(QtAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -370,18 +374,20 @@ void CqAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to ban the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to ban the following masters"), masters, true);
         return;
     }
 
     for (const LevelInfo &li : ll) {
         q->banGroupMember(ev.from, li.uid, duration);
     }
-    showSuccessList(ev.from, tr("The following members have been banned"), ll, false);
+    showSuccessList(ev.from, q->tr("The following members have been banned"), ll, false);
 }
 
-void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &args)
 {
+    Q_Q(QtAssistant);
+
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
@@ -414,7 +420,7 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to kill the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to kill the following masters"), masters, true);
         return;
     }
 
@@ -422,11 +428,13 @@ void CqAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
         deathHouse->addMember(ev.from, li.uid);
     }
 
-    showSuccessList(ev.from, tr("The following members have been killed soon"), ll, true);
+    showSuccessList(ev.from, q->tr("The following members have been killed soon"), ll, true);
 }
 
-void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &args)
 {
+    Q_Q(QtAssistant);
+
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
@@ -527,7 +535,7 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to kill the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to kill the following masters"), masters, true);
         return;
     }
 
@@ -535,12 +543,12 @@ void CqAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
         levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
         li.level = newLevel;
     }
-    showSuccessList(ev.from, tr("The following members have been repowered"), ll, true);
+    showSuccessList(ev.from, q->tr("The following members have been repowered"), ll, true);
 }
 
-void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    Q_Q(QtAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -575,18 +583,20 @@ void CqAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to unban the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to unban the following masters"), masters, true);
         return;
     }
 
     for (const LevelInfo &li : ll) {
         q->banGroupMember(ev.from, li.uid, 0);
     }
-    showSuccessList(ev.from, tr("The following members have been unbanned"), ll, false);
+    showSuccessList(ev.from, q->tr("The following members have been unbanned"), ll, false);
 }
 
-void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &args)
 {
+    Q_Q(QtAssistant);
+
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
@@ -620,18 +630,20 @@ void CqAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to unkill the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to unkill the following masters"), masters, true);
         return;
     }
 
     for (const LevelInfo &li : ll) {
         deathHouse->removeMember(ev.from, li.uid);
     }
-    showSuccessList(ev.from, tr("The following members have been unkilled"), ll, false);
+    showSuccessList(ev.from, q->tr("The following members have been unkilled"), ll, false);
 }
 
-void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList &args)
 {
+    Q_Q(QtAssistant);
+
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
@@ -692,19 +704,19 @@ void CqAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
         }
     }
     if (!masters.isEmpty()) {
-        showDangerList(ev.from, tr("You have no rights to unpower the following masters"), masters, true);
+        showDangerList(ev.from, q->tr("You have no rights to unpower the following masters"), masters, true);
         return;
     }
 
     for (const LevelInfo &li : ll) {
         levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, MasterLevel::Unknown);
     }
-    showSuccessList(ev.from, tr("The following members have been unpowered"), ll, true);
+    showSuccessList(ev.from, q->tr("The following members have been unpowered"), ll, true);
 }
 
-void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    Q_Q(QtAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -762,13 +774,13 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
         if (argvOption == 3) {
             if (ll.isEmpty()) {
                 QDateTime now = QDateTime::currentDateTime();
-                QHashIterator<Member, qint64> i(welcome->welcome());
+                QHashIterator<Member, qint64> i(welcome->members());
                 while (i.hasNext()) {
                     i.next();
                     QDateTime stamp = QDateTime::fromMSecsSinceEpoch(i.value()).addSecs(1800);
-                    members << tr("%1 will kicked in %2 minute(s).").arg(q->cqAt(i.key().second)).arg(now.secsTo(stamp) / 60);
+                    members << q->tr("%1 will kicked in %2 minute(s).").arg(q->cqAt(i.key().second)).arg(now.secsTo(stamp) / 60);
                 }
-                members.prepend(tr("Welcome List:"));
+                members.prepend(q->tr("Welcome List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
 
                 return;
@@ -782,7 +794,7 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
                     } else {
                         if (argvOption == 1) {
                             welcome->addMember(ev.from, li.uid);
-                            q->sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->cqAt(li.uid)));
+                            q->sendGroupMessage(ev.from, q->tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->cqAt(li.uid)));
                         } else if (argvOption == 2) {
                             welcome->removeMember(ev.from, li.uid);
                         }
@@ -792,14 +804,14 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
 
                 QStringList reply;
                 if (!masters.isEmpty()) {
-                    reply << tr("Permission Denied:");
+                    reply << q->tr("Permission Denied:");
                     reply << masters;
                 }
                 if (!members.isEmpty()) {
                     if (argvOption == 1) {
-                        reply << tr("Welcome Add List:");
+                        reply << q->tr("Welcome Add List:");
                     } else if (argvOption == 2) {
-                        reply << tr("Welcome Delete List:");
+                        reply << q->tr("Welcome Delete List:");
                     }
                     reply << members;
                 }
@@ -810,12 +822,12 @@ void CqAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
         }
     }
 
-    q->sendGroupMessage(ev.from, tr("welcome [add|delete] @Member1 [@Member2] [@Member3] ..."));
+    q->sendGroupMessage(ev.from, q->tr("welcome [add|delete] @Member1 [@Member2] [@Member3] ..."));
 }
 
-void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringList &args)
+void QtAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(CqAssistant);
+    Q_Q(QtAssistant);
 
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
@@ -881,7 +893,7 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
                     i.next();
                     members << q->cqAt(i.key().second);
                 }
-                members.prepend(tr("Blacklist List:"));
+                members.prepend(q->tr("Blacklist List:"));
                 q->sendGroupMessage(ev.from, members.join("\n"));
 
                 return;
@@ -904,14 +916,14 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
 
                 QStringList reply;
                 if (!masters.isEmpty()) {
-                    reply << tr("Permission Denied:");
+                    reply << q->tr("Permission Denied:");
                     reply << masters;
                 }
                 if (!members.isEmpty()) {
                     if (argvOption == 1) {
-                        reply << tr("Blacklist Add List:");
+                        reply << q->tr("Blacklist Add List:");
                     } else if (argvOption == 2) {
-                        reply << tr("Blacklist Delete List:");
+                        reply << q->tr("Blacklist Delete List:");
                     }
                     reply << members;
                 }
@@ -922,15 +934,15 @@ void CqAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
         }
     }
 
-    q->sendGroupMessage(ev.from, tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
+    q->sendGroupMessage(ev.from, q->tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
 }
 
-void CqAssistantPrivate::groupHelpHelp(qint64 gid)
+void QtAssistantPrivate::groupHelpHelp(qint64 gid)
 {
     Q_UNUSED(gid);
 }
 
-void CqAssistantPrivate::groupLevelHelp(qint64 gid)
+void QtAssistantPrivate::groupLevelHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -945,7 +957,7 @@ void CqAssistantPrivate::groupLevelHelp(qint64 gid)
     showPrompt(gid, "等级查询操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupRenameHelp(qint64 gid)
+void QtAssistantPrivate::groupRenameHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -960,7 +972,7 @@ void CqAssistantPrivate::groupRenameHelp(qint64 gid)
     showPrompt(gid, "改名操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupBanHelp(qint64 gid)
+void QtAssistantPrivate::groupBanHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -979,7 +991,7 @@ void CqAssistantPrivate::groupBanHelp(qint64 gid)
     showPrompt(gid, "禁言操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupKillHelp(qint64 gid)
+void QtAssistantPrivate::groupKillHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -994,7 +1006,7 @@ void CqAssistantPrivate::groupKillHelp(qint64 gid)
     showPrompt(gid, "踢出操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupPowerHelp(qint64 gid)
+void QtAssistantPrivate::groupPowerHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1011,7 +1023,7 @@ void CqAssistantPrivate::groupPowerHelp(qint64 gid)
     showPrompt(gid, "赋权操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupUnbanHelp(qint64 gid)
+void QtAssistantPrivate::groupUnbanHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1026,7 +1038,7 @@ void CqAssistantPrivate::groupUnbanHelp(qint64 gid)
     showPrompt(gid, "解禁操作的用法", usage);
 }
 
-void CqAssistantPrivate::groupUnkillHelp(qint64 gid)
+void QtAssistantPrivate::groupUnkillHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1041,7 +1053,7 @@ void CqAssistantPrivate::groupUnkillHelp(qint64 gid)
     showPrompt(gid, "取消踢出的用法", usage);
 }
 
-void CqAssistantPrivate::groupUnpowerHelp(qint64 gid)
+void QtAssistantPrivate::groupUnpowerHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);

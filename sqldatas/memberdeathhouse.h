@@ -2,6 +2,7 @@
 #define MEMBERDEATHHOUSE_H
 
 #include <QHash>
+
 #include "cqsqlite.h"
 
 class MemberDeathHousePrivate;
@@ -19,7 +20,8 @@ public:
     Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> deathHouse() const;
+    QHash<Member, qint64> members() const;
+    void expiredMembers(MemberList &members);
 };
 
 #endif // MEMBERDEATHHOUSE_H

@@ -2,6 +2,7 @@
 #define MASTERLEVELS_H
 
 #include <QHash>
+
 #include "cqsqlite.h"
 
 enum class MasterLevel {
