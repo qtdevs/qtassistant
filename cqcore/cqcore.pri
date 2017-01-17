@@ -8,7 +8,7 @@ HEADERS += $$PWD/cqapi/cqapi.h
 LIBS    += -l$$PWD/cqapi/cqapi
 
 HEADERS += \
-    $$PWD/cqglobalvalues.h \
+    $$PWD/cqglobalevents.h \
     $$PWD/cqpersoninfo.h \
     $$PWD/cqpersoninfo_p.h \
     $$PWD/cqmemberinfo.h \
@@ -19,6 +19,7 @@ HEADERS += \
     $$PWD/cqsqlite_p.h
 
 SOURCES += \
+    $$PWD/cqglobalevents.cpp \
     $$PWD/cqpersoninfo.cpp \
     $$PWD/cqmemberinfo.cpp \
     $$PWD/cqportal.cpp \

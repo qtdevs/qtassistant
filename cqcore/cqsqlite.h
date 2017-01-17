@@ -1,7 +1,9 @@
 #ifndef CQSQLITE_H
 #define CQSQLITE_H
 
-#include "cqglobalvalues.h"
+#include <QSqlQuery>
+
+#include "cqglobalevents.h"
 
 class CqSqlitePrivate;
 class CqSqlite : public QObject
@@ -18,6 +20,16 @@ public:
 
 public:
     enum Result { NoChange, Done, SqlError };
+
+protected:
+    void setFileName(const QString &fileName);
+    void prepare(const QString &s);
+    bool openDatabase();
+
+protected:
+    QSqlQuery query(const QByteArray &sql);
+    QSqlQuery query(const QString &sql);
+    QSqlQuery query(const char *sql);
 };
 
 #endif // CQSQLITE_H

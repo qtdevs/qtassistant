@@ -1,7 +1,7 @@
 #ifndef CQPORTAL_H
 #define CQPORTAL_H
 
-#include "cqglobalvalues.h"
+#include "cqglobalevents.h"
 #include "cqpersoninfo.h"
 #include "cqmemberinfo.h"
 

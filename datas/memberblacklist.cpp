@@ -17,7 +17,7 @@ MemberBlacklist::MemberBlacklist(QObject *parent)
 {
     Q_D(MemberBlacklist);
 
-    d->setFileName(QStringLiteral("Blacklist.db"));
+    setFileName(QStringLiteral("Blacklist.db"));
 
     do {
         const char sql[] = "CREATE TABLE IF NOT EXISTS [Blacklist] ("
@@ -25,13 +25,13 @@ MemberBlacklist::MemberBlacklist(QObject *parent)
                            "[uid] INT8 NOT NULL, "
                            "[stamp] INT8 NOT NULL, "
                            "PRIMARY KEY ([gid], [uid]));";
-        d->prepare(QString::fromLatin1(sql));
+        prepare(QString::fromLatin1(sql));
     } while (false);
 
-    if (d->openDatabase()) {
+    if (openDatabase()) {
         do {
             const char sql[] = "SELECT * FROM [Blacklist];";
-            QSqlQuery query = d->query(sql);
+            QSqlQuery query = this->query(sql);
             while (query.next()) {
                 qint64 gid = query.value(0).toLongLong();
                 qint64 uid = query.value(1).toLongLong();
@@ -56,7 +56,7 @@ CqSqlite::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
         qint64 stamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
         const char sql[] = "REPLACE INTO [Blacklist] VALUES(%1, %2, %3);";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid).arg(stamp);
-        QSqlQuery query = d->query(qtSql);
+        QSqlQuery query = this->query(qtSql);
         if (query.lastError().isValid()) {
             qCCritical(qlcMemberBlacklist, "Update error: %s",
                        qPrintable(query.lastError().text()));
@@ -80,7 +80,7 @@ CqSqlite::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
     if (d->blacklist.contains(member)) {
         const char sql[] = "DELETE FROM [Blacklist] WHERE [gid] = %1 AND [uid] = %2;";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
-        QSqlQuery query = d->query(qtSql);
+        QSqlQuery query = this->query(qtSql);
         if (query.lastError().isValid()) {
             qCCritical(qlcMemberBlacklist, "Delete error: %s",
                        qPrintable(query.lastError().text()));

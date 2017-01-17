@@ -1,5 +1,5 @@
-#ifndef CQGLOBALVALUES_H
-#define CQGLOBALVALUES_H
+#ifndef CQGLOBALEVENTS_H
+#define CQGLOBALEVENTS_H
 
 #include <QObject>
 #include <QVector>
@@ -75,4 +75,4 @@ struct MemberLeaveEvent
     qint64 member;
 };
 
-#endif // CQGLOBALVALUES_H
+#endif // CQGLOBALEVENTS_H

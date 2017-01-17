@@ -29,6 +29,75 @@ CqSqlite::~CqSqlite()
 {
 }
 
+void CqSqlite::setFileName(const QString &fileName)
+{
+    Q_D(CqSqlite);
+
+    d->fileName = fileName;
+}
+
+void CqSqlite::prepare(const QString &s)
+{
+    Q_D(CqSqlite);
+
+    d->prepareSqls.append(s);
+}
+
+bool CqSqlite::openDatabase()
+{
+    Q_D(CqSqlite);
+
+    if (d->fileName.isEmpty()) {
+        return false;
+    }
+
+    d->dbs = QSqlDatabase::addDatabase("QSQLITE", d->fileName);
+    QString sqliteFileName = QDir::cleanPath(d->basePath % "/" % d->fileName);
+    d->dbs.setDatabaseName(sqliteFileName);
+    if (!d->dbs.open()) {
+        qCCritical(qlcCqSqlite, "%s: Open failed: %s",
+                   qPrintable(sqliteFileName),
+                   qPrintable(d->dbs.lastError().text()));
+        return false;
+    }
+
+    for (const QString &sql: d->prepareSqls) {
+        QSqlQuery result = d->dbs.exec(sql);
+        if (result.lastError().isValid()) {
+            qCCritical(qlcCqSqlite, "%s: Prepare failed: %s",
+                       qPrintable(sqliteFileName),
+                       qPrintable(result.lastError().text()));
+            return false;
+        }
+    }
+
+    qCInfo(qlcCqSqlite, "%s: Ready.",
+           qPrintable(sqliteFileName));
+
+    return true;
+}
+
+QSqlQuery CqSqlite::query(const QByteArray &sql)
+{
+    Q_D(CqSqlite);
+
+    return QSqlQuery(QString::fromLatin1(sql), d->dbs);
+}
+
+QSqlQuery CqSqlite::query(const QString &sql)
+{
+    Q_D(CqSqlite);
+
+    return QSqlQuery(sql, d->dbs);
+}
+
+QSqlQuery CqSqlite::query(const char *sql)
+{
+    Q_D(CqSqlite);
+
+    return QSqlQuery(QString::fromLatin1(sql), d->dbs);
+}
+
 // class CqSqlitePrivate
 
 QString CqSqlitePrivate::basePath;
@@ -40,57 +109,4 @@ CqSqlitePrivate::CqSqlitePrivate()
 
 CqSqlitePrivate::~CqSqlitePrivate()
 {
-}
-
-void CqSqlitePrivate::setFileName(const QString &fileName)
-{
-    this->fileName = fileName;
-}
-
-void CqSqlitePrivate::prepare(const QString &s)
-{
-    prepareSqls.append(s);
-}
-
-bool CqSqlitePrivate::openDatabase()
-{
-    dbs = QSqlDatabase::addDatabase("QSQLITE", fileName);
-    QString fileFullName = QDir::cleanPath(basePath % "/" % fileName);
-    dbs.setDatabaseName(fileFullName);
-    if (!dbs.open()) {
-        qCCritical(qlcCqSqlite, "%s: Open failed: %s",
-                   qPrintable(fileFullName),
-                   qPrintable(dbs.lastError().text()));
-        return false;
-    }
-
-    for (const QString &sql: prepareSqls) {
-        QSqlQuery result = dbs.exec(sql);
-        if (result.lastError().isValid()) {
-            qCCritical(qlcCqSqlite, "%s: Prepare failed: %s",
-                       qPrintable(fileFullName),
-                       qPrintable(result.lastError().text()));
-            return false;
-        }
-    }
-
-    qCInfo(qlcCqSqlite, "%s: Ready.",
-           qPrintable(fileFullName));
-
-    return true;
-}
-
-QSqlQuery CqSqlitePrivate::query(const QByteArray &sql)
-{
-    return QSqlQuery(QString::fromLatin1(sql), dbs);
-}
-
-QSqlQuery CqSqlitePrivate::query(const QString &sql)
-{
-    return QSqlQuery(sql, dbs);
-}
-
-QSqlQuery CqSqlitePrivate::query(const char *sql)
-{
-    return QSqlQuery(QString::fromLatin1(sql), dbs);
 }

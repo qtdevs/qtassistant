@@ -16,7 +16,7 @@ MasterLevels::MasterLevels(QObject *parent)
 {
     Q_D(MasterLevels);
 
-    d->setFileName(QStringLiteral("Levels.db"));
+    setFileName(QStringLiteral("Levels.db"));
 
     do {
         const char sql[] = "CREATE TABLE IF NOT EXISTS [Levels] ("
@@ -24,12 +24,12 @@ MasterLevels::MasterLevels(QObject *parent)
                            "[uid] INT8 NOT NULL, "
                            "[level] INT8 NOT NULL, "
                            "PRIMARY KEY ([gid], [uid]));";
-        d->prepare(QString::fromLatin1(sql));
+        prepare(QString::fromLatin1(sql));
     } while (false);
 
-    if (d->openDatabase()) {
+    if (openDatabase()) {
         const char sql[] = "SELECT * FROM [Levels];";
-        QSqlQuery query = d->query(sql);
+        QSqlQuery query = this->query(sql);
         while (query.next()) {
             qint64 gid = query.value(0).toLongLong();
             qint64 uid = query.value(1).toLongLong();
@@ -135,7 +135,7 @@ bool MasterLevels::setLevel(qint64 gid, qint64 uid, MasterLevel level)
     if (MasterLevel::Unknown != level) {
         const char sql[] = "REPLACE INTO [Levels] VALUES(%1, %2, %3);";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid).arg(levelCast(level));
-        QSqlQuery query = d->query(qtSql);
+        QSqlQuery query = this->query(qtSql);
         if (query.lastError().isValid()) {
             qCCritical(qlcMasterLevels, "Update error: %s",
                        qPrintable(query.lastError().text()));
@@ -149,7 +149,7 @@ bool MasterLevels::setLevel(qint64 gid, qint64 uid, MasterLevel level)
     } else {
         const char sql[] = "DELETE FROM [Levels] WHERE [gid] = %1 AND [uid] = %2;";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
-        QSqlQuery query = d->query(qtSql);
+        QSqlQuery query = this->query(qtSql);
         if (query.lastError().isValid()) {
             qCCritical(qlcMasterLevels, "Delete error: %s",
                        qPrintable(query.lastError().text()));

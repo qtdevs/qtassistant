@@ -18,18 +18,6 @@ protected:
 
 public:
     static QString basePath;
-
-public:
-    void setFileName(const QString &fileName);
-    void prepare(const QString &s);
-    bool openDatabase();
-
-public:
-    QSqlQuery query(const QByteArray &sql);
-    QSqlQuery query(const QString &sql);
-    QSqlQuery query(const char *sql);
-
-public:
     mutable QReadWriteLock guard;
 
 private:
