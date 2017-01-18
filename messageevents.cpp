@@ -40,6 +40,9 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
     } else if (strncmp(ev.gbkMsg, "sudo", 4) == 0) {
         QString msgs = convert(ev.gbkMsg).mid(4);
         args = msgs.split(' ', QString::SkipEmptyParts);
+    } else if ((-93 == ev.gbkMsg[0]) && (-95 == ev.gbkMsg[1])) {
+        QString msgs = convert(ev.gbkMsg).mid(1);
+        args = msgs.split(' ', QString::SkipEmptyParts);
     }
 
     // 命令派发。
