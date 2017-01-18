@@ -297,9 +297,11 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
             }
         } else if (ll.isEmpty()) {
             // 在还没有找到号码的情况下，我们认为这是新名片的开始。
+            if (!prefixFound) {
+                int r = name.indexOf(arg);
+                name = name.mid(r);
+            }
             prefixFound = true;
-            int r = name.indexOf(arg);
-            name = name.mid(r);
         }
     }
     if (invalidArgs) {
@@ -309,8 +311,8 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 
     // 在这里，我们对新名片做规范化处理。
     name.remove(' '); // 消除空格，不允许有空格。
-    name.replace('\u3010', '['); // 替换全角方括号，用半角方括号替代。
-    name.replace('\u3011', ']'); // 替换全角方括号，用半角方括号替代。
+    name.replace("【", "["); // 替换全角方括号，用半角方括号替代。
+    name.replace("】", "]"); // 替换全角方括号，用半角方括号替代。
 
     if (name.isEmpty()) {
         groupRenameHelp(ev.from);
