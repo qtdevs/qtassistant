@@ -160,16 +160,28 @@ void QtAssistant::feedbackList(qint64 gid, const QString &title, const LevelInfo
             ds << "</span><div>";
             for (; i < members.count(); ++i) {
                 const LevelInfo &li = members.at(i);
-                CqMemberInfo mi = memberInfo(gid, li.uid);
                 ds << "<p class=\"c\">";
                 if (level) {
                     ds << MasterLevels::levelName(li.level) << tr(": ");
                 }
-                if (!mi.nameCard().isEmpty()) {
-                    ds << mi.nameCard() << "</p>";
+                CqMemberInfo mi = memberInfo(gid, li.uid);
+                if (mi.isValid()) {
+                    if (!mi.nameCard().isEmpty()) {
+                        ds << mi.nameCard();
+                    } else {
+                        ds << mi.nickName();
+                    }
                 } else {
-                    ds << mi.nickName() << "</p>";
+                    CqPersonInfo pi = personInfo(li.uid);
+                    if (pi.isValid()) {
+                        ds << pi.nickName();
+                    } else {
+                        ds << QString::number(li.uid);
+                    }
+                    ds << "<span>(" << tr("不在本群") << ")</span>";
                 }
+                ds << "</p>";
+
                 if (i == cc) {
                     ++i;
                     break;
