@@ -122,8 +122,14 @@ bool QtAssistant::discussMessageEventFilter(const MessageEvent &ev)
 
 void QtAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &args)
 {
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 五级管理及以上。
+    if (level > MasterLevel::Master5) {
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -142,7 +148,6 @@ void QtAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &ar
     ts << QString::fromUtf8("  取消踢出(3+): <code>uk,unkill</code>\n");
     ts << QString::fromUtf8("  提权命令(1+): <code>p,power</code>\n");
     ts << QString::fromUtf8("  取消提权(1+): <code>up,unpower</code>\n");
-
     ts << "</pre>";
 
     ts.flush();
@@ -219,14 +224,18 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 五级管理及以上。
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
+
+    // !!! 由于此命令的特殊性，命令行解析自行分析。
 
     QString name = q->convert(ev.gbkMsg);
 
@@ -240,11 +249,13 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
             ll.append(LevelInfo(uid.toLongLong(),
                                 MasterLevel::Unknown));
 
+            // 如果找到了号码，同时找到了部分新名片，我们认为它是无效的命令。
             if (prefixFound) {
                 invalidArgs = true;
                 break;
             }
 
+            // 如果只找到一个号码，我们认为号码以后的部分都是新名片；否则就是无效的命令。
             if (ll.count() == 1) {
                 int r = name.indexOf(arg);
                 name = name.mid(r + arg.count());
@@ -253,38 +264,49 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
                 break;
             }
         } else if (ll.isEmpty()) {
+            // 在还没有找到号码的情况下，我们认为这是新名片的开始。
             prefixFound = true;
             int r = name.indexOf(arg);
             name = name.mid(r);
         }
     }
-
-    //newName = newName.replace("[", "[");
-    //newName = newName.replace("]", "]");
-
-    name = name.trimmed();
-
-    if (!invalidArgs && !name.isEmpty()) {
-        qint64 uid = 0;
-        if (ll.isEmpty()) {
-            uid = ev.sender;
-        } else {
-            uid = ll.at(0).uid;
-        }
-
-        q->renameGroupMember(ev.from, uid, name);
-        showSuccess(ev.from, q->tr("Rename"), q->tr("Nickname Changed: %1").arg(name));
+    if (invalidArgs) {
+        groupRenameHelp(ev.from);
+        return;
     }
+
+    // 在这里，我们对新名片做规范化处理。
+
+    name.remove(' '); // 消除空格，不允许有空格。
+    name.replace('\u3010', '['); // 替换全角方括号，用半角方括号替代。
+    name.replace('\u3011', ']'); // 替换全角方括号，用半角方括号替代。
+
+    if (name.isEmpty()) {
+        groupRenameHelp(ev.from);
+        return;
+    }
+
+    // 执行重命名操作。
+
+    if (ll.isEmpty()) {
+        q->renameGroupMember(ev.from, ev.sender, name);
+    } else {
+        q->renameGroupMember(ev.from, ll.at(0).uid, name);
+    }
+
+    showSuccess(ev.from, q->tr("Rename"), q->tr("Nickname Changed: %1").arg(name));
 }
 
 void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &args)
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 五级管理及以上。
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -388,10 +410,12 @@ void QtAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &ar
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 三级管理及以上。
     if (level > MasterLevel::Master3) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -435,10 +459,12 @@ void QtAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 首席管理及以上。
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -550,11 +576,12 @@ void QtAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &a
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
-
+    // 五级管理及以上。
     if (level > MasterLevel::Master5) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -597,12 +624,13 @@ void QtAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
-
-    if (level > MasterLevel::Master5) {
+    // 三级管理及以上。
+    if (level > MasterLevel::Master3) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
@@ -644,10 +672,12 @@ void QtAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 首席管理及以上。
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -718,10 +748,12 @@ void QtAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList 
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 首席管理及以上。
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
@@ -829,10 +861,12 @@ void QtAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringLis
 {
     Q_Q(QtAssistant);
 
+    // 普通成员不应答。
     MasterLevel level = levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
+    // 首席管理及以上。
     if (level > MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;

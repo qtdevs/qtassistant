@@ -55,16 +55,19 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
     d->welcome->addMember(ev.from, ev.member);
 
     // 尝试修改昵称。
-    bool newNameCard = false;
+    bool unknownLocation = false;
     CqMemberInfo mi = memberInfo(ev.from, ev.member);
     if (mi.isValid()) {
         QString nickName = mi.nickName().trimmed();
         QString location = mi.location().trimmed();
 
-        if (!nickName.isEmpty() && !location.isEmpty()) {
+        if (!nickName.isEmpty()) {
+            if (location.isEmpty()) {
+                unknownLocation = true;
+                location = tr("Location");
+            }
             QString nameCard = '[' % location % ']' % nickName;
             renameGroupMember(ev.from, ev.member, nameCard);
-            newNameCard = true;
         }
     }
 
