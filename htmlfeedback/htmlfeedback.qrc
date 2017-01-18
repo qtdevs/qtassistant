@@ -5,5 +5,10 @@
         <file>css/prompt.css</file>
         <file>css/success.css</file>
         <file>css/warning.css</file>
+        <file>img/danger.png</file>
+        <file>img/primary.png</file>
+        <file>img/prompt.png</file>
+        <file>img/success.png</file>
+        <file>img/warning.png</file>
     </qresource>
 </RCC>

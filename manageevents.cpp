@@ -74,9 +74,9 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
 
     // 发送欢迎卡片。
     if (unknownLocation) {
-        d->showWarning(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，并<span class=\"warning\">修改你的群名片</span>，否则将被自动踢出。谢谢你的配合！"));
+        showPrimary(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，并<span class=\"warning\">修改你的群名片</span>，否则将被自动踢出。<br />谢谢你的配合！"));
     } else {
-        d->showWarning(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，否则将被自动踢出。谢谢你的配合！"));
+        showPrimary(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，否则将被自动踢出。<br />谢谢你的配合！"));
     }
 
     sendGroupMessage(ev.from, cqAt(ev.member));

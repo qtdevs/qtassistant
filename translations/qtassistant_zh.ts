@@ -51,122 +51,110 @@
         <translation type="vanished">%1 在黑名单中，从群中踢出。</translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="168"/>
+        <location filename="../messageevents.cpp" line="170"/>
         <source>全部命令清单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="217"/>
+        <location filename="../messageevents.cpp" line="219"/>
         <source>跨群等级列表</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="219"/>
+        <location filename="../messageevents.cpp" line="221"/>
         <source>本群等级列表</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="226"/>
-        <location filename="../messageevents.cpp" line="234"/>
+        <location filename="../messageevents.cpp" line="228"/>
+        <location filename="../messageevents.cpp" line="236"/>
         <source>跨群等级</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="228"/>
-        <location filename="../messageevents.cpp" line="234"/>
+        <location filename="../messageevents.cpp" line="230"/>
+        <location filename="../messageevents.cpp" line="236"/>
         <source>本群等级</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="157"/>
-        <location filename="../messageevents.cpp" line="314"/>
+        <location filename="../messageevents.cpp" line="159"/>
+        <location filename="../messageevents.cpp" line="316"/>
         <source>修改名片</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="155"/>
+        <location filename="../messageevents.cpp" line="157"/>
         <source>帮助信息</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="156"/>
+        <location filename="../messageevents.cpp" line="158"/>
         <source>等级查询</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="158"/>
+        <location filename="../messageevents.cpp" line="160"/>
         <source>禁言命令</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="159"/>
+        <location filename="../messageevents.cpp" line="161"/>
         <source>取消禁言</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="160"/>
+        <location filename="../messageevents.cpp" line="162"/>
         <source>踢出命令</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="161"/>
+        <location filename="../messageevents.cpp" line="163"/>
         <source>取消踢出</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="162"/>
+        <location filename="../messageevents.cpp" line="164"/>
         <source>提权命令</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="163"/>
+        <location filename="../messageevents.cpp" line="165"/>
         <source>取消提权</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="314"/>
+        <location filename="../messageevents.cpp" line="316"/>
         <source>新的名片：%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="418"/>
-        <location filename="../messageevents.cpp" line="470"/>
-        <location filename="../messageevents.cpp" line="590"/>
-        <location filename="../messageevents.cpp" line="647"/>
-        <location filename="../messageevents.cpp" line="699"/>
-        <location filename="../messageevents.cpp" line="775"/>
-        <location filename="../messageevents.cpp" line="868"/>
-        <location filename="../messageevents.cpp" line="975"/>
-        <source>你没有权限对下列成员执行此操作</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../messageevents.cpp" line="428"/>
+        <location filename="../messageevents.cpp" line="430"/>
         <source>下列成员已经被禁言</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="480"/>
+        <location filename="../messageevents.cpp" line="482"/>
         <source>下列成员已经被加入驱逐队列</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="605"/>
+        <location filename="../messageevents.cpp" line="607"/>
         <source>下列成员已经被赋权</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="657"/>
+        <location filename="../messageevents.cpp" line="659"/>
         <source>下列成员已经被解禁</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="709"/>
+        <location filename="../messageevents.cpp" line="711"/>
         <source>下列成员已经被移出驱逐队列</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="790"/>
+        <location filename="../messageevents.cpp" line="792"/>
         <source>下列成员已经被降权</source>
         <translation></translation>
     </message>
@@ -207,190 +195,241 @@
         <translation type="vanished">blacklist [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="853"/>
+        <location filename="../messageevents.cpp" line="420"/>
+        <location filename="../messageevents.cpp" line="472"/>
+        <location filename="../messageevents.cpp" line="592"/>
+        <location filename="../messageevents.cpp" line="649"/>
+        <location filename="../messageevents.cpp" line="701"/>
+        <location filename="../messageevents.cpp" line="777"/>
+        <location filename="../messageevents.cpp" line="877"/>
+        <location filename="../messageevents.cpp" line="996"/>
+        <source>你没有权限执行此操作</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../messageevents.cpp" line="858"/>
+        <location filename="../messageevents.cpp" line="861"/>
         <source>新人监控</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="879"/>
+        <location filename="../messageevents.cpp" line="858"/>
+        <source>新人监控中没有任何成员</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../messageevents.cpp" line="888"/>
         <source>下列成员已经被加入新人监控</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="885"/>
+        <location filename="../messageevents.cpp" line="894"/>
         <source>下列成员已经被移出新人监控</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="957"/>
+        <location filename="../messageevents.cpp" line="970"/>
+        <location filename="../messageevents.cpp" line="977"/>
         <source>跨群黑名单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="959"/>
+        <location filename="../messageevents.cpp" line="970"/>
+        <location filename="../messageevents.cpp" line="972"/>
+        <source>黑名单中没有任何成员</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../messageevents.cpp" line="972"/>
+        <location filename="../messageevents.cpp" line="979"/>
         <source>本群黑名单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="986"/>
+        <location filename="../messageevents.cpp" line="1007"/>
         <source>下列成员已经被加入黑名单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="992"/>
+        <location filename="../messageevents.cpp" line="1013"/>
         <source>下列成员已经被移出黑名单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1009"/>
-        <location filename="../messageevents.cpp" line="1047"/>
-        <location filename="../messageevents.cpp" line="1085"/>
-        <location filename="../messageevents.cpp" line="1155"/>
-        <location filename="../messageevents.cpp" line="1174"/>
+        <location filename="../messageevents.cpp" line="1028"/>
+        <location filename="../messageevents.cpp" line="1062"/>
+        <location filename="../messageevents.cpp" line="1096"/>
+        <location filename="../messageevents.cpp" line="1158"/>
+        <location filename="../messageevents.cpp" line="1175"/>
         <source>参数</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1009"/>
-        <location filename="../messageevents.cpp" line="1029"/>
-        <location filename="../messageevents.cpp" line="1047"/>
-        <location filename="../messageevents.cpp" line="1068"/>
-        <location filename="../messageevents.cpp" line="1085"/>
-        <location filename="../messageevents.cpp" line="1104"/>
-        <location filename="../messageevents.cpp" line="1121"/>
-        <location filename="../messageevents.cpp" line="1138"/>
-        <location filename="../messageevents.cpp" line="1155"/>
-        <location filename="../messageevents.cpp" line="1174"/>
+        <location filename="../messageevents.cpp" line="1028"/>
+        <location filename="../messageevents.cpp" line="1046"/>
+        <location filename="../messageevents.cpp" line="1062"/>
+        <location filename="../messageevents.cpp" line="1081"/>
+        <location filename="../messageevents.cpp" line="1096"/>
+        <location filename="../messageevents.cpp" line="1113"/>
+        <location filename="../messageevents.cpp" line="1128"/>
+        <location filename="../messageevents.cpp" line="1143"/>
+        <location filename="../messageevents.cpp" line="1158"/>
+        <location filename="../messageevents.cpp" line="1175"/>
         <source>成员</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1010"/>
-        <location filename="../messageevents.cpp" line="1030"/>
-        <location filename="../messageevents.cpp" line="1048"/>
-        <location filename="../messageevents.cpp" line="1069"/>
-        <location filename="../messageevents.cpp" line="1086"/>
-        <location filename="../messageevents.cpp" line="1105"/>
-        <location filename="../messageevents.cpp" line="1122"/>
-        <location filename="../messageevents.cpp" line="1139"/>
-        <location filename="../messageevents.cpp" line="1156"/>
-        <location filename="../messageevents.cpp" line="1175"/>
+        <location filename="../messageevents.cpp" line="1029"/>
+        <location filename="../messageevents.cpp" line="1047"/>
+        <location filename="../messageevents.cpp" line="1063"/>
+        <location filename="../messageevents.cpp" line="1082"/>
+        <location filename="../messageevents.cpp" line="1097"/>
+        <location filename="../messageevents.cpp" line="1114"/>
+        <location filename="../messageevents.cpp" line="1129"/>
+        <location filename="../messageevents.cpp" line="1144"/>
+        <location filename="../messageevents.cpp" line="1159"/>
+        <location filename="../messageevents.cpp" line="1176"/>
         <source>权限要求：</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1011"/>
-        <location filename="../messageevents.cpp" line="1049"/>
-        <location filename="../messageevents.cpp" line="1087"/>
-        <location filename="../messageevents.cpp" line="1157"/>
-        <location filename="../messageevents.cpp" line="1176"/>
+        <location filename="../messageevents.cpp" line="1030"/>
+        <location filename="../messageevents.cpp" line="1064"/>
+        <location filename="../messageevents.cpp" line="1098"/>
+        <location filename="../messageevents.cpp" line="1160"/>
+        <location filename="../messageevents.cpp" line="1177"/>
         <source>参数列表：</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1012"/>
+        <location filename="../messageevents.cpp" line="1031"/>
         <source>跨群查询</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1013"/>
+        <location filename="../messageevents.cpp" line="1032"/>
         <source>列表查询</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1018"/>
+        <location filename="../messageevents.cpp" line="1037"/>
         <source>等级查询的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1029"/>
+        <location filename="../messageevents.cpp" line="1046"/>
         <source>名片</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1031"/>
+        <location filename="../messageevents.cpp" line="1048"/>
         <source>新的名片将会被格式化为统一样式，不允许出现空格。</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1050"/>
+        <location filename="../messageevents.cpp" line="1065"/>
         <source>禁言天数</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1051"/>
+        <location filename="../messageevents.cpp" line="1066"/>
         <source>禁言时数</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1052"/>
+        <location filename="../messageevents.cpp" line="1067"/>
         <source>禁言分数</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1057"/>
+        <location filename="../messageevents.cpp" line="1072"/>
         <source>禁言命令的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1074"/>
+        <location filename="../messageevents.cpp" line="1087"/>
         <source>踢出命令的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1088"/>
+        <location filename="../messageevents.cpp" line="1099"/>
         <source>权限等级</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1093"/>
+        <location filename="../messageevents.cpp" line="1104"/>
         <source>提权命令的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1110"/>
+        <location filename="../messageevents.cpp" line="1119"/>
         <source>取消禁言的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1127"/>
+        <location filename="../messageevents.cpp" line="1134"/>
         <source>取消踢出的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1144"/>
+        <location filename="../messageevents.cpp" line="1149"/>
         <source>取消提权的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1158"/>
+        <location filename="../messageevents.cpp" line="1161"/>
         <source>加入|移除新人监控</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1163"/>
+        <location filename="../messageevents.cpp" line="1166"/>
         <source>新人监控的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1177"/>
+        <location filename="../messageevents.cpp" line="1178"/>
         <source>加入|移除黑名单</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../messageevents.cpp" line="1182"/>
+        <location filename="../messageevents.cpp" line="1183"/>
         <source>黑名单的用法</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../manageevents.cpp" line="67"/>
+        <location filename="../manageevents.cpp" line="68"/>
         <source>所在地</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../manageevents.cpp" line="75"/>
-        <source>%1，欢迎加入我们，请立刻发言，否则30分钟会被自动移出群。</source>
+        <location filename="../manageevents.cpp" line="77"/>
+        <source>欢迎加入我们！请你&lt;span class=&quot;warning&quot;&gt;在三十分钟内发言一次&lt;/span&gt;，并&lt;span class=&quot;warning&quot;&gt;修改你的群名片&lt;/span&gt;，否则将被自动踢出。&lt;br /&gt;谢谢你的配合！</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../manageevents.cpp" line="79"/>
+        <source>欢迎加入我们！请你&lt;span class=&quot;warning&quot;&gt;在三十分钟内发言一次&lt;/span&gt;，否则将被自动踢出。&lt;br /&gt;谢谢你的配合！</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qtassistant.cpp" line="78"/>
+        <source>作为一个%1，你没有权限执行此操作。</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qtassistant.cpp" line="79"/>
+        <source>没有相关权限</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../qtassistant.cpp" line="158"/>
+        <source>(Part %1)</source>
+        <translation>（第%1部分）</translation>
+    </message>
+    <message>
+        <location filename="../qtassistant.cpp" line="166"/>
+        <source>: </source>
+        <translation>：</translation>
     </message>
 </context>
 <context>
@@ -600,24 +639,20 @@
         <translation type="vanished">blacklist [add|delete] @成员1 [@成员2] [@成员3] ...</translation>
     </message>
     <message>
-        <location filename="../qtassistant.cpp" line="139"/>
         <source>As %1, you have no rights.</source>
-        <translation>作为一个%1，你没有权利执行此命令。</translation>
+        <translation type="vanished">作为一个%1，你没有权利执行此命令。</translation>
     </message>
     <message>
-        <location filename="../qtassistant.cpp" line="140"/>
         <source>Permission Denied</source>
-        <translation>没有相关权限</translation>
+        <translation type="vanished">没有相关权限</translation>
     </message>
     <message>
-        <location filename="../qtassistant.cpp" line="205"/>
         <source>(Part %1)</source>
-        <translation>（第%1部分）</translation>
+        <translation type="vanished">（第%1部分）</translation>
     </message>
     <message>
-        <location filename="../qtassistant.cpp" line="213"/>
         <source>: </source>
-        <translation>：</translation>
+        <translation type="vanished">：</translation>
     </message>
     <message>
         <source>As a %1, you have no rights.</source>

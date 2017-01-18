@@ -48,7 +48,7 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
     Q_D(const HtmlFeedback);
 
     QColor backgroundColor;
-    QString promptChar;
+    const QPixmap *siderBarImage = Q_NULLPTR;
 
     qreal sideBarWidth = 50;
     qreal contentMargins = 4;
@@ -62,29 +62,29 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
     htmlDoc.setTextWidth(width - sw - cm * 2);
     switch (style) {
     case Primary:
-        promptChar = QChar(0xf0e6);
-        backgroundColor.setNamedColor("#3071a9");
         htmlDoc.setDefaultStyleSheet(d->primarySheet);
+        backgroundColor.setNamedColor("#3071a9");
+        siderBarImage = &d->primaryImage;
         break;
     case Danger:
-        promptChar = QChar(0xf00d);
-        backgroundColor.setNamedColor("#c9302c");
         htmlDoc.setDefaultStyleSheet(d->dangerSheet);
+        backgroundColor.setNamedColor("#c9302c");
+        siderBarImage = &d->dangerImage;
         break;
     case Warning:
-        promptChar = QChar(0xf12a);
-        backgroundColor.setNamedColor("#ec971f");
         htmlDoc.setDefaultStyleSheet(d->warningSheet);
+        backgroundColor.setNamedColor("#ec971f");
+        siderBarImage = &d->warningImage;
         break;
     case Prompt:
-        promptChar = QChar(0xf129);
-        backgroundColor.setNamedColor("#31b0d5");
         htmlDoc.setDefaultStyleSheet(d->promptSheet);
+        backgroundColor.setNamedColor("#31b0d5");
+        siderBarImage = &d->promptImage;
         break;
     case Success:
-        promptChar = QChar(0xf00c);
-        backgroundColor.setNamedColor("#449d44");
         htmlDoc.setDefaultStyleSheet(d->successSheet);
+        backgroundColor.setNamedColor("#449d44");
+        siderBarImage = &d->successImage;
         break;
     }
     htmlDoc.setHtml(html);
@@ -96,10 +96,14 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
     QPainter painter(&pixmap);
     // SideBar
     painter.setPen(Qt::white);
-    painter.setFont(d->awesomeFont);
     QRect swRect(0, 0, sw, pixmap.height());
     painter.fillRect(swRect, backgroundColor.darker(120));
-    painter.drawText(swRect, Qt::AlignCenter, promptChar);
+    if (siderBarImage) {
+        QPoint c = swRect.center();
+        int cy = c.y() - siderBarImage->height() / 2;
+        int cx = c.x() - siderBarImage->width() / 2;
+        painter.drawPixmap(cx, cy, *siderBarImage);
+    }
     // Content
     painter.translate(sw + cm, cm);
     htmlDoc.drawContents(&painter);
@@ -147,7 +151,11 @@ HtmlFeedbackPrivate::HtmlFeedbackPrivate()
         }
     } while (false);
 
-    awesomeFont = QFont("FontAwesome", 24);
+    primaryImage.load(":/htmlfeedback/img/primary.png");
+    dangerImage.load(":/htmlfeedback/img/danger.png");
+    warningImage.load(":/htmlfeedback/img/warning.png");
+    promptImage.load(":/htmlfeedback/img/prompt.png");
+    successImage.load(":/htmlfeedback/img/success.png");
 }
 
 HtmlFeedbackPrivate::~HtmlFeedbackPrivate()

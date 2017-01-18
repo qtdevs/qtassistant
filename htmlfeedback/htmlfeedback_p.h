@@ -5,7 +5,7 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include <QFont>
+#include <QPixmap>
 
 #include "htmlfeedback.h"
 
@@ -26,8 +26,11 @@ private:
     QString promptSheet;
     QString successSheet;
 
-private:
-    QFont awesomeFont;
+    QPixmap primaryImage;
+    QPixmap dangerImage;
+    QPixmap warningImage;
+    QPixmap promptImage;
+    QPixmap successImage;
 };
 
 #endif // HTMLFEEDBACK_P_H

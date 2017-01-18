@@ -3,6 +3,7 @@
 
 #include <QStringBuilder>
 #include <QTextStream>
+#include <QtDebug>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -24,6 +25,7 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
     // 黑名单检查，如果发现匹配，直接踢出。
     if (d->blacklist->contains(ev.from, ev.sender)) {
         kickGroupMember(ev.from, ev.sender, false);
+        qDebug("kickGroupMember(ev.from, ev.sender, false)");
         return true;
     }
 
@@ -112,7 +114,7 @@ void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -165,7 +167,7 @@ void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
 
     ts.flush();
 
-    d->showPrompt(ev.from, tr("全部命令清单"), usage);
+    showPrompt(ev.from, tr("全部命令清单"), usage);
 }
 
 void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
@@ -214,24 +216,24 @@ void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
             if (MasterLevel::Unknown != level) {
                 ll = d->levels->levels(argvGlobal ? 0 : ev.from);
                 if (argvGlobal) {
-                    d->showPromptList(ev.from, tr("跨群等级列表"), ll, true);
+                    showPromptList(ev.from, tr("跨群等级列表"), ll, true);
                 } else {
-                    d->showPromptList(ev.from, tr("本群等级列表"), ll, true);
+                    showPromptList(ev.from, tr("本群等级列表"), ll, true);
                 }
             }
         } else {
             MasterLevel level = d->levels->level(argvGlobal ? 0 : ev.from, ev.sender);
             ll.append(LevelInfo(ev.sender, level));
             if (argvGlobal) {
-                d->showPromptList(ev.from, tr("跨群等级"), ll, true);
+                showPromptList(ev.from, tr("跨群等级"), ll, true);
             } else {
-                d->showPromptList(ev.from, tr("本群等级"), ll, true);
+                showPromptList(ev.from, tr("本群等级"), ll, true);
             }
         }
     } else if (!argvList) {
         if (MasterLevel::Unknown != level) {
             d->levels->update(argvGlobal ? 0 : ev.from, ll);
-            d->showPromptList(ev.from, argvGlobal ? tr("跨群等级") : tr("本群等级"), ll, true);
+            showPromptList(ev.from, argvGlobal ? tr("跨群等级") : tr("本群等级"), ll, true);
         }
     } else {
         groupLevelHelp(ev.from);
@@ -249,7 +251,7 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -311,7 +313,7 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
         renameGroupMember(ev.from, ll.at(0).uid, name);
     }
 
-    d->showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(name));
+    showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(name));
 }
 
 void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
@@ -325,7 +327,7 @@ void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -415,7 +417,7 @@ void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -425,7 +427,7 @@ void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
         banGroupMember(ev.from, li.uid, duration);
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
+    showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
 }
 
 void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
@@ -439,7 +441,7 @@ void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
     }
     // 三级管理及以上。
     if (level > MasterLevel::Master3) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -467,7 +469,7 @@ void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -477,7 +479,7 @@ void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
         d->deathHouse->addMember(ev.from, li.uid);
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
 }
 
 void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
@@ -491,7 +493,7 @@ void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -569,12 +571,12 @@ void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
 
     // 检查一：只有 ATField 有跨群操作的权限。
     if (argvGlobal && (level != MasterLevel::ATField)) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
     // 检查二：新等级不能超过当前管理的等级。
     if (newLevel <= level) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -587,7 +589,7 @@ void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -602,7 +604,7 @@ void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
         }
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
 }
 
 void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
@@ -616,7 +618,7 @@ void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -644,7 +646,7 @@ void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -654,7 +656,7 @@ void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
         banGroupMember(ev.from, li.uid, 0);
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
+    showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
 }
 
 void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
@@ -668,7 +670,7 @@ void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
     }
     // 三级管理及以上。
     if (level > MasterLevel::Master3) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -696,7 +698,7 @@ void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -706,7 +708,7 @@ void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
         d->deathHouse->removeMember(ev.from, li.uid);
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
+    showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
 }
 
 void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
@@ -720,7 +722,7 @@ void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -759,7 +761,7 @@ void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
 
     // 检查一：只有 ATField 有跨群操作的权限。
     if (argvGlobal && (MasterLevel::ATField != level)) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -772,7 +774,7 @@ void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -787,7 +789,7 @@ void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
         }
     }
 
-    d->showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
 }
 
 void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
@@ -801,7 +803,7 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -847,10 +849,17 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
     if (0 == argvOption) { // list
         QHashIterator<Member, qint64> i(d->welcome->members());
         while (i.hasNext()) {
-            ll.append(LevelInfo(i.next().key().second, MasterLevel::Unknown));
+            i.next();
+            if (i.key().first == ev.from) {
+                ll.append(LevelInfo(i.key().second, MasterLevel::Unknown));
+            }
         }
-        d->levels->update(ev.from, ll);
-        d->showPromptList(ev.from, tr("新人监控"), ll, false);
+        if (ll.isEmpty()) {
+            showPrompt(ev.from, tr("新人监控"), tr("新人监控中没有任何成员"));
+        } else {
+            d->levels->update(ev.from, ll);
+            showPromptList(ev.from, tr("新人监控"), ll, true);
+        }
         return;
     }
 
@@ -865,7 +874,7 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -876,13 +885,13 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
             d->welcome->addMember(ev.from, li.uid);
         }
 
-        d->showSuccessList(ev.from, tr("下列成员已经被加入新人监控"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已经被加入新人监控"), ll, true);
     } else if (2 == argvOption) { // delete
         for (const LevelInfo &li : ll) {
-            d->welcome->addMember(ev.from, li.uid);
+            d->welcome->removeMember(ev.from, li.uid);
         }
 
-        d->showSuccessList(ev.from, tr("下列成员已经被移出新人监控"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已经被移出新人监控"), ll, true);
     }
 }
 
@@ -897,7 +906,7 @@ void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        d->permissionDenied(ev.from, ev.sender, level);
+        permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
@@ -948,15 +957,27 @@ void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args
 
     // 打印黑名单列表。
     if (0 == argvOption) {
+        qint64 gid = argvGlobal ? 0 : ev.from;
         QHashIterator<Member, qint64> i(d->blacklist->members());
         while (i.hasNext()) {
-            ll.append(LevelInfo(i.next().key().second, MasterLevel::Unknown));
+            i.next();
+            if (i.key().first == gid) {
+                ll.append(LevelInfo(i.key().second, MasterLevel::Unknown));
+            }
         }
-        d->levels->update(argvGlobal ? 0 : ev.from, ll);
-        if (argvGlobal) {
-            d->showPromptList(ev.from, tr("跨群黑名单"), ll, false);
+        if (ll.isEmpty()) {
+            if (argvGlobal) {
+                showPrompt(ev.from, tr("跨群黑名单"), tr("黑名单中没有任何成员"));
+            } else {
+                showPrompt(ev.from, tr("本群黑名单"), tr("黑名单中没有任何成员"));
+            }
         } else {
-            d->showPromptList(ev.from, tr("本群黑名单"), ll, false);
+            d->levels->update(ev.from, ll);
+            if (argvGlobal) {
+                showPromptList(ev.from, tr("跨群黑名单"), ll, true);
+            } else {
+                showPromptList(ev.from, tr("本群黑名单"), ll, true);
+            }
         }
         return;
     }
@@ -972,7 +993,7 @@ void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args
         }
     }
     if (!ml.isEmpty()) {
-        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
         return;
     }
 
@@ -980,16 +1001,16 @@ void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args
 
     if (1 == argvOption) { // add
         for (const LevelInfo &li : ll) {
-            d->blacklist->addMember(ev.from, li.uid);
+            d->blacklist->addMember(argvGlobal ? 0 : ev.from, li.uid);
         }
 
-        d->showSuccessList(ev.from, tr("下列成员已经被加入黑名单"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已经被加入黑名单"), ll, true);
     } else if (2 == argvOption) { // delete
         for (const LevelInfo &li : ll) {
-            d->blacklist->addMember(ev.from, li.uid);
+            d->blacklist->removeMember(argvGlobal ? 0 : ev.from, li.uid);
         }
 
-        d->showSuccessList(ev.from, tr("下列成员已经被移出黑名单"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已经被移出黑名单"), ll, true);
     }
 }
 
@@ -1000,8 +1021,6 @@ void QtAssistant::groupHelpHelp(qint64 gid)
 
 void QtAssistant::groupLevelHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1015,13 +1034,11 @@ void QtAssistant::groupLevelHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("等级查询的用法"), usage);
+    showPrompt(gid, tr("等级查询的用法"), usage);
 }
 
 void QtAssistant::groupRenameHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1033,13 +1050,11 @@ void QtAssistant::groupRenameHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, "修改名片的用法", usage);
+    showPrompt(gid, "修改名片的用法", usage);
 }
 
 void QtAssistant::groupBanHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1054,13 +1069,11 @@ void QtAssistant::groupBanHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("禁言命令的用法"), usage);
+    showPrompt(gid, tr("禁言命令的用法"), usage);
 }
 
 void QtAssistant::groupKillHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1071,13 +1084,11 @@ void QtAssistant::groupKillHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("踢出命令的用法"), usage);
+    showPrompt(gid, tr("踢出命令的用法"), usage);
 }
 
 void QtAssistant::groupPowerHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1090,13 +1101,11 @@ void QtAssistant::groupPowerHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("提权命令的用法"), usage);
+    showPrompt(gid, tr("提权命令的用法"), usage);
 }
 
 void QtAssistant::groupUnbanHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1107,13 +1116,11 @@ void QtAssistant::groupUnbanHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("取消禁言的用法"), usage);
+    showPrompt(gid, tr("取消禁言的用法"), usage);
 }
 
 void QtAssistant::groupUnkillHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1124,13 +1131,11 @@ void QtAssistant::groupUnkillHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("取消踢出的用法"), usage);
+    showPrompt(gid, tr("取消踢出的用法"), usage);
 }
 
 void QtAssistant::groupUnpowerHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1141,13 +1146,11 @@ void QtAssistant::groupUnpowerHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("取消提权的用法"), usage);
+    showPrompt(gid, tr("取消提权的用法"), usage);
 }
 
 void QtAssistant::groupWelcomeHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1160,13 +1163,11 @@ void QtAssistant::groupWelcomeHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("新人监控的用法"), usage);
+    showPrompt(gid, tr("新人监控的用法"), usage);
 }
 
 void QtAssistant::groupBlacklistHelp(qint64 gid)
 {
-    Q_D(QtAssistant);
-
     QString usage;
     QTextStream ts(&usage);
 
@@ -1179,5 +1180,5 @@ void QtAssistant::groupBlacklistHelp(qint64 gid)
 
     ts.flush();
 
-    d->showPrompt(gid, tr("黑名单的用法"), usage);
+    showPrompt(gid, tr("黑名单的用法"), usage);
 }

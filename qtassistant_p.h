@@ -13,9 +13,6 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
-#include "sqldatas/masterlevels.h"
-#include "htmlfeedback/htmlfeedback.h"
-
 class QtAssistantPrivate : public CqPortalPrivate
 {
     Q_DECLARE_PUBLIC(QtAssistant)
@@ -35,22 +32,7 @@ private:
 
     int checkTimerId;
 
-private:
-    void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
 
-    //void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    //void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    void showWarning(qint64 gid, const QString &title, const QString &content);
-    void showPrompt(qint64 gid, const QString &title, const QString &content);
-    void showSuccess(qint64 gid, const QString &title, const QString &content);
-
-    void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    void showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    void showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    void showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-
-    void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
 
 private:
     HtmlFeedback *htmlFeedback;
