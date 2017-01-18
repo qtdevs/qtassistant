@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * \class CqPortal
  * \brief 插件入口类
  */

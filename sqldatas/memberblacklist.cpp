@@ -1,4 +1,4 @@
-#include "memberblacklist.h"
+﻿#include "memberblacklist.h"
 #include "memberblacklist_p.h"
 
 #include <QDateTime>
@@ -36,7 +36,7 @@ MemberBlacklist::MemberBlacklist(QObject *parent)
                 qint64 gid = query.value(0).toLongLong();
                 qint64 uid = query.value(1).toLongLong();
                 qint64 stamp = query.value(2).toLongLong();
-                d->blacklist.insert(Member(gid, uid), stamp);
+                d->members.insert(Member(gid, uid), stamp);
             }
         } while (false);
     }
@@ -52,7 +52,7 @@ CqSqlite::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
     QWriteLocker locker(&d->guard);
 
     Member member(gid, uid);
-    if (!d->blacklist.contains(member)) {
+    if (!d->members.contains(member)) {
         qint64 stamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
         const char sql[] = "REPLACE INTO [Blacklist] VALUES(%1, %2, %3);";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid).arg(stamp);
@@ -62,7 +62,7 @@ CqSqlite::Result MemberBlacklist::addMember(qint64 gid, qint64 uid)
                        qPrintable(query.lastError().text()));
             return SqlError;
         }
-        d->blacklist.insert(member, stamp);
+        d->members.insert(member, stamp);
         qCInfo(qlcMemberBlacklist, "Update: gid: %lld, uid: %lld.", gid, uid);
 
         return Done;
@@ -77,7 +77,7 @@ CqSqlite::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
     QWriteLocker locker(&d->guard);
 
     Member member(gid, uid);
-    if (d->blacklist.contains(member)) {
+    if (d->members.contains(member)) {
         const char sql[] = "DELETE FROM [Blacklist] WHERE [gid] = %1 AND [uid] = %2;";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
         QSqlQuery query = this->query(qtSql);
@@ -86,7 +86,7 @@ CqSqlite::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
                        qPrintable(query.lastError().text()));
             return SqlError;
         }
-        d->blacklist.remove(member);
+        d->members.remove(member);
         qCInfo(qlcMemberBlacklist, "Delete: gid: %lld, uid: %lld.", gid, uid);
 
         return Done;
@@ -95,10 +95,10 @@ CqSqlite::Result MemberBlacklist::removeMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-QHash<Member, qint64> MemberBlacklist::blacklist() const
+QHash<Member, qint64> MemberBlacklist::members() const
 {
     Q_D(const MemberBlacklist);
-    return d->blacklist;
+    return d->members;
 }
 
 bool MemberBlacklist::contains(qint64 gid, qint64 uid) const
@@ -106,10 +106,10 @@ bool MemberBlacklist::contains(qint64 gid, qint64 uid) const
     Q_D(const MemberBlacklist);
     QReadLocker locker(&d->guard);
 
-    if (d->blacklist.contains(Member(0, uid))) {
+    if (d->members.contains(Member(0, uid))) {
         return true;
     }
-    return d->blacklist.contains(Member(gid, uid));
+    return d->members.contains(Member(gid, uid));
 }
 
 // class MemberBlacklistPrivate

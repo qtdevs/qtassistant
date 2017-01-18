@@ -1,5 +1,9 @@
-#ifndef CQPORTAL_P_H
+﻿#ifndef CQPORTAL_P_H
 #define CQPORTAL_P_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqportal.h"
 

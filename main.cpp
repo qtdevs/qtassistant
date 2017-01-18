@@ -1,4 +1,4 @@
-#include <QtCore>
+﻿#include <QtCore>
 #include <QtWidgets>
 
 #include "qtassistant.h"

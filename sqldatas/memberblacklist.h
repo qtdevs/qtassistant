@@ -1,5 +1,9 @@
-#ifndef MEMBERBLACKLIST_H
+﻿#ifndef MEMBERBLACKLIST_H
 #define MEMBERBLACKLIST_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include <QHash>
 
@@ -20,7 +24,7 @@ public:
     Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> blacklist() const;
+    QHash<Member, qint64> members() const;
     bool contains(qint64 gid, qint64 uid) const;
 };
 

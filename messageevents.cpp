@@ -1,11 +1,8 @@
-#include "qtassistant.h"
+﻿#include "qtassistant.h"
 #include "qtassistant_p.h"
 
-#include <QCoreApplication>
-#include <QDateTime>
 #include <QStringBuilder>
 #include <QTextStream>
-#include <QPixmap>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -46,65 +43,51 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
     // 命令派发。
     if (!args.isEmpty()) {
         QString c = args.value(0);
-
-        if (c == "member") {
-            CqMemberInfo mi = memberInfo(ev.from, ev.sender);
-            sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4 : %5 : %6 : %7 : %8 : %9 : %10 : %11 : %12")
-                             .arg(mi.gid()).arg(mi.uid()).arg(mi.nickName()).arg(mi.nameCard()).arg(mi.sex()).arg(mi.age()).arg(mi.location())
-                             .arg(mi.joinTime().toString()).arg(mi.lastSent().toString()).arg(mi.levelName()).arg(mi.permission()).arg(mi.unfriendly()));
-
-            CqPersonInfo pi = personInfo(ev.sender);
-            sendGroupMessage(ev.from, QString("%1 : %2 : %3 : %4")
-                             .arg(pi.uid()).arg(pi.nickName()).arg(pi.sex()).arg(pi.age()));
-
-            d->permissionDenied(ev.from, ev.sender, MasterLevel::Unknown, "");
-        }
-
-        if (c == QLatin1String("h") || c == QLatin1String("help")) {
-            d->groupHelp(ev, args.mid(1));
+        if ((c == "h") || (c == "help")) {
+            groupHelp(ev, args.mid(1));
             return true;
         }
-        if (c == QLatin1String("l") || c == QLatin1String("level")) {
-            d->groupLevel(ev, args.mid(1));
+        if ((c == "l") || (c == "level")) {
+            groupLevel(ev, args.mid(1));
             return true;
         }
-        if (c == QLatin1String("r") || c == QLatin1String("rename")) {
-            d->groupRename(ev, args.mid(1));
+        if ((c == "r") || (c == "rename")) {
+            groupRename(ev, args.mid(1));
             return true;
         }
 
-        if (c == QLatin1String("b") || c == QLatin1String("ban")) {
-            d->groupBan(ev, args.mid(1));
+        if ((c == "b") || (c == "ban")) {
+            groupBan(ev, args.mid(1));
             return true;
         }
-        if (c == QLatin1String("k") || c == QLatin1String("kill")) {
-            d->groupKill(ev, args.mid(1));
+        if ((c == "k") || (c == "kill")) {
+            groupKill(ev, args.mid(1));
             return true;
         }
-        if (c == QLatin1String("p") || c == QLatin1String("power")) {
-            d->groupPower(ev, args.mid(1));
-            return true;
-        }
-
-        if (c == QLatin1String("ub") || c == QLatin1String("unban")) {
-            d->groupUnban(ev, args.mid(1));
-            return true;
-        }
-        if (c == QLatin1String("uk") || c == QLatin1String("unkill")) {
-            d->groupUnkill(ev, args.mid(1));
-            return true;
-        }
-        if (c == QLatin1String("up") || c == QLatin1String("unpower")) {
-            d->groupUnpower(ev, args.mid(1));
+        if ((c == "p") || (c == "power")) {
+            groupPower(ev, args.mid(1));
             return true;
         }
 
-        if (c == QLatin1String("wl") || c == QLatin1String("welcome")) {
-            d->groupWelcome(ev, args.mid(1));
+        if ((c == "ub") || (c == "unban")) {
+            groupUnban(ev, args.mid(1));
             return true;
         }
-        if (c == QLatin1String("bl") || c == QLatin1String("blacklist")) {
-            d->groupBlacklist(ev, args.mid(1));
+        if ((c == "uk") || (c == "unkill")) {
+            groupUnkill(ev, args.mid(1));
+            return true;
+        }
+        if ((c == "up") || (c == "unpower")) {
+            groupUnpower(ev, args.mid(1));
+            return true;
+        }
+
+        if ((c == "wl") || (c == "welcome")) {
+            groupWelcome(ev, args.mid(1));
+            return true;
+        }
+        if ((c == "bl") || (c == "blacklist")) {
+            groupBlacklist(ev, args.mid(1));
             return true;
         }
     }
@@ -118,75 +101,102 @@ bool QtAssistant::discussMessageEventFilter(const MessageEvent &ev)
     return false;
 }
 
-// class QtAssistantPrivate
-
-void QtAssistantPrivate::groupHelp(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
 {
+    Q_D(QtAssistant);
+
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    Q_UNUSED(args);
+    QString argv = args.value(0);
+    if (!argv.isEmpty()) {
+        if (argv == "h" || argv == "help") {
+            groupHelpHelp(ev.from);
+            return;
+        } else if (argv == "l" || argv == "level") {
+            groupLevelHelp(ev.from);
+            return;
+        } else if (argv == "r" || argv == "rename") {
+            groupRenameHelp(ev.from);
+            return;
+        } else if (argv == "b" || argv == "ban") {
+            groupBanHelp(ev.from);
+            return;
+        } else if (argv == "k" || argv == "kill") {
+            groupKillHelp(ev.from);
+            return;
+        } else if (argv == "p" || argv == "power") {
+            groupPowerHelp(ev.from);
+            return;
+        } else if (argv == "ub" || argv == "unban") {
+            groupUnbanHelp(ev.from);
+            return;
+        } else if (argv == "uk" || argv == "unkill") {
+            groupUnkillHelp(ev.from);
+            return;
+        } else if (argv == "up" || argv == "unpower") {
+            groupUnpowerHelp(ev.from);
+            return;
+        }
+    }
 
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("  帮助信息(5+): <code>h,help</code>\n");
-    ts << QString::fromUtf8("  查询等级(5+): <code>l,level</code>\n");
-    ts << QString::fromUtf8("  修改昵称(5+): <code>r,rename</code>\n");
-    ts << QString::fromUtf8("  禁言命令(5+): <code>b,ban</code>\n");
-    ts << QString::fromUtf8("  取消禁言(5+): <code>ub,unban</code>\n");
-    ts << QString::fromUtf8("  踢出命令(3+): <code>k,kill</code>\n");
-    ts << QString::fromUtf8("  取消踢出(3+): <code>uk,unkill</code>\n");
-    ts << QString::fromUtf8("  提权命令(1+): <code>p,power</code>\n");
-    ts << QString::fromUtf8("  取消提权(1+): <code>up,unpower</code>\n");
+    ts << "<code>  </code>" << tr("帮助信息") << " <code>(5+): help(h)</code>\n";
+    ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level(l)</code>\n";
+    ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename(r)</code>\n";
+    ts << "<code>  </code>" << tr("禁言命令") << " <code>(5+): ban(b)</code>\n";
+    ts << "<code>  </code>" << tr("取消禁言") << " <code>(5+): unban(ub)</code>\n";
+    ts << "<code>  </code>" << tr("踢出命令") << " <code>(3+): kill(k)</code>\n";
+    ts << "<code>  </code>" << tr("取消踢出") << " <code>(3+): unkill(uk)</code>\n";
+    ts << "<code>  </code>" << tr("提权命令") << " <code>(1+): power(p)</code>\n";
+    ts << "<code>  </code>" << tr("取消提权") << " <code>(1+): unpower(up)</code>\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(ev.from, "全部命令清单", usage);
+    d->showPrompt(ev.from, tr("全部命令清单"), usage);
 }
 
-void QtAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    LevelInfoList ll = d->findUsers(args);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
 
-    LevelInfoList ll = findUsers(args);
+    // 分析其他命令行参数
 
-    // Parse Command Lines
-
-    bool argvListRead = false;
-    bool argvGlobalRead = false;
+    bool argvGlobal = false;
+    bool argvList = false;
 
     bool invalidArg = false;
     int c = args.count() - ll.count();
     for (int i = 0; i < c; ++i) {
         const auto &argv = args.at(i);
 
-        if ((argv == QLatin1String("g"))
-                || (argv == QLatin1String("global"))) {
-            if (argvGlobalRead) {
+        if ((argv == "g") || (argv == "global")) {
+            if (argvGlobal) {
                 invalidArg = true;
                 break;
             }
-            argvGlobalRead = true;
-        } else if ((argv == QLatin1String("l"))
-                   || (argv == QLatin1String("list"))) {
-            if (argvListRead) {
+            argvGlobal = true;
+        } else if ((argv == "l") || (argv == "list")) {
+            if (argvList) {
                 invalidArg = true;
                 break;
             }
-            argvListRead = true;
+            argvList = true;
         } else {
             invalidArg = true;
             break;
@@ -197,47 +207,55 @@ void QtAssistantPrivate::groupLevel(const MessageEvent &ev, const QStringList &a
         return;
     }
 
+    // 执行具体操作
+
     if (ll.isEmpty()) {
-        if (argvListRead) {
+        if (argvList) {
             if (MasterLevel::Unknown != level) {
-                ll = levels->levels(argvGlobalRead ? 0 : ev.from);
-                if (argvGlobalRead) {
-                    showPromptList(ev.from, q->tr("Global Level List"), ll, true);
+                ll = d->levels->levels(argvGlobal ? 0 : ev.from);
+                if (argvGlobal) {
+                    d->showPromptList(ev.from, tr("跨群等级列表"), ll, true);
                 } else {
-                    showPromptList(ev.from, q->tr("Local Level List"), ll, true);
+                    d->showPromptList(ev.from, tr("本群等级列表"), ll, true);
                 }
             }
         } else {
-            MasterLevel level = levels->level(argvGlobalRead ? 0 : ev.from, ev.sender);
+            MasterLevel level = d->levels->level(argvGlobal ? 0 : ev.from, ev.sender);
             ll.append(LevelInfo(ev.sender, level));
-            showPromptList(ev.from, argvGlobalRead ? q->tr("Global Level") : q->tr("Local Level"), ll, true);
+            if (argvGlobal) {
+                d->showPromptList(ev.from, tr("跨群等级"), ll, true);
+            } else {
+                d->showPromptList(ev.from, tr("本群等级"), ll, true);
+            }
         }
-    } else if (!argvListRead) {
+    } else if (!argvList) {
         if (MasterLevel::Unknown != level) {
-            levels->update(argvGlobalRead ? 0 : ev.from, ll);
-            showPromptList(ev.from, argvGlobalRead ? q->tr("Global Level List") : q->tr("Local Level List"), ll, true);
+            d->levels->update(argvGlobal ? 0 : ev.from, ll);
+            d->showPromptList(ev.from, argvGlobal ? tr("跨群等级") : tr("本群等级"), ll, true);
         }
+    } else {
+        groupLevelHelp(ev.from);
     }
 }
 
-void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    // !!! 由于此命令的特殊性，命令行解析自行分析。
+    // !!! 由于此操作的特殊性，命令行解析自行分析
 
-    QString name = q->convert(ev.gbkMsg);
+    QString name = convert(ev.gbkMsg);
 
     LevelInfoList ll;
     bool prefixFound = false;
@@ -249,13 +267,13 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
             ll.append(LevelInfo(uid.toLongLong(),
                                 MasterLevel::Unknown));
 
-            // 如果找到了号码，同时找到了部分新名片，我们认为它是无效的命令。
+            // 如果找到了号码，同时找到了部分新名片，我们认为它是无效的操作。
             if (prefixFound) {
                 invalidArgs = true;
                 break;
             }
 
-            // 如果只找到一个号码，我们认为号码以后的部分都是新名片；否则就是无效的命令。
+            // 如果只找到一个号码，我们认为号码以后的部分都是新名片；否则就是无效的操作。
             if (ll.count() == 1) {
                 int r = name.indexOf(arg);
                 name = name.mid(r + arg.count());
@@ -276,7 +294,6 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
     }
 
     // 在这里，我们对新名片做规范化处理。
-
     name.remove(' '); // 消除空格，不允许有空格。
     name.replace('\u3010', '['); // 替换全角方括号，用半角方括号替代。
     name.replace('\u3011', ']'); // 替换全角方括号，用半角方括号替代。
@@ -286,47 +303,48 @@ void QtAssistantPrivate::groupRename(const MessageEvent &ev, const QStringList &
         return;
     }
 
-    // 执行重命名操作。
+    // 执行具体操作
 
     if (ll.isEmpty()) {
-        q->renameGroupMember(ev.from, ev.sender, name);
+        renameGroupMember(ev.from, ev.sender, name);
     } else {
-        q->renameGroupMember(ev.from, ll.at(0).uid, name);
+        renameGroupMember(ev.from, ll.at(0).uid, name);
     }
 
-    showSuccess(ev.from, q->tr("Rename"), q->tr("Nickname Changed: %1").arg(name));
+    d->showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(name));
 }
 
-void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupBanHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
+    // 分析其他命令行参数
 
     int ds = 0;
     int hs = 0;
     int ms = 0;
 
-    bool dsRead = false;
-    bool hsRead = false;
-    bool msRead = false;
+    bool dsReady = false;
+    bool hsReady = false;
+    bool msReady = false;
 
     bool invalidArg = false;
     int c = args.count() - ll.count();
@@ -334,11 +352,11 @@ void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
         const auto &argv = args.at(i);
 
         if (argv.endsWith('d')) {
-            if (dsRead) {
+            if (dsReady) {
                 invalidArg = true;
                 break;
             }
-            dsRead = true;
+            dsReady = true;
 
             ds = argv.left(argv.length() - 1).toInt();
             if ((ds <= 0) || (ds > 30)) {
@@ -346,11 +364,11 @@ void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
                 break;
             }
         } else if (argv.endsWith('h')) {
-            if (hsRead) {
+            if (hsReady) {
                 invalidArg = true;
                 break;
             }
-            hsRead = true;
+            hsReady = true;
 
             hs = argv.left(argv.length() - 1).toInt();
             if ((hs <= 0) || (hs > 24)) {
@@ -358,11 +376,11 @@ void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
                 break;
             }
         } else if (argv.endsWith('m')) {
-            if (msRead) {
+            if (msReady) {
                 invalidArg = true;
                 break;
             }
-            msRead = true;
+            msReady = true;
 
             ms = argv.left(argv.length() - 1).toInt();
             if ((ms <= 0) || (ms > 60)) {
@@ -386,130 +404,133 @@ void QtAssistantPrivate::groupBan(const MessageEvent &ev, const QStringList &arg
         duration = 60;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
         if (li.level <= level) {
-            masters << li;
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to ban the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
     for (const LevelInfo &li : ll) {
-        q->banGroupMember(ev.from, li.uid, duration);
+        banGroupMember(ev.from, li.uid, duration);
     }
-    showSuccessList(ev.from, q->tr("The following members have been banned"), ll, false);
+
+    d->showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
 }
 
-void QtAssistantPrivate::groupKill(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 三级管理及以上。
     if (level > MasterLevel::Master3) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupKillHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
-
+    // 检查参数有效性。
     if (args.count() != ll.count()) {
         groupKillHelp(ev.from);
         return;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
-        if (li.level <= MasterLevel::Master5) {
-            masters << li;
+        if (li.level <= level) {
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to kill the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
     for (const LevelInfo &li : ll) {
-        deathHouse->addMember(ev.from, li.uid);
+        d->deathHouse->addMember(ev.from, li.uid);
     }
 
-    showSuccessList(ev.from, q->tr("The following members have been killed soon"), ll, true);
+    d->showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
 }
 
-void QtAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupPowerHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
+    // 分析其他命令行参数
 
     int argvLevel = 0;
-    int argvGlobal = 0;
 
-    bool argvLevelRead = false;
-    bool argvGlobalRead = false;
+    bool levelReady = false;
+    bool argvGlobal = false;
 
     bool invalidArg = false;
     int c = args.count() - ll.count();
     for (int i = 0; i < c; ++i) {
         const auto &argv = args.at(i);
-
         if (argv.startsWith('m')) {
-            if (argvLevelRead) {
+            if (levelReady) {
                 invalidArg = true;
                 break;
             }
-            argvLevelRead = true;
+            levelReady = true;
 
             argvLevel = argv.mid(1).toInt();
             if ((argvLevel < 1) || (argvLevel > 5)) {
                 invalidArg = true;
                 break;
             }
-        } else if ((argv == QLatin1String("g"))
-                   || (argv == QLatin1String("global"))) {
-            if (argvGlobalRead) {
+        } else if ((argv == "g") || (argv == "global")) {
+            if (argvGlobal) {
                 invalidArg = true;
                 break;
             }
-            argvGlobalRead = true;
-
-            argvGlobal = 1;
+            argvGlobal = true;
         } else {
             invalidArg = true;
             break;
@@ -520,6 +541,7 @@ void QtAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
         return;
     }
 
+    // 转换到等级的枚举类型。
     MasterLevel newLevel = MasterLevel::Unknown;
     switch (argvLevel) {
     case 1:
@@ -543,172 +565,186 @@ void QtAssistantPrivate::groupPower(const MessageEvent &ev, const QStringList &a
         return;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    if (newLevel <= level) {
-        permissionDenied(ev.from, ev.sender, level);
+    // 检查一：只有 ATField 有跨群操作的权限。
+    if (argvGlobal && (level != MasterLevel::ATField)) {
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
-    } else if (argvGlobal && (level != MasterLevel::ATField)) {
-        permissionDenied(ev.from, ev.sender, level);
+    }
+    // 检查二：新等级不能超过当前管理的等级。
+    if (newLevel <= level) {
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查三：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
         if (li.level <= level) {
-            masters << li;
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to kill the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
     for (LevelInfo &li : ll) {
-        levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, newLevel);
         li.level = newLevel;
+        if (argvGlobal) {
+            d->levels->setLevel(0, li.uid, li.level);
+        } else {
+            d->levels->setLevel(ev.from, li.uid, li.level);
+        }
     }
-    showSuccessList(ev.from, q->tr("The following members have been repowered"), ll, true);
+
+    d->showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
 }
 
-void QtAssistantPrivate::groupUnban(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 五级管理及以上。
     if (level > MasterLevel::Master5) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupUnbanHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
-
+    // 检查参数有效性。
     if (args.count() != ll.count()) {
         groupUnbanHelp(ev.from);
         return;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
         if (li.level <= level) {
-            masters << li;
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to unban the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
     for (const LevelInfo &li : ll) {
-        q->banGroupMember(ev.from, li.uid, 0);
+        banGroupMember(ev.from, li.uid, 0);
     }
-    showSuccessList(ev.from, q->tr("The following members have been unbanned"), ll, false);
+
+    d->showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
 }
 
-void QtAssistantPrivate::groupUnkill(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 三级管理及以上。
     if (level > MasterLevel::Master3) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupUnkillHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
-
+    // 检查参数有效性。
     if (args.count() != ll.count()) {
         groupUnkillHelp(ev.from);
         return;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
         if (li.level <= level) {
-            masters << li;
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to unkill the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
     for (const LevelInfo &li : ll) {
-        deathHouse->removeMember(ev.from, li.uid);
+        d->deathHouse->removeMember(ev.from, li.uid);
     }
-    showSuccessList(ev.from, q->tr("The following members have been unkilled"), ll, false);
+
+    d->showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
 }
 
-void QtAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList ll = findUsers(args);
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
         groupUnpowerHelp(ev.from);
         return;
     }
 
-    // Parse Command Lines
-
-    int argvGlobal = 0;
-
-    bool argvGlobalRead = false;
+    // 分析其他命令行参数。
+    bool argvGlobal = false;
 
     bool invalidArg = false;
     int c = args.count() - ll.count();
     for (int i = 0; i < c; ++i) {
         const auto &argv = args.at(i);
 
-        if ((argv == QLatin1String("g"))
-                || (argv == QLatin1String("global"))) {
-            if (argvGlobalRead) {
+        if ((argv == "g") || (argv == "global")) {
+            if (argvGlobal) {
                 invalidArg = true;
                 break;
             }
-            argvGlobalRead = true;
-
-            argvGlobal = 1;
+            argvGlobal = true;
         } else {
             invalidArg = true;
             break;
@@ -719,385 +755,429 @@ void QtAssistantPrivate::groupUnpower(const MessageEvent &ev, const QStringList 
         return;
     }
 
-    // Master Level Checks
+    // 管理等级检查
 
-    if (argvGlobal && (level != MasterLevel::ATField)) {
-        permissionDenied(ev.from, ev.sender, level);
+    // 检查一：只有 ATField 有跨群操作的权限。
+    if (argvGlobal && (MasterLevel::ATField != level)) {
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    LevelInfoList masters;
-    levels->update(ev.from, ll);
+    // 检查二：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
         if (li.level <= level) {
-            masters << li;
+            ml << li;
         }
     }
-    if (!masters.isEmpty()) {
-        showDangerList(ev.from, q->tr("You have no rights to unpower the following masters"), masters, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
         return;
     }
 
+    // 执行具体操作
+
+    for (LevelInfo &li : ll) {
+        li.level = MasterLevel::Unknown;
+        if (argvGlobal) {
+            d->levels->setLevel(0, li.uid, li.level);
+        } else {
+            d->levels->setLevel(ev.from, li.uid, li.level);
+        }
+    }
+
+    d->showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
+}
+
+void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
+{
+    Q_D(QtAssistant);
+
+    // 普通成员不应答。
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 首席管理及以上。
+    if (level > MasterLevel::Master1) {
+        d->permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
+
+    // 分析其他命令行参数。
+    int argvOption = 0;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if ((argv == "a") || (argv == "add")) {
+            if (argvOption == 0) {
+                argvOption = 1;
+            } else {
+                invalidArg = true;
+                break;
+            }
+        } else if ((argv == "d") || (argv == "delete")) {
+            if (argvOption == 0) {
+                argvOption = 2;
+            } else {
+                invalidArg = true;
+                break;
+            }
+        } else {
+            invalidArg = true;
+            break;
+        }
+    }
+    if (invalidArg) {
+        groupWelcomeHelp(ev.from);
+        return;
+    } else if (!ll.isEmpty() && (0 == argvOption)) {
+        groupWelcomeHelp(ev.from);
+        return;
+    }
+
+    // 打印新人监控。
+    if (0 == argvOption) { // list
+        QHashIterator<Member, qint64> i(d->welcome->members());
+        while (i.hasNext()) {
+            ll.append(LevelInfo(i.next().key().second, MasterLevel::Unknown));
+        }
+        d->levels->update(ev.from, ll);
+        d->showPromptList(ev.from, tr("新人监控"), ll, false);
+        return;
+    }
+
+    // 管理等级检查
+
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
     for (const LevelInfo &li : ll) {
-        levels->setLevel(argvGlobal ? 0 : ev.from, li.uid, MasterLevel::Unknown);
+        if (li.level <= level) {
+            ml << li;
+        }
     }
-    showSuccessList(ev.from, q->tr("The following members have been unpowered"), ll, true);
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        return;
+    }
+
+    // 执行具体操作
+
+    if (1 == argvOption) { // add
+        for (const LevelInfo &li : ll) {
+            d->welcome->addMember(ev.from, li.uid);
+        }
+
+        d->showSuccessList(ev.from, tr("下列成员已经被加入新人监控"), ll, true);
+    } else if (2 == argvOption) { // delete
+        for (const LevelInfo &li : ll) {
+            d->welcome->addMember(ev.from, li.uid);
+        }
+
+        d->showSuccessList(ev.from, tr("下列成员已经被移出新人监控"), ll, true);
+    }
 }
 
-void QtAssistantPrivate::groupWelcome(const MessageEvent &ev, const QStringList &args)
+void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args)
 {
-    Q_Q(QtAssistant);
+    Q_D(QtAssistant);
 
     // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
     if (MasterLevel::Unknown == level) {
         return;
     }
     // 首席管理及以上。
     if (level > MasterLevel::Master1) {
-        permissionDenied(ev.from, ev.sender, level);
+        d->permissionDenied(ev.from, ev.sender, level);
         return;
     }
 
-    int argvOption = 0;
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if ((arg == QLatin1String("a"))
-                   || (arg == QLatin1String("add"))) {
-            if (argvOption == 0) {
-                argvOption = 1;
-            } else {
-                invalidArgs = true;
-                break;
-            }
-        } else if ((arg == QLatin1String("d"))
-                   || (arg == QLatin1String("delete"))) {
-            if (argvOption == 0) {
-                argvOption = 2;
-            } else {
-                invalidArgs = true;
-                break;
-            }
-        } else if ((arg == QLatin1String("l"))
-                   || (arg == QLatin1String("list"))) {
-            if (argvOption == 0) {
-                argvOption = 3;
-            } else {
-                invalidArgs = true;
-                break;
-            }
-        } else {
-            invalidArgs = true;
-            break;
-        }
-    }
-
-    if (!invalidArgs && (argvOption != 0)) {
-        QStringList masters;
-        QStringList members;
-
-        if (argvOption == 3) {
-            if (ll.isEmpty()) {
-                QDateTime now = QDateTime::currentDateTime();
-                QHashIterator<Member, qint64> i(welcome->members());
-                while (i.hasNext()) {
-                    i.next();
-                    QDateTime stamp = QDateTime::fromMSecsSinceEpoch(i.value()).addSecs(1800);
-                    members << q->tr("%1 will kicked in %2 minute(s).").arg(q->cqAt(i.key().second)).arg(now.secsTo(stamp) / 60);
-                }
-                members.prepend(q->tr("Welcome List:"));
-                q->sendGroupMessage(ev.from, members.join("\n"));
-
-                return;
-            }
-        } else {
-            if (!ll.isEmpty()) {
-                levels->update(ev.from, ll);
-                for (const LevelInfo &li : ll) {
-                    if (li.level <= level) {
-                        masters << q->cqAt(li.uid);
-                    } else {
-                        if (argvOption == 1) {
-                            welcome->addMember(ev.from, li.uid);
-                            q->sendGroupMessage(ev.from, q->tr("%1, Welcome to join us, please say something in 30 minutes.").arg(q->cqAt(li.uid)));
-                        } else if (argvOption == 2) {
-                            welcome->removeMember(ev.from, li.uid);
-                        }
-                        members << q->cqAt(li.uid);
-                    }
-                }
-
-                QStringList reply;
-                if (!masters.isEmpty()) {
-                    reply << q->tr("Permission Denied:");
-                    reply << masters;
-                }
-                if (!members.isEmpty()) {
-                    if (argvOption == 1) {
-                        reply << q->tr("Welcome Add List:");
-                    } else if (argvOption == 2) {
-                        reply << q->tr("Welcome Delete List:");
-                    }
-                    reply << members;
-                }
-                q->sendGroupMessage(ev.from, reply.join("\n"));
-
-                return;
-            }
-        }
-    }
-
-    q->sendGroupMessage(ev.from, q->tr("welcome [add|delete] @Member1 [@Member2] [@Member3] ..."));
-}
-
-void QtAssistantPrivate::groupBlacklist(const MessageEvent &ev, const QStringList &args)
-{
-    Q_Q(QtAssistant);
-
-    // 普通成员不应答。
-    MasterLevel level = levels->level(ev.from, ev.sender);
-    if (MasterLevel::Unknown == level) {
-        return;
-    }
-    // 首席管理及以上。
-    if (level > MasterLevel::Master1) {
-        permissionDenied(ev.from, ev.sender, level);
-        return;
-    }
-
-    int argvOption = 0;
+    // 分析其他命令行参数。
     bool argvGlobal = false;
+    int argvOption = 0;
 
-    LevelInfoList ll;
-    bool invalidArgs = false;
-    for (const QString &arg : args) {
-        if (arg.startsWith("[CQ:at")) {
-            int i = arg.lastIndexOf("]");
-            QString str = arg.mid(10, i - 10);
-            ll.append(LevelInfo(str.toLongLong(),
-                                MasterLevel::Unknown));
-        } else if ((arg == QLatin1String("a"))
-                   || (arg == QLatin1String("add"))) {
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if ((argv == "a") || (argv == "add")) {
             if (argvOption == 0) {
                 argvOption = 1;
             } else {
-                invalidArgs = true;
+                invalidArg = true;
                 break;
             }
-        } else if ((arg == QLatin1String("d"))
-                   || (arg == QLatin1String("delete"))) {
+        } else if ((argv == "d") || (argv == "delete")) {
             if (argvOption == 0) {
                 argvOption = 2;
             } else {
-                invalidArgs = true;
+                invalidArg = true;
                 break;
             }
-        } else if ((arg == QLatin1String("g"))
-                   || (arg == QLatin1String("global"))) {
+        } else if ((argv == "g") || (argv == "global")) {
+            if (argvGlobal) {
+                invalidArg = true;
+                break;
+            }
             argvGlobal = true;
-        } else if ((arg == QLatin1String("l"))
-                   || (arg == QLatin1String("list"))) {
-            if (argvOption == 0) {
-                argvOption = 3;
-            } else {
-                invalidArgs = true;
-                break;
-            }
         } else {
-            invalidArgs = true;
+            invalidArg = true;
             break;
         }
     }
-
-    QStringList masters;
-    QStringList members;
-
-    if (!invalidArgs && (argvOption != 0)) {
-        if (argvOption == 3) {
-            if (ll.isEmpty()) {
-                QHashIterator<Member, qint64> i(blacklist->blacklist());
-                while (i.hasNext()) {
-                    i.next();
-                    members << q->cqAt(i.key().second);
-                }
-                members.prepend(q->tr("Blacklist List:"));
-                q->sendGroupMessage(ev.from, members.join("\n"));
-
-                return;
-            }
-        } else {
-            if (!ll.isEmpty()) {
-                levels->update(ev.from, ll);
-                for (const LevelInfo &li : ll) {
-                    if (li.level <= level) {
-                        masters << q->cqAt(li.uid);
-                    } else {
-                        if (argvOption == 1) {
-                            blacklist->addMember(ev.from, li.uid);
-                        } else if (argvOption == 2) {
-                            blacklist->removeMember(ev.from, li.uid);
-                        }
-                        members << q->cqAt(li.uid);
-                    }
-                }
-
-                QStringList reply;
-                if (!masters.isEmpty()) {
-                    reply << q->tr("Permission Denied:");
-                    reply << masters;
-                }
-                if (!members.isEmpty()) {
-                    if (argvOption == 1) {
-                        reply << q->tr("Blacklist Add List:");
-                    } else if (argvOption == 2) {
-                        reply << q->tr("Blacklist Delete List:");
-                    }
-                    reply << members;
-                }
-                q->sendGroupMessage(ev.from, reply.join("\n"));
-
-                return;
-            }
-        }
+    if (invalidArg) {
+        groupBlacklistHelp(ev.from);
+        return;
+    } else if (!ll.isEmpty() && (0 == argvOption)) {
+        groupBlacklistHelp(ev.from);
+        return;
     }
 
-    q->sendGroupMessage(ev.from, q->tr("blacklist [add|delete] @Member1 [@Member2] [@Member3] ..."));
+    // 打印黑名单列表。
+    if (0 == argvOption) {
+        QHashIterator<Member, qint64> i(d->blacklist->members());
+        while (i.hasNext()) {
+            ll.append(LevelInfo(i.next().key().second, MasterLevel::Unknown));
+        }
+        d->levels->update(argvGlobal ? 0 : ev.from, ll);
+        if (argvGlobal) {
+            d->showPromptList(ev.from, tr("跨群黑名单"), ll, false);
+        } else {
+            d->showPromptList(ev.from, tr("本群黑名单"), ll, false);
+        }
+        return;
+    }
+
+    // 管理等级检查
+
+    // 检查一：管理只能处理比自己等级低的成员。
+    LevelInfoList ml;
+    d->levels->update(ev.from, ll);
+    for (const LevelInfo &li : ll) {
+        if (li.level <= level) {
+            ml << li;
+        }
+    }
+    if (!ml.isEmpty()) {
+        d->showDangerList(ev.from, tr("你没有权限对下列成员执行此操作"), ml, true);
+        return;
+    }
+
+    // 执行具体操作
+
+    if (1 == argvOption) { // add
+        for (const LevelInfo &li : ll) {
+            d->blacklist->addMember(ev.from, li.uid);
+        }
+
+        d->showSuccessList(ev.from, tr("下列成员已经被加入黑名单"), ll, true);
+    } else if (2 == argvOption) { // delete
+        for (const LevelInfo &li : ll) {
+            d->blacklist->addMember(ev.from, li.uid);
+        }
+
+        d->showSuccessList(ev.from, tr("下列成员已经被移出黑名单"), ll, true);
+    }
 }
 
-void QtAssistantPrivate::groupHelpHelp(qint64 gid)
+void QtAssistant::groupHelpHelp(qint64 gid)
 {
     Q_UNUSED(gid);
 }
 
-void QtAssistantPrivate::groupLevelHelp(qint64 gid)
+void QtAssistant::groupLevelHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo level [成员]</code>\n");
-    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "<code>sudo level(l) [" << tr("参数") << "] [" << tr("成员") << "]</code>\n";
+    ts << tr("权限要求：") << "5+\n";
+    ts << tr("参数列表：") << "\n";
+    ts << "<code>  global(g) </code>" << tr("跨群查询") << "\n";
+    ts << "<code>  list(l)   </code>" << tr("列表查询") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "等级查询操作的用法", usage);
+    d->showPrompt(gid, tr("等级查询的用法"), usage);
 }
 
-void QtAssistantPrivate::groupRenameHelp(qint64 gid)
+void QtAssistant::groupRenameHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo rename [成员] [新名片]</code>\n");
-    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "<code>sudo rename(r) [" << tr("成员") << "] " << tr("名片") << "</code>\n";
+    ts << tr("权限要求：") << "5+\n";
+    ts << "<code>  </code>" << tr("新的名片将会被格式化为统一样式，不允许出现空格。") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "改名操作的用法", usage);
+    d->showPrompt(gid, "修改名片的用法", usage);
 }
 
-void QtAssistantPrivate::groupBanHelp(qint64 gid)
+void QtAssistant::groupBanHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo ban [参数] [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
-    ts << QString::fromUtf8("参数列表:\n");
-    ts << QString::fromUtf8("<code>  [1-30]d </code>禁言天数\n");
-    ts << QString::fromUtf8("<code>  [1-24]h </code>禁言时数\n");
-    ts << QString::fromUtf8("<code>  [1-60]m </code>禁言分数\n");
+    ts << "<code>sudo ban(b) [" << tr("参数") << "] " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "5+\n";
+    ts << tr("参数列表：") << "\n";
+    ts << "<code>  [1-30]d </code>" << tr("禁言天数") << "\n";
+    ts << "<code>  [1-24]h </code>" << tr("禁言时数") << "\n";
+    ts << "<code>  [1-60]m </code>" << tr("禁言分数") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "禁言操作的用法", usage);
+    d->showPrompt(gid, tr("禁言命令的用法"), usage);
 }
 
-void QtAssistantPrivate::groupKillHelp(qint64 gid)
+void QtAssistant::groupKillHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo kill [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 三级管理以上\n");
+    ts << "<code>sudo kill(k) " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "3+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "踢出操作的用法", usage);
+    d->showPrompt(gid, tr("踢出命令的用法"), usage);
 }
 
-void QtAssistantPrivate::groupPowerHelp(qint64 gid)
+void QtAssistant::groupPowerHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo power [参数] [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 首席管理以上\n");
-    ts << QString::fromUtf8("参数列表:\n");
-    ts << QString::fromUtf8("<code>  m[1-5] </code>权限等级\n");
+    ts << "<code>sudo power(p) [" << tr("参数") << "] " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "1+\n";
+    ts << tr("参数列表：") << "\n";
+    ts << "<code>  m[1-5] </code>" << tr("权限等级") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "赋权操作的用法", usage);
+    d->showPrompt(gid, tr("提权命令的用法"), usage);
 }
 
-void QtAssistantPrivate::groupUnbanHelp(qint64 gid)
+void QtAssistant::groupUnbanHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo unban [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 五级管理以上\n");
+    ts << "<code>sudo unban(ub) " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "5+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "解禁操作的用法", usage);
+    d->showPrompt(gid, tr("取消禁言的用法"), usage);
 }
 
-void QtAssistantPrivate::groupUnkillHelp(qint64 gid)
+void QtAssistant::groupUnkillHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo unkill [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 三级管理以上\n");
+    ts << "<code>sudo unkill(uk) " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "3+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "取消踢出的用法", usage);
+    d->showPrompt(gid, tr("取消踢出的用法"), usage);
 }
 
-void QtAssistantPrivate::groupUnpowerHelp(qint64 gid)
+void QtAssistant::groupUnpowerHelp(qint64 gid)
 {
+    Q_D(QtAssistant);
+
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << QString::fromUtf8("<code>sudo unpower [成员]...</code>\n");
-    ts << QString::fromUtf8("权限要求: 首席管理以上\n");
+    ts << "<code>sudo unpower(up) " << tr("成员") << " ...</code>\n";
+    ts << tr("权限要求：") << "1+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "降权操作的用法", usage);
+    d->showPrompt(gid, tr("取消提权的用法"), usage);
+}
+
+void QtAssistant::groupWelcomeHelp(qint64 gid)
+{
+    Q_D(QtAssistant);
+
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << "<code>sudo welcome(wl) [" << tr("参数") << "] [" << tr("成员") << "] ...</code>\n";
+    ts << tr("权限要求：") << "1+\n";
+    ts << tr("参数列表：") << "\n";
+    ts << "<code>  add(a)|delete(d) </code>" << tr("加入|移除新人监控") << "\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    d->showPrompt(gid, tr("新人监控的用法"), usage);
+}
+
+void QtAssistant::groupBlacklistHelp(qint64 gid)
+{
+    Q_D(QtAssistant);
+
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << "<code>sudo blacklist(bl) [" << tr("参数") << "] [" << tr("成员") << "] ...</code>\n";
+    ts << tr("权限要求：") << "1+\n";
+    ts << tr("参数列表：") << "\n";
+    ts << "<code>  add(a)|delete(d) </code>" << tr("加入|移除黑名单") << "\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    d->showPrompt(gid, tr("黑名单的用法"), usage);
 }

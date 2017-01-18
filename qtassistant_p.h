@@ -1,5 +1,9 @@
-#ifndef QtAssistant_P_H
+﻿#ifndef QtAssistant_P_H
 #define QtAssistant_P_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqportal_p.h"
 #include "qtassistant.h"
@@ -21,6 +25,9 @@ public:
     virtual ~QtAssistantPrivate();
 
 private:
+    static LevelInfoList findUsers(const QStringList &args);
+
+private:
     MasterLevels *levels;
     MemberWelcome *welcome;
     MemberBlacklist *blacklist;
@@ -29,43 +36,11 @@ private:
     int checkTimerId;
 
 private:
-    LevelInfoList findUsers(const QStringList &args) const;
-
-private:
-    void groupHelp(const MessageEvent &ev, const QStringList &args);
-    void groupLevel(const MessageEvent &ev, const QStringList &args);
-    void groupRename(const MessageEvent &ev, const QStringList &args);
-
-    void groupBan(const MessageEvent &ev, const QStringList &args);
-    void groupKill(const MessageEvent &ev, const QStringList &args);
-    void groupPower(const MessageEvent &ev, const QStringList &args);
-
-    void groupUnban(const MessageEvent &ev, const QStringList &args);
-    void groupUnkill(const MessageEvent &ev, const QStringList &args);
-    void groupUnpower(const MessageEvent &ev, const QStringList &args);
-
-    void groupWelcome(const MessageEvent &ev, const QStringList &args);
-    void groupBlacklist(const MessageEvent &ev, const QStringList &args);
-
-private:
-    void groupHelpHelp(qint64 gid);
-    void groupLevelHelp(qint64 gid);
-    void groupRenameHelp(qint64 gid);
-
-    void groupBanHelp(qint64 gid);
-    void groupKillHelp(qint64 gid);
-    void groupPowerHelp(qint64 gid);
-
-    void groupUnbanHelp(qint64 gid);
-    void groupUnkillHelp(qint64 gid);
-    void groupUnpowerHelp(qint64 gid);
-
-private:
     void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
 
     //void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
     //void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
-    //void showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
+    void showWarning(qint64 gid, const QString &title, const QString &content);
     void showPrompt(qint64 gid, const QString &title, const QString &content);
     void showSuccess(qint64 gid, const QString &title, const QString &content);
 

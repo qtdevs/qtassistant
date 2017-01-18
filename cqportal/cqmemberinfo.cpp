@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * \class CqMemberInfo
  * \brief 成员信息
  */

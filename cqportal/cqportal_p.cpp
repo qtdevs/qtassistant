@@ -1,4 +1,4 @@
-#include "cqportal.h"
+﻿#include "cqportal.h"
 #include "cqportal_p.h"
 
 #include <QCoreApplication>

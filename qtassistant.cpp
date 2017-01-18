@@ -1,15 +1,14 @@
-#include "qtassistant.h"
+﻿#include "qtassistant.h"
 #include "qtassistant_p.h"
 
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
-#include <QThread>
 #include <QPixmap>
 #include <QStringBuilder>
 #include <QTextStream>
-#include <QUuid>
-#include <QCoreApplication>
 #include <QTranslator>
+#include <QUuid>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -85,49 +84,50 @@ QtAssistantPrivate::~QtAssistantPrivate()
 {
 }
 
-LevelInfoList QtAssistantPrivate::findUsers(const QStringList &args) const
+LevelInfoList QtAssistantPrivate::findUsers(const QStringList &args)
 {
     QListIterator<QString> i(args);
-    LevelInfoList liList;
+    LevelInfoList levels;
     i.toBack();
+
     while (i.hasPrevious()) {
         const QString &arg = i.previous();
         if (arg.startsWith(QStringLiteral("[CQ:at"))) {
             qint64 uid = arg.mid(10, arg.count() - 11).toLongLong();
-            if (0 == uid) {
+            if (100000 > uid) {
                 break;
             }
 
             bool noFound = true;
-            for (const LevelInfo &li : liList) {
+            for (const LevelInfo &li : levels) {
                 if (li.uid == uid) {
                     noFound = false;
                     break;
                 }
             }
             if (noFound) {
-                liList << LevelInfo(uid, MasterLevel::Unknown);
+                levels.prepend(LevelInfo(uid, MasterLevel::Unknown));
             }
         } else {
             qint64 uid = arg.toLongLong();
-            if (0 == uid) {
+            if (100000 > uid) {
                 break;
             }
 
             bool noFound = true;
-            for (const LevelInfo &li : liList) {
+            for (const LevelInfo &li : levels) {
                 if (li.uid == uid) {
                     noFound = false;
                     break;
                 }
             }
             if (noFound) {
-                liList << LevelInfo(uid, MasterLevel::Unknown);
+                levels.prepend(LevelInfo(uid, MasterLevel::Unknown));
             }
         }
     }
 
-    return liList;
+    return levels;
 }
 
 void QtAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
@@ -140,6 +140,17 @@ void QtAssistantPrivate::permissionDenied(qint64 gid, qint64 uid, MasterLevel le
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(q->tr("Permission Denied"), content);
 
     QPixmap feedback = htmlFeedback->drawDanger(html, 400);
+    QString fileName = q->saveImage(feedback);
+    q->sendGroupMessage(gid, q->cqImage(fileName));
+}
+
+void QtAssistantPrivate::showWarning(qint64 gid, const QString &title, const QString &content)
+{
+    Q_Q(QtAssistant);
+
+    QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
+
+    QPixmap feedback = htmlFeedback->drawWarning(html, 400);
     QString fileName = q->saveImage(feedback);
     q->sendGroupMessage(gid, q->cqImage(fileName));
 }

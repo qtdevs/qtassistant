@@ -1,4 +1,4 @@
-#include "cqglobalevents.h"
+﻿#include "cqglobalevents.h"
 
 /*!
  * \struct MessageEvent

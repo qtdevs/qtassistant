@@ -1,4 +1,4 @@
-#include "masterlevels.h"
+﻿#include "masterlevels.h"
 #include "masterlevels_p.h"
 
 #include <QSqlError>

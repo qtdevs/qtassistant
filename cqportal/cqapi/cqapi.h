@@ -1,9 +1,13 @@
-/*
+﻿/*
 * CoolQ SDK for VC++
 * Api Version 9.6
 * Written by Coxxs & Thanks for the help of orzFly
 */
 #pragma once
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #define CQAPIVER 9
 #define CQAPIVERTEXT "9"

@@ -1,4 +1,4 @@
-#include "qtassistant.h"
+﻿#include "qtassistant.h"
 #include "qtassistant_p.h"
 
 #include <QStringBuilder>
@@ -55,6 +55,7 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
     d->welcome->addMember(ev.from, ev.member);
 
     // 尝试修改昵称。
+    QString nameCard;
     bool unknownLocation = false;
     CqMemberInfo mi = memberInfo(ev.from, ev.member);
     if (mi.isValid()) {
@@ -64,15 +65,21 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
         if (!nickName.isEmpty()) {
             if (location.isEmpty()) {
                 unknownLocation = true;
-                location = tr("Location");
+                location = tr("所在地");
             }
-            QString nameCard = '[' % location % ']' % nickName;
+            nameCard = '[' % location % ']' % nickName;
             renameGroupMember(ev.from, ev.member, nameCard);
         }
     }
 
     // 发送欢迎卡片。
-    sendGroupMessage(ev.from, tr("%1, Welcome to join us, please say something in 30 minutes.").arg(cqAt(ev.member)));
+    if (unknownLocation) {
+        d->showWarning(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，并<span class=\"warning\">修改你的群名片</span>，否则将被自动踢出。谢谢你的配合！"));
+    } else {
+        d->showWarning(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，否则将被自动踢出。谢谢你的配合！"));
+    }
+
+    sendGroupMessage(ev.from, cqAt(ev.member));
 
     return false;
 }

@@ -1,4 +1,4 @@
-/*! \class CqPersonInfo
+﻿/*! \class CqPersonInfo
  * \brief 个人信息
  */
 

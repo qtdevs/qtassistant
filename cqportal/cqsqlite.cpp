@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * \class CqSqlite
  * \brief 数据存储类
  */

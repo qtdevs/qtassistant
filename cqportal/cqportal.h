@@ -1,5 +1,9 @@
-#ifndef CQPORTAL_H
+﻿#ifndef CQPORTAL_H
 #define CQPORTAL_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqglobalevents.h"
 #include "cqpersoninfo.h"

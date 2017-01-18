@@ -1,4 +1,4 @@
-#include "memberwelcome.h"
+﻿#include "memberwelcome.h"
 #include "memberwelcome_p.h"
 
 #include <QDateTime>

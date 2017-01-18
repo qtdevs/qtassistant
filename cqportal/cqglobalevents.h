@@ -1,5 +1,9 @@
-#ifndef CQGLOBALEVENTS_H
+﻿#ifndef CQGLOBALEVENTS_H
 #define CQGLOBALEVENTS_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include <QObject>
 #include <QVector>

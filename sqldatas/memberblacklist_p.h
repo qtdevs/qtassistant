@@ -1,5 +1,9 @@
-#ifndef MEMBERBLACKLIST_P_H
+﻿#ifndef MEMBERBLACKLIST_P_H
 #define MEMBERBLACKLIST_P_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqsqlite_p.h"
 #include "memberblacklist.h"
@@ -13,7 +17,7 @@ public:
     virtual ~MemberBlacklistPrivate();
 
 public:
-    QHash<Member, qint64> blacklist;
+    QHash<Member, qint64> members;
 };
 
 #endif // MEMBERBLACKLIST_P_H
