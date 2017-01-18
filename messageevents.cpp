@@ -301,6 +301,21 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
         return;
     }
 
+    // 管理等级检查
+
+    if (!ll.isEmpty()) {
+        // 普通成员不应答。
+        MasterLevel level = d->levels->level(ev.from, ev.sender);
+        if (MasterLevel::Unknown == level) {
+            return;
+        }
+        // 五级管理及以上。
+        if (level > MasterLevel::Master5) {
+            permissionDenied(ev.from, ev.sender, level);
+            return;
+        }
+    }
+
     // 在这里，我们对新名片做规范化处理。
     name.remove(' '); // 消除空格，不允许有空格。
     name.replace("【", "["); // 替换全角方括号，用半角方括号替代。
@@ -316,17 +331,6 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     if (ll.isEmpty()) {
         renameGroupMember(ev.from, ev.sender, name);
     } else {
-        // 普通成员不应答。
-        MasterLevel level = d->levels->level(ev.from, ev.sender);
-        if (MasterLevel::Unknown == level) {
-            return;
-        }
-        // 五级管理及以上。
-        if (level > MasterLevel::Master5) {
-            permissionDenied(ev.from, ev.sender, level);
-            return;
-        }
-
         renameGroupMember(ev.from, ll.at(0).uid, name);
     }
 
