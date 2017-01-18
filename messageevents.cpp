@@ -215,10 +215,18 @@ void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
         if (argvList) {
             if (MasterLevel::Unknown != level) {
                 ll = d->levels->levels(argvGlobal ? 0 : ev.from);
-                if (argvGlobal) {
-                    showPromptList(ev.from, tr("跨群等级列表"), ll, true);
+                if (ll.isEmpty()) {
+                    if (argvGlobal) {
+                        showPrompt(ev.from, tr("跨群等级列表"), tr("等级列表中没有任何成员"));
+                    } else {
+                        showPrompt(ev.from, tr("本群等级列表"), tr("等级列表中没有任何成员"));
+                    }
                 } else {
-                    showPromptList(ev.from, tr("本群等级列表"), ll, true);
+                    if (argvGlobal) {
+                        showPromptList(ev.from, tr("跨群等级列表"), ll, true);
+                    } else {
+                        showPromptList(ev.from, tr("本群等级列表"), ll, true);
+                    }
                 }
             }
         } else {
@@ -233,7 +241,11 @@ void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
     } else if (!argvList) {
         if (MasterLevel::Unknown != level) {
             d->levels->update(argvGlobal ? 0 : ev.from, ll);
-            showPromptList(ev.from, argvGlobal ? tr("跨群等级") : tr("本群等级"), ll, true);
+            if (argvGlobal) {
+                showPromptList(ev.from, tr("跨群等级"), ll, true);
+            } else {
+                showPromptList(ev.from, tr("本群等级"), ll, true);
+            }
         }
     } else {
         groupLevelHelp(ev.from);
