@@ -259,17 +259,6 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 {
     Q_D(QtAssistant);
 
-    // 普通成员不应答。
-    MasterLevel level = d->levels->level(ev.from, ev.sender);
-    if (MasterLevel::Unknown == level) {
-        return;
-    }
-    // 五级管理及以上。
-    if (level > MasterLevel::Master5) {
-        permissionDenied(ev.from, ev.sender, level);
-        return;
-    }
-
     // !!! 由于此操作的特殊性，命令行解析自行分析
 
     QString name = convert(ev.gbkMsg);
@@ -327,6 +316,17 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     if (ll.isEmpty()) {
         renameGroupMember(ev.from, ev.sender, name);
     } else {
+        // 普通成员不应答。
+        MasterLevel level = d->levels->level(ev.from, ev.sender);
+        if (MasterLevel::Unknown == level) {
+            return;
+        }
+        // 五级管理及以上。
+        if (level > MasterLevel::Master5) {
+            permissionDenied(ev.from, ev.sender, level);
+            return;
+        }
+
         renameGroupMember(ev.from, ll.at(0).uid, name);
     }
 
