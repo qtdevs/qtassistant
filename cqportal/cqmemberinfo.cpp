@@ -67,13 +67,17 @@ CqMemberInfo::CqMemberInfo(const char *info)
     do {
         qint32 stamp = 0;
         ds >> stamp;
-        data->joinTime = QDateTime::fromTime_t(stamp);
+        if (stamp != 0) {
+            data->joinTime = QDateTime::fromTime_t(stamp);
+        }
     } while (false);
 
     do {
         qint32 stamp = 0;
         ds >> stamp;
-        data->lastSent = QDateTime::fromTime_t(stamp);
+        if (stamp != 0) {
+            data->lastSent = QDateTime::fromTime_t(stamp);
+        }
     } while (false);
 
     do {

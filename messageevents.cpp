@@ -1,6 +1,7 @@
 ﻿#include "qtassistant.h"
 #include "qtassistant_p.h"
 
+#include <QRegularExpression>
 #include <QStringBuilder>
 #include <QTextStream>
 #include <QtDebug>
@@ -58,6 +59,14 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
         }
         if ((c == "r") || (c == "rename")) {
             groupRename(ev, args.mid(1));
+            return true;
+        }
+        if ((c == "f") || (c == "format")) {
+            groupFormat(ev, args.mid(1));
+            return true;
+        }
+        if ((c == "m") || (c == "member")) {
+            groupMember(ev, args.mid(1));
             return true;
         }
 
@@ -132,6 +141,12 @@ void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
         } else if (argv == "r" || argv == "rename") {
             groupRenameHelp(ev.from);
             return;
+        } else if (argv == "f" || argv == "format") {
+            groupFormatHelp(ev.from);
+            return;
+        } else if (argv == "m" || argv == "member") {
+            groupMemberHelp(ev.from);
+            return;
         } else if (argv == "b" || argv == "ban") {
             groupBanHelp(ev.from);
             return;
@@ -160,6 +175,7 @@ void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
     ts << "<code>  </code>" << tr("帮助信息") << " <code>(5+): help(h)</code>\n";
     ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level(l)</code>\n";
     ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename(r)</code>\n";
+    ts << "<code>  </code>" << tr("格式名片") << " <code>(5+): format(f)</code>\n";
     ts << "<code>  </code>" << tr("禁言命令") << " <code>(5+): ban(b)</code>\n";
     ts << "<code>  </code>" << tr("取消禁言") << " <code>(5+): unban(ub)</code>\n";
     ts << "<code>  </code>" << tr("踢出命令") << " <code>(3+): kill(k)</code>\n";
@@ -261,7 +277,7 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 
     // !!! 由于此操作的特殊性，命令行解析自行分析
 
-    QString name = convert(ev.gbkMsg);
+    QString nameCard = convert(ev.gbkMsg);
 
     LevelInfoList ll;
     bool prefixFound = false;
@@ -281,8 +297,8 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 
             // 如果只找到一个号码，我们认为号码以后的部分都是新名片；否则就是无效的操作。
             if (ll.count() == 1) {
-                int r = name.indexOf(arg);
-                name = name.mid(r + arg.count());
+                int r = nameCard.indexOf(arg);
+                nameCard = nameCard.mid(r + arg.count());
             } else {
                 invalidArgs = true;
                 break;
@@ -290,8 +306,8 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
         } else if (ll.isEmpty()) {
             // 在还没有找到号码的情况下，我们认为这是新名片的开始。
             if (!prefixFound) {
-                int r = name.indexOf(arg);
-                name = name.mid(r);
+                int r = nameCard.indexOf(arg);
+                nameCard = nameCard.mid(r);
             }
             prefixFound = true;
         }
@@ -317,11 +333,9 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     }
 
     // 在这里，我们对新名片做规范化处理。
-    name.remove(' '); // 消除空格，不允许有空格。
-    name.replace("【", "["); // 替换全角方括号，用半角方括号替代。
-    name.replace("】", "]"); // 替换全角方括号，用半角方括号替代。
+    d->formatNameCard(nameCard);
 
-    if (name.isEmpty()) {
+    if (nameCard.isEmpty()) {
         groupRenameHelp(ev.from);
         return;
     }
@@ -329,12 +343,190 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     // 执行具体操作
 
     if (ll.isEmpty()) {
-        renameGroupMember(ev.from, ev.sender, name);
+        renameGroupMember(ev.from, ev.sender, nameCard);
     } else {
-        renameGroupMember(ev.from, ll.at(0).uid, name);
+        renameGroupMember(ev.from, ll.at(0).uid, nameCard);
     }
 
-    showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(name));
+    showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(nameCard));
+}
+
+void QtAssistant::groupFormat(const MessageEvent &ev, const QStringList &args)
+{
+    Q_D(QtAssistant);
+
+    LevelInfoList ll = d->findUsers(args);
+
+    QRegularExpression correctNameCard("^[\\[【][^\\[\\]【】]+[\\]】][^\\[\\]【】]+$");
+    QRegularExpression correctLocation("^[\\[【][^\\[\\]【】]+[\\]】]$");
+    QRegularExpression correctNickName("^[^\\[\\]【】]+$");
+
+    // 管理等级检查
+
+    if (!ll.isEmpty()) {
+        // 普通成员不应答。
+        MasterLevel level = d->levels->level(ev.from, ev.sender);
+        if (MasterLevel::Unknown == level) {
+            return;
+        }
+        // 五级管理及以上。
+        if (level > MasterLevel::Master5) {
+            permissionDenied(ev.from, ev.sender, level);
+            return;
+        }
+
+        // 管理等级检查
+
+        // 检查一：管理只能处理比自己等级低的成员。
+        LevelInfoList ml;
+        d->levels->update(ev.from, ll);
+        for (const LevelInfo &li : ll) {
+            if (li.level <= level) {
+                ml << li;
+            }
+        }
+        if (!ml.isEmpty()) {
+            showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
+            return;
+        }
+
+        // 执行具体操作
+
+        for (const LevelInfo &li : ll) {
+            // 尝试修改昵称。
+            CqMemberInfo mi = memberInfo(ev.from, li.uid, false);
+            if (mi.isValid()) {
+                QString nameCard = mi.nameCard().remove(' ');
+                d->safetyNameCard(nameCard);
+
+                if (!correctNameCard.match(nameCard).hasMatch()) {
+                    QString nickName = mi.nickName().trimmed();
+                    QString location = mi.location().trimmed();
+                    d->safetyNameCard(nickName);
+                    if (location.isEmpty()) {
+                        location = tr("所在地");
+                    }
+
+                    if (correctLocation.match(nameCard).hasMatch()) {
+                        nameCard = nameCard % nickName;
+                    } else if (correctNickName.match(nameCard).hasMatch()) {
+                        nameCard = '[' % location % ']' % nameCard;
+                    } else {
+                        if (nameCard.isEmpty()) {
+                            nameCard = '[' % location % ']' % nickName;
+                        } else {
+                            nameCard = '[' % location % ']' % nameCard;
+                        }
+                    }
+                }
+
+                // 在这里，我们对新名片做规范化处理。
+                d->formatNameCard(nameCard);
+
+                if (!nameCard.isEmpty() && (nameCard != mi.nameCard().trimmed())) {
+                    renameGroupMember(ev.from, li.uid, nameCard);
+                }
+            }
+        }
+
+        showSuccessList(ev.from, tr("格式化后新的名片"), ll, false);
+    } else {
+        // 尝试修改昵称。
+        CqMemberInfo mi = memberInfo(ev.from, ev.sender, false);
+        if (mi.isValid()) {
+            QString nameCard = mi.nameCard().remove(' ');
+            d->safetyNameCard(nameCard);
+
+            if (!correctNameCard.match(nameCard).hasMatch()) {
+                QString nickName = mi.nickName().trimmed();
+                QString location = mi.location().trimmed();
+                d->safetyNameCard(nickName);
+                if (location.isEmpty()) {
+                    location = tr("所在地");
+                }
+
+                if (correctLocation.match(nameCard).hasMatch()) {
+                    nameCard = nameCard % nickName;
+                } else if (correctNickName.match(nameCard).hasMatch()) {
+                    nameCard = '[' % location % ']' % nameCard;
+                } else {
+                    if (nameCard.isEmpty()) {
+                        nameCard = '[' % location % ']' % nickName;
+                    } else {
+                        nameCard = '[' % location % ']' % nameCard;
+                    }
+                }
+            }
+
+            // 在这里，我们对新名片做规范化处理。
+            d->formatNameCard(nameCard);
+
+            if (!nameCard.isEmpty() && (nameCard != mi.nameCard().trimmed())) {
+                renameGroupMember(ev.from, ev.sender, nameCard);
+            }
+
+            showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(nameCard));
+        } else {
+            showDanger(ev.from, tr("修改名片"), tr("数据同步错误，请重试。"));
+        }
+    }
+}
+
+void QtAssistant::groupMember(const MessageEvent &ev, const QStringList &args)
+{
+    Q_D(QtAssistant);
+
+    // 普通成员不应答。
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 绝对领域及以上。
+    if (level > MasterLevel::ATField) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
+    if (ll.isEmpty()) {
+        groupMemberHelp(ev.from);
+        return;
+    }
+
+    // 检查参数有效性。
+    if (args.count() != ll.count()) {
+        groupMemberHelp(ev.from);
+        return;
+    }
+
+    // 执行具体操作
+
+    for (const LevelInfo &li : ll) {
+        CqMemberInfo mi = memberInfo(ev.from, li.uid, false);
+
+        QString reports;
+        QTextStream ts(&reports);
+
+        ts << "<pre>";
+        ts << "<code>qint64 gid: " << mi.gid() << "</code>\n";
+        ts << "<code>qint64 uid: " << mi.uid() << "</code>\n";
+        ts << "<code>qint32 sex: " << mi.sex() << "</code>\n";
+        ts << "<code>qint32 age: " << mi.age() << "</code>\n";
+        ts << "<code>QString nickName: </code>" << mi.nickName() << "\n";
+        ts << "<code>QString nameCard: </code>" << mi.nameCard() << "\n";
+        ts << "<code>QString location: </code>" << mi.location() << "\n";
+        ts << "<code>QString levelName: </code>" << mi.levelName() << "\n";
+        ts << "<code>qint32 permission: " << mi.permission() << "</code>\n";
+        ts << "<code>qint32 unfriendly: " << mi.unfriendly() << "</code>\n";
+        ts << "<code>QDateTime joinTime:\n  " << mi.joinTime().toString(Qt::ISODate) << "</code>\n";
+        ts << "<code>QDateTime lastSent:\n  " << mi.lastSent().toString(Qt::ISODate) << "</code>\n";
+        ts << "</pre>";
+
+        ts.flush();
+
+        showPrimary(ev.from, QString::number(li.uid), reports);
+    }
 }
 
 void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
@@ -1072,6 +1264,36 @@ void QtAssistant::groupRenameHelp(qint64 gid)
     ts.flush();
 
     showPrompt(gid, "修改名片的用法", usage);
+}
+
+void QtAssistant::groupFormatHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << "<code>sudo format(f) [" << tr("成员") << "] ...</code>\n";
+    ts << tr("权限要求：") << "5+\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, tr("格式名片的用法"), usage);
+}
+
+void QtAssistant::groupMemberHelp(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << "<code>sudo member(m) [" << tr("成员") << "] ...</code>\n";
+    ts << tr("权限要求：") << "5+\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, tr("成员信息的用法"), usage);
 }
 
 void QtAssistant::groupBanHelp(qint64 gid)

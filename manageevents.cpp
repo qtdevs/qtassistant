@@ -57,10 +57,11 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
     // 尝试修改昵称。
     QString nameCard;
     bool unknownLocation = false;
-    CqMemberInfo mi = memberInfo(ev.from, ev.member);
+    CqMemberInfo mi = memberInfo(ev.from, ev.member, false);
     if (mi.isValid()) {
         QString nickName = mi.nickName().trimmed();
         QString location = mi.location().trimmed();
+        d->safetyNameCard(nickName);
 
         if (!nickName.isEmpty()) {
             if (location.isEmpty()) {

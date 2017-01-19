@@ -24,18 +24,18 @@ public:
 private:
     static LevelInfoList findUsers(const QStringList &args);
 
+    static void safetyNameCard(QString &nameCard);
+    static void formatNameCard(QString &nameCard);
+
 private:
     MasterLevels *levels;
     MemberWelcome *welcome;
     MemberBlacklist *blacklist;
     MemberDeathHouse *deathHouse;
 
-    int checkTimerId;
-
-
-
-private:
     HtmlFeedback *htmlFeedback;
+
+    int checkTimerId;
 };
 
 #endif // QtAssistant_P_H

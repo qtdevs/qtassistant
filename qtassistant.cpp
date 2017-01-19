@@ -55,7 +55,10 @@ void QtAssistant::timerEvent(QTimerEvent *)
         MemberList members;
         d->welcome->expiredMembers(members);
         for (const auto &member : members) {
-            kickGroupMember(member.first, member.second, false);
+            CqMemberInfo mi = memberInfo(member.first, member.second, false);
+            if (mi.isValid() && mi.lastSent().isNull()) {
+                kickGroupMember(member.first, member.second, false);
+            }
         }
     } while (false);
 
@@ -204,6 +207,7 @@ QtAssistantPrivate::QtAssistantPrivate()
     , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
     , htmlFeedback(Q_NULLPTR)
+    , checkTimerId(-1)
 {
 }
 
@@ -255,4 +259,30 @@ LevelInfoList QtAssistantPrivate::findUsers(const QStringList &args)
     }
 
     return levels;
+}
+
+void QtAssistantPrivate::safetyNameCard(QString &nameCard)
+{
+    // 屏蔽 emoji 表情
+    do {
+        int s = nameCard.indexOf("[CQ:emoji");
+        if (s < 0) {
+            break;
+        }
+        int e = nameCard.indexOf(']', s);
+        if (e < 0) {
+            break;
+        }
+
+        nameCard.replace(s, e - s + 1, "{?}");
+    } while (true);
+}
+
+void QtAssistantPrivate::formatNameCard(QString &nameCard)
+{
+    // 在这里，我们对新名片做规范化处理。
+    nameCard.remove(' '); // 消除空格，不允许有空格。
+    nameCard.replace("【", "["); // 替换全角方括号，用半角方括号替代。
+    nameCard.replace("】", "]"); // 替换全角方括号，用半角方括号替代。
+
 }

@@ -42,6 +42,8 @@ private:
     void groupHelp(const MessageEvent &ev, const QStringList &args);
     void groupLevel(const MessageEvent &ev, const QStringList &args);
     void groupRename(const MessageEvent &ev, const QStringList &args);
+    void groupFormat(const MessageEvent &ev, const QStringList &args);
+    void groupMember(const MessageEvent &ev, const QStringList &args);
 
     void groupBan(const MessageEvent &ev, const QStringList &args);
     void groupKill(const MessageEvent &ev, const QStringList &args);
@@ -58,6 +60,8 @@ private:
     void groupHelpHelp(qint64 gid);
     void groupLevelHelp(qint64 gid);
     void groupRenameHelp(qint64 gid);
+    void groupFormatHelp(qint64 gid);
+    void groupMemberHelp(qint64 gid);
 
     void groupBanHelp(qint64 gid);
     void groupKillHelp(qint64 gid);

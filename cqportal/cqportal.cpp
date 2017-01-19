@@ -107,11 +107,21 @@ QString CqPortal::convert(const QByteArray &str)
 /*!
  * \brief 返回酷Q中@他人的字符串
  *
- * 此函数将返回@他人的字符串。
+ * 此函数将返回酷Q中@他人的字符串。
  */
 QString CqPortal::cqAt(qint64 uid)
 {
     return QString::fromLatin1("[CQ:at,qq=%1]").arg(uid);
+}
+
+/*!
+ * \brief 返回酷Q中的 emoji 表情
+ *
+ * 此函数将返回酷Q中的 emoji 表情。
+ */
+QString CqPortal::cqEmoji(int emojiCode)
+{
+    return QString::fromLatin1("[CQ:emoji,id=%1]").arg(emojiCode);
 }
 
 /*!
@@ -123,6 +133,24 @@ QString CqPortal::cqAt(qint64 uid)
 QString CqPortal::cqImage(const QString &name)
 {
     return QString::fromLatin1("[CQ:image,file=%1]").arg(name);
+}
+
+/*!
+ * \brief 通过数值返回 QString 格式的 emoji 表情
+ *
+ * 此函数将通过数值返回 QString 格式的 emoji 表情。
+ */
+QString CqPortal::emoji(qint32 value)
+{
+    char utf8Emoji[5] = {0};
+
+    utf8Emoji[0] = char(0xF0);
+    utf8Emoji[1] = char(((value >> 0xC) & 0x3f) | 0x80);
+    utf8Emoji[2] = char(((value >> 0x6) & 0x3f) | 0x80);
+    utf8Emoji[3] = char(((value >> 0x0) & 0x3f) | 0x80);
+    utf8Emoji[4] = 0;
+
+    return QString::fromUtf8(utf8Emoji);
 }
 
 /*!
@@ -536,7 +564,7 @@ QString CqPortal::saveImage(const QPixmap &data) const
 
     QString uuid = QString::fromLatin1(QUuid::createUuid().toRfc4122().toHex());
     QString name = QString("%1/%2.png").arg(d->imagePath, uuid);
-    if (data.save(name, "PNG")) {
+    if (data.save(name, "PNG", 0)) {
         return uuid % ".png";
     }
 

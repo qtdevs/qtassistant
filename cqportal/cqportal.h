@@ -29,8 +29,10 @@ public:
 
 public:
     static QString cqAt(qint64 uid);
-
+    static QString cqEmoji(int emojiCode);
     static QString cqImage(const QString &name);
+
+    static QString emoji(qint32 value);
 
 public:
     qint64 currentId() const;
