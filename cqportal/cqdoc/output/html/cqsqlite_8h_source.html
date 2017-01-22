@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.13"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CqCore: C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqsqlite.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">CqCore
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqsqlite.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef CQSQLITE_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define CQSQLITE_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QSqlQuery&gt;</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;cqglobalevents.h&quot;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">class </span>CqSqlitePrivate;</div><div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="class_cq_sqlite.html">    9</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_cq_sqlite.html">CqSqlite</a> : <span class="keyword">public</span> QObject</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    Q_OBJECT</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    Q_DECLARE_PRIVATE(<a class="code" href="class_cq_sqlite.html">CqSqlite</a>)</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="class_cq_sqlite.html#a9d1a5fcd72f176999645b772f53540d6">CqSqlite</a>(CqSqlitePrivate &amp;dd, QObject *parent = Q_NULLPTR);</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    QScopedPointer&lt;CqSqlitePrivate&gt; d_ptr;</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_cq_sqlite.html#a924d6905a7519fa2908292580ae58e01">~CqSqlite</a>();</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a069572925efb87950131dfc106cf07cc">   22</a></span>&#160;    <span class="keyword">enum</span> <a class="code" href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3">Result</a> { <a class="code" href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a43ca9638c7f623ed2528d36c96e36d74">NoChange</a>, <a class="code" href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a85b04a2447dd99c31cc277ef85d8b754">Done</a>, <a class="code" href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a069572925efb87950131dfc106cf07cc">SqlError</a> };</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cq_sqlite.html#a7b4d2a9088750dc6741511604bc4aea4">setFileName</a>(<span class="keyword">const</span> QString &amp;fileName);</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cq_sqlite.html#ad8dedf419ae7730d0bfcdacee712b48f">prepare</a>(<span class="keyword">const</span> QString &amp;s);</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_cq_sqlite.html#a222a6b10184a46c14db7d2c5d9534c75">openDatabase</a>();</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    QSqlQuery <a class="code" href="class_cq_sqlite.html#a9faa5ecdbf8947000244b94fdfde2646">query</a>(<span class="keyword">const</span> QString &amp;sql);</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    QSqlQuery <a class="code" href="class_cq_sqlite.html#a9faa5ecdbf8947000244b94fdfde2646">query</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *srcSql);</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif // CQSQLITE_H</span></div><div class="ttc" id="class_cq_sqlite_html_a924d6905a7519fa2908292580ae58e01"><div class="ttname"><a href="class_cq_sqlite.html#a924d6905a7519fa2908292580ae58e01">CqSqlite::~CqSqlite</a></div><div class="ttdeci">virtual ~CqSqlite()</div><div class="ttdoc">析构函数 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:67</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a9d1a5fcd72f176999645b772f53540d6"><div class="ttname"><a href="class_cq_sqlite.html#a9d1a5fcd72f176999645b772f53540d6">CqSqlite::CqSqlite</a></div><div class="ttdeci">CqSqlite(CqSqlitePrivate &amp;dd, QObject *parent=Q_NULLPTR)</div><div class="ttdoc">构造函数 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:55</div></div>
+<div class="ttc" id="class_cq_sqlite_html"><div class="ttname"><a href="class_cq_sqlite.html">CqSqlite</a></div><div class="ttdoc">数据存储类 </div><div class="ttdef"><b>Definition:</b> cqsqlite.h:9</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a7b4d2a9088750dc6741511604bc4aea4"><div class="ttname"><a href="class_cq_sqlite.html#a7b4d2a9088750dc6741511604bc4aea4">CqSqlite::setFileName</a></div><div class="ttdeci">void setFileName(const QString &amp;fileName)</div><div class="ttdoc">设置文件名 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:76</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a70ab8f02795bb5614a7ace2f025b82e3a43ca9638c7f623ed2528d36c96e36d74"><div class="ttname"><a href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a43ca9638c7f623ed2528d36c96e36d74">CqSqlite::NoChange</a></div><div class="ttdoc">没有发生改变 </div><div class="ttdef"><b>Definition:</b> cqsqlite.h:22</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a222a6b10184a46c14db7d2c5d9534c75"><div class="ttname"><a href="class_cq_sqlite.html#a222a6b10184a46c14db7d2c5d9534c75">CqSqlite::openDatabase</a></div><div class="ttdeci">bool openDatabase()</div><div class="ttdoc">打开数据库 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:100</div></div>
+<div class="ttc" id="class_cq_sqlite_html_ad8dedf419ae7730d0bfcdacee712b48f"><div class="ttname"><a href="class_cq_sqlite.html#ad8dedf419ae7730d0bfcdacee712b48f">CqSqlite::prepare</a></div><div class="ttdeci">void prepare(const QString &amp;s)</div><div class="ttdoc">设置预处理 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:88</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a70ab8f02795bb5614a7ace2f025b82e3"><div class="ttname"><a href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3">CqSqlite::Result</a></div><div class="ttdeci">Result</div><div class="ttdoc">CqSqlite 执行结果 </div><div class="ttdef"><b>Definition:</b> cqsqlite.h:22</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a70ab8f02795bb5614a7ace2f025b82e3a85b04a2447dd99c31cc277ef85d8b754"><div class="ttname"><a href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a85b04a2447dd99c31cc277ef85d8b754">CqSqlite::Done</a></div><div class="ttdoc">已经完成 </div><div class="ttdef"><b>Definition:</b> cqsqlite.h:22</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a70ab8f02795bb5614a7ace2f025b82e3a069572925efb87950131dfc106cf07cc"><div class="ttname"><a href="class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a069572925efb87950131dfc106cf07cc">CqSqlite::SqlError</a></div><div class="ttdoc">数据库错误 </div><div class="ttdef"><b>Definition:</b> cqsqlite.h:22</div></div>
+<div class="ttc" id="class_cq_sqlite_html_a9faa5ecdbf8947000244b94fdfde2646"><div class="ttname"><a href="class_cq_sqlite.html#a9faa5ecdbf8947000244b94fdfde2646">CqSqlite::query</a></div><div class="ttdeci">QSqlQuery query(const QString &amp;sql)</div><div class="ttdoc">执行 Sql 语句 </div><div class="ttdef"><b>Definition:</b> cqsqlite.cpp:139</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.13
+</small></address>
+</body>
+</html>

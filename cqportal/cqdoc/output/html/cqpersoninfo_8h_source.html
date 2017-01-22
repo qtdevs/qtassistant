@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.13"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CqCore: C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqpersoninfo.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">CqCore
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">C:/Users/Monster/Documents/GitHub/qtassistant/cqcore/cqpersoninfo.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef CQPERSONINFO_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define CQPERSONINFO_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QDateTime&gt;</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QSharedDataPointer&gt;</span></div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">class </span>CqPersonInfoData;</div><div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="class_cq_person_info.html">    8</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_cq_person_info.html">CqPersonInfo</a></div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <a class="code" href="class_cq_person_info.html#ab813fe7fcc045efab81bb83901262d3d">CqPersonInfo</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *info);</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="class_cq_person_info.html#ab813fe7fcc045efab81bb83901262d3d">CqPersonInfo</a>(<span class="keyword">const</span> <a class="code" href="class_cq_person_info.html">CqPersonInfo</a> &amp;other);</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="class_cq_person_info.html">CqPersonInfo</a> &amp;<a class="code" href="class_cq_person_info.html#a65a18698d904a63ca7142eba1fd30e07">operator=</a>(<span class="keyword">const</span> <a class="code" href="class_cq_person_info.html">CqPersonInfo</a> &amp;rhs);</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="class_cq_person_info.html#a9eeaf32e2d5008745165ead94896001e">~CqPersonInfo</a>();</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_cq_person_info.html#a19c75c0c3cc043988d68fe3247386654">isValid</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    qint64 <a class="code" href="class_cq_person_info.html#a89e24716f23e4269a3dfbaea7b1f3b11">uid</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    qint32 <a class="code" href="class_cq_person_info.html#ad7ee2f95e8bfcac28b429450b8879a0a">sex</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    qint32 <a class="code" href="class_cq_person_info.html#a5af75e8e4d86fbb58cafc9cad997da9d">age</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    QString <a class="code" href="class_cq_person_info.html#ab09db509ccd1e632e68fb43d82d1cfa2">nickName</a>() <span class="keyword">const</span>;</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">private</span>:</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    QSharedDataPointer&lt;CqPersonInfoData&gt; data;</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#endif // CQPERSONINFO_H</span></div><div class="ttc" id="class_cq_person_info_html_a5af75e8e4d86fbb58cafc9cad997da9d"><div class="ttname"><a href="class_cq_person_info.html#a5af75e8e4d86fbb58cafc9cad997da9d">CqPersonInfo::age</a></div><div class="ttdeci">qint32 age() const</div><div class="ttdoc">返回年龄 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:106</div></div>
+<div class="ttc" id="class_cq_person_info_html_a65a18698d904a63ca7142eba1fd30e07"><div class="ttname"><a href="class_cq_person_info.html#a65a18698d904a63ca7142eba1fd30e07">CqPersonInfo::operator=</a></div><div class="ttdeci">CqPersonInfo &amp; operator=(const CqPersonInfo &amp;rhs)</div><div class="ttdoc">赋值函数 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:60</div></div>
+<div class="ttc" id="class_cq_person_info_html"><div class="ttname"><a href="class_cq_person_info.html">CqPersonInfo</a></div><div class="ttdoc">个人信息 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.h:8</div></div>
+<div class="ttc" id="class_cq_person_info_html_a89e24716f23e4269a3dfbaea7b1f3b11"><div class="ttname"><a href="class_cq_person_info.html#a89e24716f23e4269a3dfbaea7b1f3b11">CqPersonInfo::uid</a></div><div class="ttdeci">qint64 uid() const</div><div class="ttdoc">返回个人号码 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:88</div></div>
+<div class="ttc" id="class_cq_person_info_html_a19c75c0c3cc043988d68fe3247386654"><div class="ttname"><a href="class_cq_person_info.html#a19c75c0c3cc043988d68fe3247386654">CqPersonInfo::isValid</a></div><div class="ttdeci">bool isValid() const</div><div class="ttdoc">验证有效信息 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:79</div></div>
+<div class="ttc" id="class_cq_person_info_html_ab09db509ccd1e632e68fb43d82d1cfa2"><div class="ttname"><a href="class_cq_person_info.html#ab09db509ccd1e632e68fb43d82d1cfa2">CqPersonInfo::nickName</a></div><div class="ttdeci">QString nickName() const</div><div class="ttdoc">返回昵称 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:115</div></div>
+<div class="ttc" id="class_cq_person_info_html_ad7ee2f95e8bfcac28b429450b8879a0a"><div class="ttname"><a href="class_cq_person_info.html#ad7ee2f95e8bfcac28b429450b8879a0a">CqPersonInfo::sex</a></div><div class="ttdeci">qint32 sex() const</div><div class="ttdoc">返回性别 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:97</div></div>
+<div class="ttc" id="class_cq_person_info_html_a9eeaf32e2d5008745165ead94896001e"><div class="ttname"><a href="class_cq_person_info.html#a9eeaf32e2d5008745165ead94896001e">CqPersonInfo::~CqPersonInfo</a></div><div class="ttdeci">~CqPersonInfo()</div><div class="ttdoc">析构函数 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:71</div></div>
+<div class="ttc" id="class_cq_person_info_html_ab813fe7fcc045efab81bb83901262d3d"><div class="ttname"><a href="class_cq_person_info.html#ab813fe7fcc045efab81bb83901262d3d">CqPersonInfo::CqPersonInfo</a></div><div class="ttdeci">CqPersonInfo(const char *info)</div><div class="ttdoc">构造函数 </div><div class="ttdef"><b>Definition:</b> cqpersoninfo.cpp:18</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.13
+</small></address>
+</body>
+</html>
