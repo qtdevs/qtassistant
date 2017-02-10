@@ -4,7 +4,7 @@
 * Written by Coxxs & Thanks for the help of orzFly
 */
 #pragma once
-
+#include <stdint.h>
 #if _MSC_VER >= 1600
 #  pragma execution_character_set("utf-8")
 #endif

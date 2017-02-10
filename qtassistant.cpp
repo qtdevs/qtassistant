@@ -14,7 +14,7 @@
 #include "sqldatas/memberwelcome.h"
 #include "sqldatas/memberblacklist.h"
 #include "sqldatas/memberdeathhouse.h"
-
+#include "sqldatas/masterdinner.h"
 #include "htmlfeedback/htmlfeedback.h"
 
 // class QtAssistant
@@ -33,9 +33,8 @@ QtAssistant::QtAssistant(QObject *parent)
     d->welcome = new MemberWelcome(this);
     d->blacklist = new MemberBlacklist(this);
     d->deathHouse = new MemberDeathHouse(this);
-
+    d->dinnerlist = new MasterDinner(this);
     d->htmlFeedback = new HtmlFeedback(this);
-
     d->checkTimerId = startTimer(10000);
 }
 

@@ -9,6 +9,7 @@
 #include <QVector>
 
 typedef QPair<qint64, qint64> Member;
+typedef QPair<qint64, QString> MemberDinner;
 typedef QVector<Member>       MemberList;
 
 struct MessageEvent

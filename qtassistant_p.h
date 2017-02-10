@@ -12,6 +12,7 @@ class MasterLevels;
 class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
+class MasterDinner;
 
 class QtAssistantPrivate : public CqPortalPrivate
 {
@@ -32,6 +33,7 @@ private:
     MemberWelcome *welcome;
     MemberBlacklist *blacklist;
     MemberDeathHouse *deathHouse;
+    MasterDinner   *dinnerlist;
 
     HtmlFeedback *htmlFeedback;
 

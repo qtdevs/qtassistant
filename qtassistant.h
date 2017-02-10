@@ -55,6 +55,7 @@ private:
 
     void groupWelcome(const MessageEvent &ev, const QStringList &args);
     void groupBlacklist(const MessageEvent &ev, const QStringList &args);
+    void groupShowDinnerList(const MessageEvent &ev, const QStringList &args);
 
 private:
     void groupHelpHelp(qint64 gid);
