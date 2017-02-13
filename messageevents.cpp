@@ -10,6 +10,7 @@
 #include "sqldatas/memberwelcome.h"
 #include "sqldatas/memberblacklist.h"
 #include "sqldatas/memberdeathhouse.h"
+#include "sqldatas/masterdinner.h"
 
 // class QtAssistant
 
@@ -102,6 +103,10 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
         }
         if ((c == "bl") || (c == "blacklist")) {
             groupBlacklist(ev, args.mid(1));
+            return true;
+        }
+        if ((c == "showcd")) {
+            groupShowDinnerList(ev, args.mid(1));
             return true;
         }
     }
@@ -1108,6 +1113,62 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
     }
 }
 
+void QtAssistant::groupShowDinnerList(const MessageEvent &ev, const QStringList &args)
+{
+    Q_D(QtAssistant);
+    bool argvGlobal = false;
+    qint64 gid = argvGlobal ? 0 : ev.from;
+    QHashIterator<MemberDinner, qint64> i(d->dinnerlist->members());
+    DinnerInfoList ll;
+    while (i.hasNext()) {
+        i.next();
+        //if (i.key().first == dinnerId) {
+            //MemberDinner tmp = i.key();
+            //ll.push_back(i.key().first, i.key.second);
+            ll.append(DinnerInfo(i.key().first, i.key().second));
+        //}
+    }
+    if(ll.size() == 0)
+    {
+        sendGroupMessage(gid, tr("菜单为空"));
+    }
+    else
+    {
+        QMap<qint64, QString>  mapCaiDan;
+        for(int i = 0; i <ll.count(); i++)
+        {
+            mapCaiDan.insert(ll.at(i).dinnerType, ll.at(i).name);
+        }
+        QMap<qint64, QString>::iterator it;
+        QString strCaidan = "开始点菜了！菜单为:\n荤菜：\n";
+        for ( it = mapCaiDan.begin(); it != mapCaiDan.end(); ++it )
+        {
+            if(100 > it.key())
+            {
+               strCaidan = strCaidan + QString::number(it.key()) + tr(":") +  it.value() + tr("  ");
+            }
+        }
+        strCaidan += "\n半荤半素菜：\n";
+        for ( it = mapCaiDan.begin(); it != mapCaiDan.end(); ++it )
+        {
+            if(200 > it.key() && it.key() > 100)
+            {
+               strCaidan = strCaidan + QString::number(it.key()) + tr(":") +  it.value() + tr("  ");
+            }
+        }
+        strCaidan += "素菜：\n";
+        for ( it = mapCaiDan.begin(); it != mapCaiDan.end(); ++it )
+        {
+            if(300 > it.key() && it.key() >200)
+            {
+               strCaidan = strCaidan + QString::number(it.key()) + tr(":") +  it.value() + tr("  ");
+            }
+        }
+
+        strCaidan += "\n";
+        sendGroupMessage(gid, strCaidan);
+    }
+}
 void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args)
 {
     Q_D(QtAssistant);

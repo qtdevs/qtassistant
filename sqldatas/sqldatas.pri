@@ -6,10 +6,13 @@ HEADERS += \
     $$PWD/memberblacklist.h \
     $$PWD/memberblacklist_p.h \
     $$PWD/memberdeathhouse.h \
-    $$PWD/memberdeathhouse_p.h
+    $$PWD/memberdeathhouse_p.h \
+    $$PWD/masterdinner.h \
+    $$PWD/masterdinner_p.h
 
 SOURCES += \
     $$PWD/masterlevels.cpp \
     $$PWD/memberwelcome.cpp \
     $$PWD/memberblacklist.cpp \
-    $$PWD/memberdeathhouse.cpp
+    $$PWD/memberdeathhouse.cpp \
+    $$PWD/masterdinner.cpp
