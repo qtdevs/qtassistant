@@ -43,6 +43,8 @@ public:
     QString appFilePath(const QString &name) const;
     QString usrFilePath(const char *srcName) const;
     QString usrFilePath(const QString &name) const;
+    QString resFilePath(const char *srcName) const;
+    QString resFilePath(const QString &name) const;
 
 public:
     virtual bool privateMessageEventFilter(const MessageEvent &ev);

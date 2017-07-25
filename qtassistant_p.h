@@ -21,7 +21,7 @@ public:
     QtAssistantPrivate();
     virtual ~QtAssistantPrivate();
 
-private:
+public:
     static LevelInfoList findUsers(const QStringList &args);
 
     static void safetyNameCard(QString &nameCard);

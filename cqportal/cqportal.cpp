@@ -56,6 +56,7 @@ CqPortal::CqPortal(CqPortalPrivate &dd, QObject *parent)
 
     QString path = convert(CQ_getAppDirectory(d->accessToken));
     d->basePath = QDir::cleanPath(path);
+    d->resPath = QDir::cleanPath(path % "/../../data");
     d->imagePath = QDir::cleanPath(path % "/../../data/image");
 
     QString sqlitePath = d->basePath % '/' % QString::number(d->currentId);
@@ -207,6 +208,16 @@ QString CqPortal::usrFilePath(const char *srcName) const
 QString CqPortal::usrFilePath(const QString &name) const
 {
     return QDir::cleanPath(d_ptr->basePath % '/' % QString::number(d_ptr->currentId) % '/' % name);
+}
+
+QString CqPortal::resFilePath(const char *srcName) const
+{
+    return QDir::cleanPath(d_ptr->resPath % '/' % QString::fromUtf8(srcName));
+}
+
+QString CqPortal::resFilePath(const QString &name) const
+{
+    return QDir::cleanPath(d_ptr->resPath % '/' % name);
 }
 
 /*!

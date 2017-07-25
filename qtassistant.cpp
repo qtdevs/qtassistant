@@ -4,6 +4,8 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QPixmap>
 #include <QStringBuilder>
 #include <QTextStream>
@@ -16,6 +18,9 @@
 #include "sqldatas/memberdeathhouse.h"
 
 #include "htmlfeedback/htmlfeedback.h"
+
+#include "discourseapi.h"
+#include "donatemodule.h"
 
 // class QtAssistant
 
@@ -37,6 +42,11 @@ QtAssistant::QtAssistant(QObject *parent)
     d->htmlFeedback = new HtmlFeedback(this);
 
     d->checkTimerId = startTimer(10000);
+
+    connect(DiscourseApi::instance(), &DiscourseApi::groupSearchResult,
+            this, &QtAssistant::groupSearchResult);
+
+    new DonateModule(this);
 }
 
 QtAssistant::~QtAssistant()
@@ -196,6 +206,50 @@ void QtAssistant::feedbackList(qint64 gid, const QString &title, const LevelInfo
         QPixmap feedback = d->htmlFeedback->draw(html, 400, style);
         QString fileName = saveImage(feedback);
         sendGroupMessage(gid, cqImage(fileName));
+    }
+}
+
+void QtAssistant::groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result)
+{
+    QString msg;
+    QTextStream ts(&msg);
+
+    ts << cqAt(uid) << endl;
+
+    if (result.contains("error_type")) {
+        ;
+    } else {
+        QJsonArray topics = result.value("topics").toArray();
+        if (topics.count() == 0) {
+            ts << QString::fromUtf8("很抱歉，没有找到与\"") << key << QString::fromUtf8("\"相关的主题。");
+        } else {
+            ts << QString::fromUtf8("关键词: ") << key << endl;
+            ts << endl;
+
+            for (int i = 0; i < topics.count() && i < 5; ++i) {
+                if (i != 0) { ts << endl; }
+                QJsonObject topic = topics.at(i).toObject();
+                ts << QString::fromUtf8("主题: ") << topic.value("fancy_title").toString() << endl;
+                auto lastPostedAt = QDateTime::fromString(topic.value("last_posted_at").toString(), Qt::ISODate);
+                int year = lastPostedAt.date().year();
+                int month = lastPostedAt.date().month();
+                int day = lastPostedAt.date().day();
+                ts << QString::fromUtf8("%1年%2月%3日 ").arg(year).arg(month, 2, 10, QLatin1Char('0')).arg(day, 2, 10, QLatin1Char('0'));
+                ts << "https://qtdevs.org/t/topic/" << topic.value("id").toInt();
+            }
+        }
+    }
+
+    ts.flush();
+
+    sendGroupMessage(gid, msg);
+}
+
+void QtAssistant::qtdevsSearch(const MessageEvent &ev, const QStringList &args)
+{
+    if (args.isEmpty()) {
+    } else {
+        DiscourseApi::instance()->groupSearch(ev.from, ev.sender, args.join(" "));
     }
 }
 

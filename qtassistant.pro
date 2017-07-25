@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT      += widgets
+QT      += widgets network
 TEMPLATE = lib
 
 TARGET   = org.qtdevs.assistant
@@ -25,17 +25,28 @@ include(sqldatas/sqldatas.pri)
 include(translations/translations.pri)
 include(htmlfeedback/htmlfeedback.pri)
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    donatemodule.cpp
 
 HEADERS += \
     qtassistant.h \
-    qtassistant_p.h
+    qtassistant_p.h \
+    donatemodule.h \
+    donatemodule_p.h
 SOURCES += \
     qtassistant.cpp \
     manageevents.cpp \
     messageevents.cpp
 
+CONFIG += openssl-linked
+
+HEADERS += \
+    discourseapi.h \
+    discourseapi_p.h
+SOURCES += \
+    discourseapi.cpp
+
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json
 
-DESTDIR = "D:/CQPro/app"
+DESTDIR = "C:/CQPro/app"

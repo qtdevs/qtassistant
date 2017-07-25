@@ -27,6 +27,7 @@ private:
     qint64  currentId;
     QString basePath;
     QString imagePath;
+    QString resPath;
 };
 
 #endif // CQPORTAL_P_H

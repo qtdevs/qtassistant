@@ -94,6 +94,11 @@ private:
     void showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
 
     void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
+
+private:
+    void groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result);
+private:
+    void qtdevsSearch(const MessageEvent &ev, const QStringList &args);
 };
 
 #endif // QTASSISTANT_H

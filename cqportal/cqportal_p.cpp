@@ -14,6 +14,10 @@ void qtHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
 {
     qint32 priority = 0;
 
+    if (msg.startsWith("QSslSocket")) {
+        return;
+    }
+
     switch (type) {
     case QtDebugMsg:
         priority = CQLOG_DEBUG;

@@ -11,6 +11,8 @@
 #include "sqldatas/memberblacklist.h"
 #include "sqldatas/memberdeathhouse.h"
 
+#include "donatemodule.h"
+
 // class QtAssistant
 
 bool QtAssistant::privateMessageEventFilter(const MessageEvent &ev)
@@ -49,6 +51,10 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
     // 命令派发。
     if (!args.isEmpty()) {
         QString c = args.value(0);
+        if (c == "q") {
+            qtdevsSearch(ev, args.mid(1));
+        }
+
         if ((c == "h") || (c == "help")) {
             groupHelp(ev, args.mid(1));
             return true;
@@ -104,6 +110,10 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
             groupBlacklist(ev, args.mid(1));
             return true;
         }
+    }
+
+    if (DonateModule::instance()->groupMessageEventFilter(this, ev)) {
+        return true;
     }
 
     return false;
@@ -275,6 +285,17 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
 {
     Q_D(QtAssistant);
 
+    // 普通成员不应答。
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 五级管理及以上。
+    if (level > MasterLevel::Master5) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
     // !!! 由于此操作的特殊性，命令行解析自行分析
 
     QString nameCard = convert(ev.gbkMsg);
@@ -320,16 +341,6 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     // 管理等级检查
 
     if (!ll.isEmpty()) {
-        // 普通成员不应答。
-        MasterLevel level = d->levels->level(ev.from, ev.sender);
-        if (MasterLevel::Unknown == level) {
-            return;
-        }
-        // 五级管理及以上。
-        if (level > MasterLevel::Master5) {
-            permissionDenied(ev.from, ev.sender, level);
-            return;
-        }
     }
 
     // 在这里，我们对新名片做规范化处理。
@@ -355,6 +366,17 @@ void QtAssistant::groupFormat(const MessageEvent &ev, const QStringList &args)
 {
     Q_D(QtAssistant);
 
+    // 普通成员不应答。
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 五级管理及以上。
+    if (level > MasterLevel::Master5) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
     LevelInfoList ll = d->findUsers(args);
 
     QRegularExpression correctNameCard("^[\\[【][^\\[\\]【】]+[\\]】][^\\[\\]【】]+$");
@@ -364,17 +386,6 @@ void QtAssistant::groupFormat(const MessageEvent &ev, const QStringList &args)
     // 管理等级检查
 
     if (!ll.isEmpty()) {
-        // 普通成员不应答。
-        MasterLevel level = d->levels->level(ev.from, ev.sender);
-        if (MasterLevel::Unknown == level) {
-            return;
-        }
-        // 五级管理及以上。
-        if (level > MasterLevel::Master5) {
-            permissionDenied(ev.from, ev.sender, level);
-            return;
-        }
-
         // 管理等级检查
 
         // 检查一：管理只能处理比自己等级低的成员。
