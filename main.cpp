@@ -1,15 +1,24 @@
 ﻿#include <QtCore>
 #include <QtWidgets>
 
-#include "qtassistant.h"
+#include "managemodule.h"
+#include "cqengine.h"
+#include "donatemodule.h"
+#include "searchmodule.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    QtAssistant assistant;
-    Q_UNUSED(assistant);
+    ManageModule assistant;
+    DonateModule donateModule;
+    SearchModule searchModule;
+
+    CqEngine engine;
+    engine.installModule(&assistant);
+    engine.installModule(&donateModule);
+    engine.installModule(&searchModule);
 
     QWidget mainWindow;
     mainWindow.show();

@@ -1,5 +1,5 @@
-﻿#ifndef CQPORTAL_H
-#define CQPORTAL_H
+﻿#ifndef CQMODULE_H
+#define CQMODULE_H
 
 #if _MSC_VER >= 1600
 #  pragma execution_character_set("utf-8")
@@ -9,18 +9,18 @@
 #include "cqpersoninfo.h"
 #include "cqmemberinfo.h"
 
-class CqPortalPrivate;
-class CqPortal : public QObject
+class CqEngine;
+class CqModulePrivate;
+class CqModule : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(CqPortal)
+    Q_DECLARE_PRIVATE(CqModule)
 
-protected:
-    CqPortal(CqPortalPrivate &dd, QObject *parent = Q_NULLPTR);
-protected:
-    QScopedPointer<CqPortalPrivate> d_ptr;
 public:
-    virtual ~CqPortal();
+    CqModule(CqEngine *parent = nullptr);
+    virtual ~CqModule();
+protected:
+    QScopedPointer<CqModulePrivate> d_ptr;
 
 public:
     static QByteArray convert(const QString &str);
@@ -47,17 +47,17 @@ public:
     QString resFilePath(const QString &name) const;
 
 public:
-    virtual bool privateMessageEventFilter(const MessageEvent &ev);
-    virtual bool groupMessageEventFilter(const MessageEvent &ev);
-    virtual bool discussMessageEventFilter(const MessageEvent &ev);
+    virtual bool privateMessageEvent(const MessageEvent &ev);
+    virtual bool groupMessageEvent(const MessageEvent &ev);
+    virtual bool discussMessageEvent(const MessageEvent &ev);
 
-    virtual bool masterChangeEventFilter(const MasterChangeEvent &ev);
-    virtual bool friendRequestEventFilter(const FriendRequestEvent &ev);
-    virtual bool groupRequestEventFilter(const GroupRequestEvent &ev);
+    virtual bool masterChangeEvent(const MasterChangeEvent &ev);
+    virtual bool friendRequestEvent(const FriendRequestEvent &ev);
+    virtual bool groupRequestEvent(const GroupRequestEvent &ev);
 
-    virtual bool friendAddEventFilter(const FriendAddEvent &ev);
-    virtual bool memberJoinEventFilter(const MemberJoinEvent &ev);
-    virtual bool memberLeaveEventFilter(const MemberLeaveEvent &ev);
+    virtual bool friendAddEvent(const FriendAddEvent &ev);
+    virtual bool memberJoinEvent(const MemberJoinEvent &ev);
+    virtual bool memberLeaveEvent(const MemberLeaveEvent &ev);
 
 public:
     enum Result {
@@ -103,4 +103,4 @@ public:
     QPixmap loadImage(const QString &name) const;
 };
 
-#endif // CQPORTAL_H
+#endif // CQMODULE_H

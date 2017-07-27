@@ -1,39 +1,41 @@
-﻿#ifndef QTASSISTANT_H
-#define QTASSISTANT_H
+﻿#ifndef MANAGEMODULE_H
+#define MANAGEMODULE_H
 
 #if _MSC_VER >= 1600
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqportal.h"
+#include "cqmodule.h"
 
 #include "sqldatas/masterlevels.h"
 #include "htmlfeedback/htmlfeedback.h"
 
-// class QtAssistant
+// class ManageModule
 
-class QtAssistantPrivate;
-class QtAssistant : public CqPortal
+class ManageModulePrivate;
+class ManageModule : public CqModule
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QtAssistant)
+    Q_DECLARE_PRIVATE(ManageModule)
 
 public:
-    explicit QtAssistant(QObject *parent = Q_NULLPTR);
-    virtual ~QtAssistant();
+    explicit ManageModule(CqEngine *engine = nullptr);
+    virtual ~ManageModule();
+protected:
+    QScopedPointer<ManageModulePrivate> d_ptr;
 
 public:
-    bool privateMessageEventFilter(const MessageEvent &ev) Q_DECL_FINAL;
-    bool groupMessageEventFilter(const MessageEvent &ev) Q_DECL_FINAL;
-    bool discussMessageEventFilter(const MessageEvent &ev) Q_DECL_FINAL;
+    bool privateMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
+    bool groupMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
+    bool discussMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
 
-    bool masterChangeEventFilter(const MasterChangeEvent &ev) Q_DECL_FINAL;
-    bool friendRequestEventFilter(const FriendRequestEvent &ev) Q_DECL_FINAL;
-    bool groupRequestEventFilter(const GroupRequestEvent &ev) Q_DECL_FINAL;
+    bool masterChangeEvent(const MasterChangeEvent &ev) Q_DECL_FINAL;
+    bool friendRequestEvent(const FriendRequestEvent &ev) Q_DECL_FINAL;
+    bool groupRequestEvent(const GroupRequestEvent &ev) Q_DECL_FINAL;
 
-    bool friendAddEventFilter(const FriendAddEvent &ev) Q_DECL_FINAL;
-    bool memberJoinEventFilter(const MemberJoinEvent &ev) Q_DECL_FINAL;
-    bool memberLeaveEventFilter(const MemberLeaveEvent &ev) Q_DECL_FINAL;
+    bool friendAddEvent(const FriendAddEvent &ev) Q_DECL_FINAL;
+    bool memberJoinEvent(const MemberJoinEvent &ev) Q_DECL_FINAL;
+    bool memberLeaveEvent(const MemberLeaveEvent &ev) Q_DECL_FINAL;
 
 private:
     void timerEvent(QTimerEvent *) Q_DECL_FINAL;
@@ -101,4 +103,4 @@ private:
     void qtdevsSearch(const MessageEvent &ev, const QStringList &args);
 };
 
-#endif // QTASSISTANT_H
+#endif // MANAGEMODULE_H

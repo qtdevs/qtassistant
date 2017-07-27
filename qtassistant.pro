@@ -26,25 +26,25 @@ include(translations/translations.pri)
 include(htmlfeedback/htmlfeedback.pri)
 
 SOURCES += main.cpp \
-    donatemodule.cpp
+    donatemodule.cpp \
+    managemodule.cpp \
+    searchmodule.cpp
 
 HEADERS += \
-    qtassistant.h \
-    qtassistant_p.h \
     donatemodule.h \
-    donatemodule_p.h
+    donatemodule_p.h \
+    managemodule.h \
+    managemodule_p.h \
+    searchmodule.h \
+    searchmodule_p.h
 SOURCES += \
-    qtassistant.cpp \
     manageevents.cpp \
     messageevents.cpp
 
 CONFIG += openssl-linked
 
-HEADERS += \
-    discourseapi.h \
-    discourseapi_p.h
-SOURCES += \
-    discourseapi.cpp
+HEADERS +=
+SOURCES +=
 
 OTHER_FILES += \
     addon/org.qtdevs.assistant.json

@@ -8,7 +8,7 @@
 
 #include <QDataStream>
 
-#include "cqportal.h"
+#include "cqmodule.h"
 
 // class CqMemberInfo
 
@@ -42,7 +42,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqPortal::convert(name);
+        data->nickName = CqModule::convert(name);
     } while (false);
 
     do {
@@ -50,7 +50,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nameCard = CqPortal::convert(name);
+        data->nameCard = CqModule::convert(name);
     } while (false);
 
     ds >> data->sex;
@@ -61,7 +61,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray location(size, 0);
         ds.readRawData(location.data(), size);
-        data->location = CqPortal::convert(location);
+        data->location = CqModule::convert(location);
     } while (false);
 
     do {
@@ -85,7 +85,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray levelName(size, 0);
         ds.readRawData(levelName.data(), size);
-        data->levelName = CqPortal::convert(levelName);
+        data->levelName = CqModule::convert(levelName);
     } while (false);
 
     ds >> data->permission;

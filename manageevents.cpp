@@ -1,5 +1,5 @@
-﻿#include "qtassistant.h"
-#include "qtassistant_p.h"
+﻿#include "managemodule.h"
+#include "managemodule_p.h"
 
 #include <QStringBuilder>
 
@@ -8,23 +8,23 @@
 #include "sqldatas/memberblacklist.h"
 #include "sqldatas/memberdeathhouse.h"
 
-// class QtAssistant
+// class ManageModule
 
-bool QtAssistant::masterChangeEventFilter(const MasterChangeEvent &ev)
+bool ManageModule::masterChangeEvent(const MasterChangeEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool QtAssistant::friendRequestEventFilter(const FriendRequestEvent &ev)
+bool ManageModule::friendRequestEvent(const FriendRequestEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool QtAssistant::groupRequestEventFilter(const GroupRequestEvent &ev)
+bool ManageModule::groupRequestEvent(const GroupRequestEvent &ev)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 黑名单检查，如果发现匹配，直接拒绝。
     if (d->blacklist->contains(ev.from, ev.user)) {
@@ -35,15 +35,15 @@ bool QtAssistant::groupRequestEventFilter(const GroupRequestEvent &ev)
     return false;
 }
 
-bool QtAssistant::friendAddEventFilter(const FriendAddEvent &ev)
+bool ManageModule::friendAddEvent(const FriendAddEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
+bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 黑名单检查，如果发现匹配，直接踢出。
     if (d->blacklist->contains(ev.from, ev.member)) {
@@ -85,9 +85,9 @@ bool QtAssistant::memberJoinEventFilter(const MemberJoinEvent &ev)
     return false;
 }
 
-bool QtAssistant::memberLeaveEventFilter(const MemberLeaveEvent &ev)
+bool ManageModule::memberLeaveEvent(const MemberLeaveEvent &ev)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 移出新手监控，不再进行监视。
     d->welcome->removeMember(ev.from, ev.member);

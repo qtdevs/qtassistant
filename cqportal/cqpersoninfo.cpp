@@ -7,7 +7,7 @@
 
 #include <QDataStream>
 
-#include "cqportal.h"
+#include "cqmodule.h"
 
 // class CqPersonInfo
 
@@ -37,7 +37,7 @@ CqPersonInfo::CqPersonInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqPortal::convert(name);
+        data->nickName = CqModule::convert(name);
     } while (false);
 
     ds >> data->sex;

@@ -1,5 +1,5 @@
-﻿#include "qtassistant.h"
-#include "qtassistant_p.h"
+﻿#include "managemodule.h"
+#include "managemodule_p.h"
 
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -13,17 +13,17 @@
 
 #include "donatemodule.h"
 
-// class QtAssistant
+// class ManageModule
 
-bool QtAssistant::privateMessageEventFilter(const MessageEvent &ev)
+bool ManageModule::privateMessageEvent(const MessageEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
+bool ManageModule::groupMessageEvent(const MessageEvent &ev)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 黑名单检查，如果发现匹配，直接踢出。
     if (d->blacklist->contains(ev.from, ev.sender)) {
@@ -112,22 +112,18 @@ bool QtAssistant::groupMessageEventFilter(const MessageEvent &ev)
         }
     }
 
-    if (DonateModule::instance()->groupMessageEventFilter(this, ev)) {
-        return true;
-    }
-
     return false;
 }
 
-bool QtAssistant::discussMessageEventFilter(const MessageEvent &ev)
+bool ManageModule::discussMessageEvent(const MessageEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupHelp(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -199,9 +195,9 @@ void QtAssistant::groupHelp(const MessageEvent &ev, const QStringList &args)
     showPrompt(ev.from, tr("全部命令清单"), usage);
 }
 
-void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupLevel(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     LevelInfoList ll = d->findUsers(args);
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -281,9 +277,9 @@ void QtAssistant::groupLevel(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupRename(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -362,9 +358,9 @@ void QtAssistant::groupRename(const MessageEvent &ev, const QStringList &args)
     showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(nameCard));
 }
 
-void QtAssistant::groupFormat(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupFormat(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -483,9 +479,9 @@ void QtAssistant::groupFormat(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void QtAssistant::groupMember(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupMember(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -540,9 +536,9 @@ void QtAssistant::groupMember(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupBan(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -654,9 +650,9 @@ void QtAssistant::groupBan(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
 }
 
-void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupKill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -706,9 +702,9 @@ void QtAssistant::groupKill(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
 }
 
-void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupPower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -831,9 +827,9 @@ void QtAssistant::groupPower(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
 }
 
-void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnban(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -883,9 +879,9 @@ void QtAssistant::groupUnban(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
 }
 
-void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnkill(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -935,9 +931,9 @@ void QtAssistant::groupUnkill(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
 }
 
-void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnpower(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -1016,9 +1012,9 @@ void QtAssistant::groupUnpower(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
 }
 
-void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupWelcome(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -1119,9 +1115,9 @@ void QtAssistant::groupWelcome(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupBlacklist(const MessageEvent &ev, const QStringList &args)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -1238,12 +1234,12 @@ void QtAssistant::groupBlacklist(const MessageEvent &ev, const QStringList &args
     }
 }
 
-void QtAssistant::groupHelpHelp(qint64 gid)
+void ManageModule::groupHelpHelp(qint64 gid)
 {
     Q_UNUSED(gid);
 }
 
-void QtAssistant::groupLevelHelp(qint64 gid)
+void ManageModule::groupLevelHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1261,7 +1257,7 @@ void QtAssistant::groupLevelHelp(qint64 gid)
     showPrompt(gid, tr("等级查询的用法"), usage);
 }
 
-void QtAssistant::groupRenameHelp(qint64 gid)
+void ManageModule::groupRenameHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1277,7 +1273,7 @@ void QtAssistant::groupRenameHelp(qint64 gid)
     showPrompt(gid, "修改名片的用法", usage);
 }
 
-void QtAssistant::groupFormatHelp(qint64 gid)
+void ManageModule::groupFormatHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1292,7 +1288,7 @@ void QtAssistant::groupFormatHelp(qint64 gid)
     showPrompt(gid, tr("格式名片的用法"), usage);
 }
 
-void QtAssistant::groupMemberHelp(qint64 gid)
+void ManageModule::groupMemberHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1307,7 +1303,7 @@ void QtAssistant::groupMemberHelp(qint64 gid)
     showPrompt(gid, tr("成员信息的用法"), usage);
 }
 
-void QtAssistant::groupBanHelp(qint64 gid)
+void ManageModule::groupBanHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1326,7 +1322,7 @@ void QtAssistant::groupBanHelp(qint64 gid)
     showPrompt(gid, tr("禁言命令的用法"), usage);
 }
 
-void QtAssistant::groupKillHelp(qint64 gid)
+void ManageModule::groupKillHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1341,7 +1337,7 @@ void QtAssistant::groupKillHelp(qint64 gid)
     showPrompt(gid, tr("踢出命令的用法"), usage);
 }
 
-void QtAssistant::groupPowerHelp(qint64 gid)
+void ManageModule::groupPowerHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1358,7 +1354,7 @@ void QtAssistant::groupPowerHelp(qint64 gid)
     showPrompt(gid, tr("提权命令的用法"), usage);
 }
 
-void QtAssistant::groupUnbanHelp(qint64 gid)
+void ManageModule::groupUnbanHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1373,7 +1369,7 @@ void QtAssistant::groupUnbanHelp(qint64 gid)
     showPrompt(gid, tr("取消禁言的用法"), usage);
 }
 
-void QtAssistant::groupUnkillHelp(qint64 gid)
+void ManageModule::groupUnkillHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1388,7 +1384,7 @@ void QtAssistant::groupUnkillHelp(qint64 gid)
     showPrompt(gid, tr("取消踢出的用法"), usage);
 }
 
-void QtAssistant::groupUnpowerHelp(qint64 gid)
+void ManageModule::groupUnpowerHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1403,7 +1399,7 @@ void QtAssistant::groupUnpowerHelp(qint64 gid)
     showPrompt(gid, tr("取消提权的用法"), usage);
 }
 
-void QtAssistant::groupWelcomeHelp(qint64 gid)
+void ManageModule::groupWelcomeHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1420,7 +1416,7 @@ void QtAssistant::groupWelcomeHelp(qint64 gid)
     showPrompt(gid, tr("新人监控的用法"), usage);
 }
 
-void QtAssistant::groupBlacklistHelp(qint64 gid)
+void ManageModule::groupBlacklistHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);

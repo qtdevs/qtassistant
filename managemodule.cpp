@@ -1,5 +1,5 @@
-﻿#include "qtassistant.h"
-#include "qtassistant_p.h"
+﻿#include "managemodule.h"
+#include "managemodule_p.h"
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -19,15 +19,18 @@
 
 #include "htmlfeedback/htmlfeedback.h"
 
-#include "discourseapi.h"
+#include "searchmodule.h"
 #include "donatemodule.h"
 
-// class QtAssistant
+// class ManageModule
 
-QtAssistant::QtAssistant(QObject *parent)
-    : CqPortal(*new QtAssistantPrivate(), parent)
+ManageModule::ManageModule(CqEngine *engine)
+    : CqModule(engine)
+    , d_ptr(new ManageModulePrivate())
 {
-    Q_D(QtAssistant);
+    d_ptr->q_ptr = this;
+
+    Q_D(ManageModule);
 
     QTranslator *translator = new QTranslator(qApp);
     if (translator->load("qtassistant_zh.qm", ":/translations")) {
@@ -43,22 +46,20 @@ QtAssistant::QtAssistant(QObject *parent)
 
     d->checkTimerId = startTimer(10000);
 
-    connect(DiscourseApi::instance(), &DiscourseApi::groupSearchResult,
-            this, &QtAssistant::groupSearchResult);
-
-    new DonateModule(this);
+    connect(SearchModule::instance(), &SearchModule::groupSearchResult,
+            this, &ManageModule::groupSearchResult);
 }
 
-QtAssistant::~QtAssistant()
+ManageModule::~ManageModule()
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     killTimer(d->checkTimerId);
 }
 
-void QtAssistant::timerEvent(QTimerEvent *)
+void ManageModule::timerEvent(QTimerEvent *)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     // 检查新手名单。
     do {
@@ -82,11 +83,11 @@ void QtAssistant::timerEvent(QTimerEvent *)
     } while (false);
 }
 
-void QtAssistant::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
+void ManageModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
 {
     Q_UNUSED(uid);
 
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     QString content = reason.isEmpty() ? tr("作为一个%1，你没有权限执行此操作。").arg(MasterLevels::levelName(level)) : reason;
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("没有相关权限"), content);
@@ -96,34 +97,34 @@ void QtAssistant::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, co
     sendGroupMessage(gid, cqImage(fileName));
 }
 
-void QtAssistant::showPrimary(qint64 gid, const QString &title, const QString &content)
+void ManageModule::showPrimary(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Primary);
 }
 
-void QtAssistant::showDanger(qint64 gid, const QString &title, const QString &content)
+void ManageModule::showDanger(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Danger);
 }
 
-void QtAssistant::showWarning(qint64 gid, const QString &title, const QString &content)
+void ManageModule::showWarning(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Warning);
 }
 
-void QtAssistant::showPrompt(qint64 gid, const QString &title, const QString &content)
+void ManageModule::showPrompt(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Prompt);
 }
 
-void QtAssistant::showSuccess(qint64 gid, const QString &title, const QString &content)
+void ManageModule::showSuccess(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Success);
 }
 
-void QtAssistant::feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style)
+void ManageModule::feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
@@ -132,34 +133,34 @@ void QtAssistant::feedback(qint64 gid, const QString &title, const QString &cont
     sendGroupMessage(gid, cqImage(fileName));
 }
 
-void QtAssistant::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManageModule::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Primary);
 }
 
-void QtAssistant::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManageModule::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Danger);
 }
 
-void QtAssistant::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManageModule::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Warning);
 }
 
-void QtAssistant::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManageModule::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Prompt);
 }
 
-void QtAssistant::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManageModule::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Success);
 }
 
-void QtAssistant::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
+void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
 {
-    Q_D(QtAssistant);
+    Q_D(ManageModule);
 
     for (int i = 0, part = 0; i < members.count();) {
         QString html;
@@ -209,7 +210,7 @@ void QtAssistant::feedbackList(qint64 gid, const QString &title, const LevelInfo
     }
 }
 
-void QtAssistant::groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result)
+void ManageModule::groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result)
 {
     QString msg;
     QTextStream ts(&msg);
@@ -245,18 +246,23 @@ void QtAssistant::groupSearchResult(qint64 gid, qint64 uid, const QString &key, 
     sendGroupMessage(gid, msg);
 }
 
-void QtAssistant::qtdevsSearch(const MessageEvent &ev, const QStringList &args)
+void ManageModule::qtdevsSearch(const MessageEvent &ev, const QStringList &args)
 {
-    if (args.isEmpty()) {
-    } else {
-        DiscourseApi::instance()->groupSearch(ev.from, ev.sender, args.join(" "));
-    }
+    Q_UNUSED(ev);
+    Q_UNUSED(args);
+
+    return;
+//    if (args.isEmpty()) {
+//    } else {
+//        SearchModule::instance()->groupSearch(ev.from, ev.sender, args.join(" "));
+//    }
 }
 
-// class QtAssistantPrivate
+// class ManageModulePrivate
 
-QtAssistantPrivate::QtAssistantPrivate()
-    : levels(Q_NULLPTR)
+ManageModulePrivate::ManageModulePrivate()
+    : q_ptr(nullptr)
+    , levels(Q_NULLPTR)
     , welcome(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
@@ -265,11 +271,11 @@ QtAssistantPrivate::QtAssistantPrivate()
 {
 }
 
-QtAssistantPrivate::~QtAssistantPrivate()
+ManageModulePrivate::~ManageModulePrivate()
 {
 }
 
-LevelInfoList QtAssistantPrivate::findUsers(const QStringList &args)
+LevelInfoList ManageModulePrivate::findUsers(const QStringList &args)
 {
     QListIterator<QString> i(args);
     LevelInfoList levels;
@@ -315,7 +321,7 @@ LevelInfoList QtAssistantPrivate::findUsers(const QStringList &args)
     return levels;
 }
 
-void QtAssistantPrivate::safetyNameCard(QString &nameCard)
+void ManageModulePrivate::safetyNameCard(QString &nameCard)
 {
     // 屏蔽 emoji 表情
     do {
@@ -332,7 +338,7 @@ void QtAssistantPrivate::safetyNameCard(QString &nameCard)
     } while (true);
 }
 
-void QtAssistantPrivate::formatNameCard(QString &nameCard)
+void ManageModulePrivate::formatNameCard(QString &nameCard)
 {
     // 在这里，我们对新名片做规范化处理。
     nameCard.remove(' '); // 消除空格，不允许有空格。
