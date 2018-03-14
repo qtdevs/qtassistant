@@ -1,6 +1,8 @@
 #ifndef DONATEMODULE_P_H
 #define DONATEMODULE_P_H
 
+#include <QMutex>
+
 #include "donatemodule.h"
 
 class DonateModulePrivate
@@ -20,6 +22,11 @@ private:
     QString ergouString;
     QString gougeString;
     QString maodaString;
+
+
+    QHash<qint64, QDateTime> lastSents;
+    QHash<qint64, int>       retryCounters;
+    QMutex                   safeGuard;
 };
 
 #endif // DONATEMODULE_P_H

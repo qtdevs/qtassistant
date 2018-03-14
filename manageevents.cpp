@@ -80,7 +80,7 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
         showPrimary(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，否则将被自动踢出。谢谢你的配合！"));
     }
 
-    sendGroupMessage(ev.from, cqAt(ev.member));
+    sendGroupMessage(ev.from, at(ev.member));
 
     return false;
 }

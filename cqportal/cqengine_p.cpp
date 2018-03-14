@@ -18,7 +18,7 @@ void cqHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
     qint32 priority = 0;
 
     if (msg.startsWith("QSslSocket")) {
-        return;
+        type = QtDebugMsg;
     }
 
     switch (type) {
@@ -95,7 +95,7 @@ CQEVENT(qint32, __pluginDisableEvent, 0)()
 CQEVENT(qint32, __privateMessageEvent, 24)(qint32 type, qint32 time, qint64 from, const char *msg, qint32 font)
 {
     if (CqEnginePrivate *enginePriv = CqEnginePrivate::self()) {
-        MessageEvent event{ type, time, from, font, from, msg };
+        MessageEvent event{ type, time, 0, font, from, msg };
         for (CqModule *module : enginePriv->privateMessageModules) {
             if (module->privateMessageEvent(event)) {
                 return EVENT_BLOCK;

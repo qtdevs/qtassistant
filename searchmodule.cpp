@@ -6,8 +6,9 @@
 #include <QNetworkReply>
 
 #include <QJsonArray>
-
+#include <QRegularExpression>
 #include <QtDebug>
+#include <QCoreApplication>
 
 Q_GLOBAL_STATIC(SearchModule, theSearchModule2)
 
@@ -19,9 +20,6 @@ SearchModule::SearchModule(CqEngine *engine)
 {
     d_ptr->q_ptr = this;
 
-    d_ptr->apiKey = "56d5e6aae544f7bf27015ffd5f19c0df238b6e93e7309e3ec5e2883ee1b71317";
-    d_ptr->apiUsername = "ericzh";
-
     d_ptr->network = new QNetworkAccessManager(this);
 }
 
@@ -29,107 +27,79 @@ SearchModule::~SearchModule()
 {
 }
 
-SearchModule *SearchModule::instance()
-{
-    return theSearchModule2();
-}
-
 bool SearchModule::privateMessageEvent(const MessageEvent &ev)
 {
-    Q_UNUSED(ev); return false;
+    Q_D(SearchModule);
+
+    if (d->search(0, 0, ev)) {
+        return true;
+    }
+
+    return false;
 }
 
 bool SearchModule::groupMessageEvent(const MessageEvent &ev)
 {
-    if ((strlen(ev.gbkMsg) > 3)
-            && ev.gbkMsg[0] == '!'
-            && ev.gbkMsg[1] == 'q'
-            && ev.gbkMsg[2] == ' ') {
-        QString msg = convert(ev.gbkMsg);
-        groupSearch(ev.from, ev.sender, msg.mid(2));
+    Q_D(SearchModule);
 
+    if (d->search(0, ev.from, ev)) {
         return true;
     }
-    Q_UNUSED(ev); return false;
+
+    return false;
 }
 
 bool SearchModule::discussMessageEvent(const MessageEvent &ev)
 {
-    Q_UNUSED(ev); return false;
-}
+    Q_D(SearchModule);
 
-void SearchModule::groupSearch(qint64 gid, qint64 uid, const QString &key)
-{
-    QMetaObject::invokeMethod(this, "_q_groupSearch", Qt::QueuedConnection,
-                              Q_ARG(qint64, gid), Q_ARG(qint64, uid), Q_ARG(QString, key));
-}
-
-void SearchModule::_q_groupSearchFinished()
-{
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    qint64 gid = reply->property("gid").toLongLong();
-    qint64 uid = reply->property("uid").toLongLong();
-    QString key = reply->property("key").toString();
-
-    qInfo() << gid << uid << key;
-
-    if (reply->error() == QNetworkReply::NoError) {
-        qInfo() << gid << uid << key;
-        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-        groupSearchResult(gid, uid, key, doc.object());
-    } else {
-        qInfo() << reply->error() << reply->errorString();
+    if (d->search(ev.from, 0, ev)) {
+        return true;
     }
+
+    return false;
 }
 
-void SearchModule::_q_groupSearch(qint64 gid, qint64 uid, const QString &key)
+bool SearchModule::event(QEvent *event)
 {
     Q_D(SearchModule);
 
-    QString searchUrl = d->searchBaseUrl.arg(d->apiKey, d->apiUsername, key);
-    QNetworkReply *reply = d->network->get(QNetworkRequest(QUrl(searchUrl)));
-    connect(reply, &QNetworkReply::finished,
-            this, &SearchModule::_q_groupSearchFinished);
+    if (event->type() == SearchEvent::Search) {
+        SearchEvent *sev = reinterpret_cast<SearchEvent *>(event);
 
-    reply->setProperty("gid", gid);
-    reply->setProperty("uid", uid);
-    reply->setProperty("key", key);
-}
+        int from = 1;
+        int number = 3;
 
-void SearchModule::groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result)
-{
-    QString msg;
-    QTextStream ts(&msg);
-
-    ts << cqAt(uid) << endl;
-
-    if (result.contains("error_type")) {
-        ;
-    } else {
-        QJsonArray topics = result.value("topics").toArray();
-        if (topics.count() == 0) {
-            ts << tr("Sorry, Not found about %1.").arg(key);
+        if ((sev->did != 0) || (sev->gid != 0)) {
         } else {
-            ts << tr("Keywords: ") << key << endl;
-            ts << endl;
-
-            for (int i = 0; i < topics.count() && i < 5; ++i) {
-                if (i != 0) { ts << endl; }
-                QJsonObject topic = topics.at(i).toObject();
-                ts << tr("Topic: ") << topic.value("fancy_title").toString() << endl;
-                auto lastPostedAt = QDateTime::fromString(topic.value("last_posted_at").toString(), Qt::ISODate);
-                int year = lastPostedAt.date().year();
-                int month = lastPostedAt.date().month();
-                int day = lastPostedAt.date().day();
-                ts << tr("%1y%2m%3d").arg(year).arg(month, 2, 10, QLatin1Char('0')).arg(day, 2, 10, QLatin1Char('0'));
-                ts << "https://qtdevs.org/t/topic/" << topic.value("id").toInt();
-            }
+            number = 3;
         }
+
+        QString keywords = sev->keywords.join('+');
+
+        QString url = d->searchUrl.arg(keywords).arg(from).arg(number);
+
+        if (sev->langSpec == SearchEvent::EnglishOnly)
+            url += "&lr=lang_en";
+        else if (sev->langSpec == SearchEvent::ChineseOnly)
+            url += "&lr=lang_zh-CN";
+        if (!sev->siteSpec.isEmpty())
+            url += "&siteSearch=" + sev->siteSpec;
+
+        QNetworkReply *reply = d->network->get(QNetworkRequest(QUrl(url)));
+        connect(reply, &QNetworkReply::finished,
+                this, [=] { d->parseSearchResult(reply); });
+
+        reply->setProperty("did", sev->did);
+        reply->setProperty("gid", sev->gid);
+        reply->setProperty("uid", sev->uid);
+        reply->setProperty("keywords", sev->keywords.join(' '));
+        reply->setProperty("siteSpec", sev->siteSpec);
+
+        // qInfo() << sev->did << sev->gid << sev->uid << sev->keywords;
     }
 
-    ts.flush();
-
-    sendGroupMessage(gid, msg);
+    return CqModule::event(event);
 }
 
 // class SearchModulePrivate
@@ -138,9 +108,166 @@ SearchModulePrivate::SearchModulePrivate()
     : q_ptr(nullptr)
     , network(nullptr)
 {
-    searchBaseUrl = "https://qtdevs.org/search/query.json?api_key=%1&api_username=%2&term=%3";
+    searchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyA1LRDb7Y2JnuQA_2wbXxm4zxsL1F2N1T0&cx=014406374443882396406:gkfrjqgu-08" \
+                "&c2coff=1&hl=zh-CN&gl=countryCN&googlehost=google.com.hk&safe=high" \
+                "&q=%1&start=%2&num=%3";
 }
 
 SearchModulePrivate::~SearchModulePrivate()
 {
+}
+
+bool SearchModulePrivate::search(qint64 did, qint64 gid, const MessageEvent &ev)
+{
+    Q_Q(SearchModule);
+
+    QStringList keywords;
+    SearchEvent::LangSpec langSpec = SearchEvent::NoLangSpec;
+    QString     siteSpec;
+
+    bool banned = false;
+
+    if (ev.equals(6, 0x20)
+            && (ev.equals(0, 0x73) || ev.equals(0, 0x53))    // s S
+            && (ev.equals(0, 0x73) || ev.equals(0, 0x53))) { // s S
+        keywords = q->convert(&ev.gbkMsg[7]).split(' ', QString::SkipEmptyParts);
+        banned = true;
+    } else if (ev.equals(4, 0x20)
+               && ev.equals(0, 0xcb) && ev.equals(1, 0xd1)   // Sou
+               && ev.equals(2, 0xcb) && ev.equals(3, 0xf7)) {// Suo
+        keywords = q->convert(&ev.gbkMsg[5]).split(' ', QString::SkipEmptyParts);
+        banned = true;
+    } else if (ev.equals(2, 0x20)
+               && (ev.equals(0, 0x65) || ev.equals(0, 0x45))    // e E
+               && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
+        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        langSpec = SearchEvent::EnglishOnly;
+        banned = true;
+    } else if (ev.equals(8, 0x20)
+               && ev.equals(0, 0xd3) && ev.equals(1, 0xa2)   // Ying
+               && ev.equals(2, 0xce) && ev.equals(3, 0xc4)   // Wen
+               && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
+               && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
+        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        langSpec = SearchEvent::EnglishOnly;
+        banned = true;
+    } else if (ev.equals(2, 0x20)
+               && (ev.equals(0, 0x63) || ev.equals(0, 0x43))    // c C
+               && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
+        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        langSpec = SearchEvent::ChineseOnly;
+        banned = true;
+    } else if (ev.equals(8, 0x20)
+               && ev.equals(0, 0xd6) && ev.equals(1, 0xd0)   // Zhong
+               && ev.equals(2, 0xce) && ev.equals(3, 0xc4)   // Wen
+               && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
+               && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
+        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        langSpec = SearchEvent::ChineseOnly;
+        banned = true;
+    } else if (ev.equals(2, 0x20)
+               && (ev.equals(0, 0x71) || ev.equals(0, 0x51))    // q Q
+               && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
+        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        siteSpec = "qtdevs.org";
+    } else if (ev.equals(8, 0x20)
+               && ev.equals(0, 0xc9) && ev.equals(1, 0xe7)   // She
+               && ev.equals(2, 0xc7) && ev.equals(3, 0xf8)   // Qu
+               && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
+               && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
+        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        siteSpec = "qtdevs.org";
+    } else if (ev.equals(2, 0x20)
+               && (ev.equals(0, 0x67) || ev.equals(0, 0x47))    // g G
+               && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
+        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        siteSpec = QLatin1Literal("qtdebug.com");
+    } else if (ev.equals(8, 0x20)
+               && ev.equals(0, 0xb6) && ev.equals(1, 0xfe)   // Er
+               && ev.equals(2, 0xb9) && ev.equals(3, 0xb7)   // Gou
+               && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
+               && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
+        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        siteSpec = QLatin1Literal("qtdebug.com");
+    }
+
+    if (banned) {
+        QString text = SearchModule::tr("Banned in law.");
+        if (did != 0) {
+            q->sendDiscussMessage(did, q->at(ev.sender) + " " + text);
+        } else if (gid != 0) {
+            q->sendGroupMessage(gid, q->at(ev.sender) + " " + text);
+        } else {
+            q->sendPrivateMessage(ev.sender, text);
+        }
+        return true;
+    }
+
+    if (!keywords.isEmpty()) {
+        qApp->postEvent(q, new SearchEvent(did, gid, ev.sender,
+                                           keywords, langSpec, siteSpec));
+        return true;
+    }
+
+    return false;
+}
+
+void SearchModulePrivate::parseSearchResult(QNetworkReply *reply)
+{
+    Q_Q(SearchModule);
+
+    qint64 did = reply->property("did").toLongLong();
+    qint64 gid = reply->property("gid").toLongLong();
+    qint64 uid = reply->property("uid").toLongLong();
+    QString keywords = reply->property("keywords").toString();
+    QString siteSpec = reply->property("siteSpec").toString();
+
+    QString msg;
+    QTextStream s(&msg);
+
+    if (reply->error() != QNetworkReply::NoError) {
+        s << SearchModule::tr("Sorry, Google already banned by GFW.");
+        qInfo() << reply->error() << reply->errorString();
+    } else {
+        auto doc = QJsonDocument::fromJson(reply->readAll());
+        QJsonObject result = doc.object();
+
+        if (result.contains("error")) {
+            s << SearchModule::tr("Sorry, Error via %1.").arg(keywords);
+        } else {
+            QJsonArray topics = result.value("items").toArray();
+            if (topics.count() == 0) {
+                s << SearchModule::tr("Sorry, Not found via %1.").arg(keywords);
+            } else {
+                s << SearchModule::tr("Keywords: ") << keywords << endl << endl;
+
+                for (int i = 0; i < topics.count(); ++i) {
+                    QJsonObject item = topics.at(i).toObject();
+                    s << q->cqEmoji(128640) << item.value("title").toString() << endl;
+                    QString snippet = item.value("snippet").toString();
+                    if (!snippet.isEmpty()) {
+                        snippet.remove("\n");
+                        s << snippet << endl;
+                    }
+                    s << item.value("link").toString() << endl;
+                }
+
+                /*
+                if (siteSpec == QLatin1Literal("qtdebug.com")) {
+                    s << SearchModule::tr("Donate ErGou.") << q->cqEmoji(128054);
+                }
+                */
+            }
+        }
+    }
+
+    s.flush();
+
+    if (did != 0) {
+        q->sendDiscussMessage(did, q->at(uid) + " " + SearchModule::tr("The result already sent in private."));
+    } else if (gid != 0) {
+        q->sendGroupMessage(gid, q->at(uid) + " " + SearchModule::tr("The result already sent in private."));
+    }
+
+    q->sendPrivateMessage(uid, msg);
 }

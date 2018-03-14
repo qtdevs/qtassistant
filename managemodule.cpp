@@ -46,8 +46,8 @@ ManageModule::ManageModule(CqEngine *engine)
 
     d->checkTimerId = startTimer(10000);
 
-    connect(SearchModule::instance(), &SearchModule::groupSearchResult,
-            this, &ManageModule::groupSearchResult);
+//    connect(SearchModule::instance(), &SearchModule::groupSearchResult,
+//            this, &ManageModule::groupSearchResult);
 }
 
 ManageModule::~ManageModule()
@@ -215,7 +215,7 @@ void ManageModule::groupSearchResult(qint64 gid, qint64 uid, const QString &key,
     QString msg;
     QTextStream ts(&msg);
 
-    ts << cqAt(uid) << endl;
+    ts << at(uid) << endl;
 
     if (result.contains("error_type")) {
         ;

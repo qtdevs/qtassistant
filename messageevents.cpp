@@ -32,6 +32,15 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
         return true;
     }
 
+    if (strncmp(ev.gbkMsg, "[CQ:hb", 6) == 0) {
+        if (ev.from == 228352761) {
+            QString msg = at(ev.sender) + tr(", HongBao is not allowed. You will be banned for %1 miniutes, and contact to owner.").arg(10);
+            sendGroupMessage(ev.from, msg);
+            banGroupMember(ev.from, ev.sender, 600);
+            return true;
+        }
+    }
+
     // 移出新手监控，不再进行监视。
     d->welcome->removeMember(ev.from, ev.sender);
 

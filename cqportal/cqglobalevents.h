@@ -20,6 +20,9 @@ struct MessageEvent
 
     qint64      sender;
     const char *gbkMsg;
+
+    bool equals(int i, int v) const
+    { return (v == (0x000000ff & gbkMsg[i])); }
 };
 
 struct MasterChangeEvent
@@ -39,6 +42,9 @@ struct FriendRequestEvent
 
     const char *gbkMsg;
     const char *gbkTag;
+
+    bool equals(int i, int v) const
+    { return (v == (0x000000ff & gbkMsg[i])); }
 };
 
 struct GroupRequestEvent
@@ -50,6 +56,9 @@ struct GroupRequestEvent
 
     const char *gbkMsg;
     const char *gbkTag;
+
+    bool equals(int i, int v) const
+    { return (v == (0x000000ff & gbkMsg[i])); }
 };
 
 struct FriendAddEvent

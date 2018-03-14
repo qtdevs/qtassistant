@@ -40,47 +40,34 @@ bool DonateModule::privateMessageEvent(const MessageEvent &ev)
 
 bool DonateModule::groupMessageEvent(const MessageEvent &ev)
 {
-    Q_D(DonateModule);
+    if (ev.equals(0, 0xb4) && ev.equals(1, 0xf2) // DaShang
+            && ev.equals(2, 0xc9) && ev.equals(3, 0xcd)) {
 
-    if (strlen(ev.gbkMsg) < 30) {
-        QString msgs = convert(ev.gbkMsg);
-        QStringList args = msgs.split(' ', QString::SkipEmptyParts);
+        if (ev.equals(4, 0xc3) && ev.equals(5, 0xa8) // MaoDa
+                && ev.equals(6, 0xb4) && ev.equals(7, 0xf3)) {
+            donateMember(ev.from, 215688650);
+            return true;
+        }
+        if (ev.equals(4, 0xb6) && ev.equals(5, 0xfe) // ErGou
+                && ev.equals(6, 0xb9) && ev.equals(7, 0xb7)) {
+            donateMember(ev.from,  26664141);
+            return true;
+        }
 
         QList<qint64> uids;
 
-        QString cmd = args[0];
-        if (cmd.startsWith(tr("Donate"))) {
-            if (msgs == d->ergouString || msgs == d->gougeString) {
-                donateMember(ev.from, 26664141);
-                return true;
-            } else if (msgs == d->maodaString) {
-                donateMember(ev.from, 215688650);
-                return true;
+        if (ev.equals(4, 0xce) && ev.equals(5, 0xd2)) { // DaShangWo
+            donateMember(ev.from, ev.sender);
+            return true;
+        } else {
+            QStringList args = convert(&ev.gbkMsg[4]).split(' ', QString::SkipEmptyParts);
+            for (auto li : ManageModulePrivate::findUsers(args)) {
+                donateMember(ev.from, li.uid);
             }
-
-            if (cmd.startsWith(tr("DonateMe"))) {
-                uids.append(ev.sender);
-            } else {
-                args = msgs.mid(tr("Donate").length()).split(' ', QString::SkipEmptyParts);
-                LevelInfoList ll = ManageModulePrivate::findUsers(args);
-                for (auto li : ll)
-                    uids.append(li.uid);
-            }
-
-            if (!uids.isEmpty()) {
-                for (auto uid : uids) {
-                    donateMember(ev.from, uid);
-                }
-            } else {
-
-            }
-
             return true;
         }
     }
-    return false;
 
-    Q_UNUSED(ev);
     return false;
 }
 
@@ -92,7 +79,21 @@ bool DonateModule::discussMessageEvent(const MessageEvent &ev)
 
 void DonateModule::donateMember(qint64 gid, qint64 uid)
 {
+    Q_D(DonateModule);
+
+    QMutexLocker locker(&d->safeGuard);
+    QDateTime lastSent = d->lastSents.value(uid);
     QDateTime now = QDateTime::currentDateTime();
+    if (lastSent.isValid() && (lastSent.secsTo(now) < 60)) {
+        if (++d->retryCounters[uid] > 3) {
+            banGroupMember(gid, uid, 600);
+        }
+        return;
+    } else {
+        d->lastSents.insert(uid, now);
+        d->retryCounters.remove(uid);
+    }
+    locker.unlock();
 
     CqMemberInfo mi = memberInfo(gid, uid);
     int joinTime = mi.joinTime().daysTo(now);
@@ -112,14 +113,14 @@ void DonateModule::donateMember(qint64 gid, qint64 uid)
                 ts << cqImage(QString::fromLatin1("donates\\%1-alipay.png").arg(uid));
             if (hasWeixinFile)
                 ts << cqImage(QString::fromLatin1("donates\\%1-weixin.png").arg(uid));
-            ts << "\r\n" << tr("The Below Pay Info ") << mi.nameCard() << tr(".");
-            ts << "\r\n" << tr("Other members contact iMaodA.");
+            ts << "\n" << tr("The Below Pay Info ") << mi.nameCard() << tr(".");
+            ts << "\n" << tr("Other members contact iMaodA.");
         }
         ts.flush();
 
         sendGroupMessage(gid, outMsg);
     } else {
-        sendGroupMessage(gid, cqAt(uid) + tr("JoinTime >= 90."));
+        sendGroupMessage(gid, at(uid) + tr("JoinTime >= 90."));
     }
 }
 

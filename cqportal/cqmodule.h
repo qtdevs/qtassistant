@@ -28,10 +28,11 @@ public:
     static QString convert(const QByteArray &str);
 
 public:
-    static QString cqAt(qint64 uid);
+    static QString at(qint64 uid);
     static QString cqEmoji(int emojiCode);
     static QString cqImage(const QString &name);
 
+    static QString face(int value);
     static QString emoji(qint32 value);
 
 public:

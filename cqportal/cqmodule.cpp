@@ -109,7 +109,7 @@ QString CqModule::convert(const QByteArray &str)
  *
  * 此函数将返回酷Q中@他人的字符串。
  */
-QString CqModule::cqAt(qint64 uid)
+QString CqModule::at(qint64 uid)
 {
     return QString::fromLatin1("[CQ:at,qq=%1]").arg(uid);
 }
@@ -133,6 +133,11 @@ QString CqModule::cqEmoji(int emojiCode)
 QString CqModule::cqImage(const QString &name)
 {
     return QString::fromLatin1("[CQ:image,file=%1]").arg(name);
+}
+
+QString CqModule::face(int value)
+{
+    return QString::fromLatin1("[CQ:face,id=%1]").arg(value);
 }
 
 /*!

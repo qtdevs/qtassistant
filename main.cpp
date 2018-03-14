@@ -11,14 +11,14 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    ManageModule assistant;
+    ManageModule manageModule;
     DonateModule donateModule;
-    SearchModule searchModule;
+    // SearchModule searchModule;
 
     CqEngine engine;
-    engine.installModule(&assistant);
+    engine.installModule(&manageModule);
     engine.installModule(&donateModule);
-    engine.installModule(&searchModule);
+    // engine.installModule(&searchModule);
 
     QWidget mainWindow;
     mainWindow.show();
