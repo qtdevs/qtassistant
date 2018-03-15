@@ -1,5 +1,9 @@
-#ifndef SEARCHMODULE_H
+﻿#ifndef SEARCHMODULE_H
 #define SEARCHMODULE_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqmodule.h"
 
@@ -12,8 +16,6 @@ class SearchModule : public CqModule
 public:
     explicit SearchModule(CqEngine *engine = nullptr);
     virtual ~SearchModule();
-protected:
-    QScopedPointer<SearchModulePrivate> d_ptr;
 
 public:
     bool privateMessageEvent(const MessageEvent &ev);

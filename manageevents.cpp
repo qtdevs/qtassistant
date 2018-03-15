@@ -2,6 +2,7 @@
 #include "managemodule_p.h"
 
 #include <QStringBuilder>
+#include <QTextStream>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -26,6 +27,10 @@ bool ManageModule::groupRequestEvent(const GroupRequestEvent &ev)
 {
     Q_D(ManageModule);
 
+    if (!d->managedGroups.contains(ev.from)) {
+        return false;
+    }
+
     // 黑名单检查，如果发现匹配，直接拒绝。
     if (d->blacklist->contains(ev.from, ev.user)) {
         rejectRequest(ev.type, ev.gbkTag);
@@ -44,6 +49,10 @@ bool ManageModule::friendAddEvent(const FriendAddEvent &ev)
 bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
 {
     Q_D(ManageModule);
+
+    if (!d->managedGroups.contains(ev.from)) {
+        return false;
+    }
 
     // 黑名单检查，如果发现匹配，直接踢出。
     if (d->blacklist->contains(ev.from, ev.member)) {
@@ -73,14 +82,16 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
         }
     }
 
-    // 发送欢迎卡片。
-    if (unknownLocation) {
-        showPrimary(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，并<span class=\"warning\">修改你的群名片</span>，否则将被自动踢出。<br />谢谢你的配合！"));
-    } else {
-        showPrimary(ev.from, nameCard, tr("欢迎加入我们！请你<span class=\"warning\">在三十分钟内发言一次</span>，否则将被自动踢出。谢谢你的配合！"));
-    }
+    QString msg;
+    QTextStream ts(&msg);
 
-    sendGroupMessage(ev.from, at(ev.member));
+    for (auto fileName : d->welcomeImages) {
+        ts << cqImage(fileName) << "\n";
+    }
+    ts << at(ev.member);
+    ts.flush();
+
+    sendGroupMessage(ev.from, msg);
 
     return false;
 }
@@ -88,6 +99,10 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
 bool ManageModule::memberLeaveEvent(const MemberLeaveEvent &ev)
 {
     Q_D(ManageModule);
+
+    if (!d->managedGroups.contains(ev.from)) {
+        return false;
+    }
 
     // 移出新手监控，不再进行监视。
     d->welcome->removeMember(ev.from, ev.member);

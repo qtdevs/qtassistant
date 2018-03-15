@@ -17,6 +17,7 @@ public:
     virtual ~MasterLevelsPrivate();
 
 private:
+    QSet<qint64> superUsers;
     QHash<Member, MasterLevel> levels;
 };
 

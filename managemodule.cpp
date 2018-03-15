@@ -6,11 +6,14 @@
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonDocument>
 #include <QPixmap>
 #include <QStringBuilder>
 #include <QTextStream>
 #include <QTranslator>
 #include <QUuid>
+#include <QtDebug>
+#include <QMetaEnum>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -25,11 +28,8 @@
 // class ManageModule
 
 ManageModule::ManageModule(CqEngine *engine)
-    : CqModule(engine)
-    , d_ptr(new ManageModulePrivate())
+    : CqModule(*new ManageModulePrivate(), engine)
 {
-    d_ptr->q_ptr = this;
-
     Q_D(ManageModule);
 
     QTranslator *translator = new QTranslator(qApp);
@@ -46,8 +46,27 @@ ManageModule::ManageModule(CqEngine *engine)
 
     d->checkTimerId = startTimer(10000);
 
-//    connect(SearchModule::instance(), &SearchModule::groupSearchResult,
-//            this, &ManageModule::groupSearchResult);
+    QFile file(usrFilePath("Management.json"));
+    if (file.open(QFile::ReadOnly)) {
+        auto doc = QJsonDocument::fromJson(file.readAll());
+        if (!doc.isEmpty() && doc.isObject()) {
+            d->init(doc.object());
+        }
+    }
+
+    d->levels->init(d->superUsers);
+
+    QFileInfo rootInfo(imgFilePath("Welcomes"));
+    if (rootInfo.isDir()) {
+        QDir root(rootInfo.absoluteFilePath());
+        for (auto fileInfo : root.entryInfoList(QDir::Files, QDir::Name)) {
+            if ((fileInfo.suffix().toLower() == "png") || (fileInfo.suffix().toLower() == "jpg")) {
+                auto fileName = fileInfo.absoluteFilePath();
+                fileName = fileName.mid(d->imagePath.count() + 1);
+                d->welcomeImages << QDir::toNativeSeparators(fileName);
+            }
+        }
+    }
 }
 
 ManageModule::~ManageModule()
@@ -210,59 +229,68 @@ void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInf
     }
 }
 
-void ManageModule::groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result)
+void ManageModule::showWelcomes(qint64 gid, qint64 uid)
 {
+    Q_D(ManageModule);
+
+    MasterLevel level = d->levels->level(gid, uid);
+    if (MasterLevel::ATField < level) {
+        return;
+    }
+
     QString msg;
     QTextStream ts(&msg);
 
-    ts << at(uid) << endl;
-
-    if (result.contains("error_type")) {
-        ;
-    } else {
-        QJsonArray topics = result.value("topics").toArray();
-        if (topics.count() == 0) {
-            ts << QString::fromUtf8("很抱歉，没有找到与\"") << key << QString::fromUtf8("\"相关的主题。");
-        } else {
-            ts << QString::fromUtf8("关键词: ") << key << endl;
-            ts << endl;
-
-            for (int i = 0; i < topics.count() && i < 5; ++i) {
-                if (i != 0) { ts << endl; }
-                QJsonObject topic = topics.at(i).toObject();
-                ts << QString::fromUtf8("主题: ") << topic.value("fancy_title").toString() << endl;
-                auto lastPostedAt = QDateTime::fromString(topic.value("last_posted_at").toString(), Qt::ISODate);
-                int year = lastPostedAt.date().year();
-                int month = lastPostedAt.date().month();
-                int day = lastPostedAt.date().day();
-                ts << QString::fromUtf8("%1年%2月%3日 ").arg(year).arg(month, 2, 10, QLatin1Char('0')).arg(day, 2, 10, QLatin1Char('0'));
-                ts << "https://qtdevs.org/t/topic/" << topic.value("id").toInt();
-            }
-        }
+    for (auto fileName : d->welcomeImages) {
+        ts << cqImage(fileName) << "\n";
     }
-
+    ts << at(uid);
     ts.flush();
 
     sendGroupMessage(gid, msg);
 }
 
-void ManageModule::qtdevsSearch(const MessageEvent &ev, const QStringList &args)
+void ManageModule::saveWelcomes(qint64 gid, qint64 uid)
 {
-    Q_UNUSED(ev);
-    Q_UNUSED(args);
+    Q_D(ManageModule);
 
-    return;
-//    if (args.isEmpty()) {
-//    } else {
-//        SearchModule::instance()->groupSearch(ev.from, ev.sender, args.join(" "));
-//    }
+    MasterLevel level = d->levels->level(gid, uid);
+    if (MasterLevel::ATField < level) {
+        return;
+    }
+
+    QFileInfo rootInfo(imgFilePath("Welcomes"));
+    if (rootInfo.isDir()) {
+        QDir root(rootInfo.absoluteFilePath());
+        for (auto fileInfo : root.entryInfoList(QDir::Files, QDir::Name)) {
+            if (fileInfo.suffix() == "txt") {
+                QStringList nameParts = fileInfo.fileName().split('.');
+                if (nameParts.count() == 3) {
+                    QFile file(fileInfo.absoluteFilePath());
+                    if (file.open(QFile::ReadOnly)) {
+                        auto html = QString::fromUtf8(file.readAll());
+                        auto styleEnum = QMetaEnum::fromType<HtmlFeedback::Style>();
+                        auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
+                        auto image = d->htmlFeedback->draw(html, 400, (HtmlFeedback::Style)style);
+                        auto fileName = imgFilePath(QString("Welcomes/%1.PNG").arg(nameParts.at(0)));
+                        if (image.save(fileName, "PNG")) {
+                            qInfo() << "Save Welcomes:" << fileName;
+                        } else {
+                            qInfo() << "Save Welcomes failed:" << fileName;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    sendGroupMessage(gid, tr("Save Welcomes finished"));
 }
 
 // class ManageModulePrivate
 
 ManageModulePrivate::ManageModulePrivate()
-    : q_ptr(nullptr)
-    , levels(Q_NULLPTR)
+    : levels(Q_NULLPTR)
     , welcome(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
     , deathHouse(Q_NULLPTR)
@@ -344,5 +372,43 @@ void ManageModulePrivate::formatNameCard(QString &nameCard)
     nameCard.remove(' '); // 消除空格，不允许有空格。
     nameCard.replace("【", "["); // 替换全角方括号，用半角方括号替代。
     nameCard.replace("】", "]"); // 替换全角方括号，用半角方括号替代。
+}
 
+void ManageModulePrivate::init(const QJsonObject &o)
+{
+    QJsonArray superUsers = o.value("superUsers").toArray();
+    for (int i = 0; i < superUsers.count(); ++i)
+        this->superUsers.insert(superUsers.at(i).toString().toLongLong());
+
+    QJsonArray managedGroups = o.value("managedGroups").toArray();
+    for (int i = 0; i < managedGroups.count(); ++i)
+        this->managedGroups.insert(managedGroups.at(i).toString().toLongLong());
+
+    QJsonArray banHongbaoGroups = o.value("banHongbaoGroups").toArray();
+    for (int i = 0; i < banHongbaoGroups.count(); ++i)
+        this->banHongbaoGroups.insert(banHongbaoGroups.at(i).toString().toLongLong());
+
+    qInfo() << "superUsers" << this->superUsers;
+    qInfo() << "managedGroups" << this->managedGroups;
+    qInfo() << "banHongbaoGroups" << this->banHongbaoGroups;
+}
+
+void ManageModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Style style)
+{
+    Q_Q(ManageModule);
+
+    QFile file(QString(":/Welcomes/%1.utf8.txt").arg(id));
+    if (file.open(QFile::ReadOnly)) {
+        auto htmlText = QString::fromUtf8(file.readAll());
+
+        QString path = q->imgFilePath("Welcomes");
+        QPixmap image = htmlFeedback->draw(htmlText, 400, style);
+        if (image.save(q->imgFilePath(QString("Welcomes/%1.png").arg(id)), "PNG")) {
+            qInfo() << "Output 1";
+        } else {
+            qInfo() << "Output 2";
+        }
+    }
+
+    qInfo() << "failed";
 }

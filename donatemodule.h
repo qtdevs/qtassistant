@@ -1,5 +1,9 @@
-#ifndef DONATEMODULE_H
+﻿#ifndef DONATEMODULE_H
 #define DONATEMODULE_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include "cqmodule.h"
 
@@ -12,8 +16,6 @@ class DonateModule : public CqModule
 public:
     explicit DonateModule(CqEngine *parent = nullptr);
     virtual ~DonateModule();
-protected:
-    QScopedPointer<DonateModulePrivate> d_ptr;
 
 public:
     static DonateModule *instance();

@@ -1,0 +1,10 @@
+﻿<html><body><span class="t">严禁事项</span>
+<div><p class="c">
+以下行为可能导致您被 <span class="warning">禁言</span> 或 <span class="warning">移除出群</span>：<br/>
+发表违法言论；<br />
+发表侮辱人格的言论；<br />
+发送红包或商业推广；<br />
+发送情色内容；<br />
+调戏群管助手。<br />
+或者，如果您发现上述情况，请及时联系管理员处理。
+</p></div></body></html>

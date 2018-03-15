@@ -21,8 +21,6 @@ class ManageModule : public CqModule
 public:
     explicit ManageModule(CqEngine *engine = nullptr);
     virtual ~ManageModule();
-protected:
-    QScopedPointer<ManageModulePrivate> d_ptr;
 
 public:
     bool privateMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
@@ -98,9 +96,8 @@ private:
     void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
 
 private:
-    void groupSearchResult(qint64 gid, qint64 uid, const QString &key, const QJsonObject &result);
-private:
-    void qtdevsSearch(const MessageEvent &ev, const QStringList &args);
+    void showWelcomes(qint64 gid, qint64 uid);
+    void saveWelcomes(qint64 gid, qint64 uid);
 };
 
 #endif // MANAGEMODULE_H

@@ -1,4 +1,4 @@
-#include "donatemodule.h"
+﻿#include "donatemodule.h"
 #include "donatemodule_p.h"
 
 #include <QFileInfo>
@@ -9,17 +9,16 @@
 // class DonateModule
 
 DonateModule::DonateModule(CqEngine *parent)
-    : CqModule(parent)
-    , d_ptr(new DonateModulePrivate())
+    : CqModule(*new DonateModulePrivate(), parent)
 {
-    d_ptr->q_ptr = this;
+    Q_D(DonateModule);
 
     Q_ASSERT(DonateModulePrivate::instance == nullptr);
     DonateModulePrivate::instance = this;
 
-    d_ptr->ergouString = tr("Donate ErGou");
-    d_ptr->gougeString = tr("Donate GouGe");
-    d_ptr->maodaString = tr("Donate MaoDa");
+    d->ergouString = tr("Donate ErGou");
+    d->gougeString = tr("Donate GouGe");
+    d->maodaString = tr("Donate MaoDa");
 }
 
 DonateModule::~DonateModule()
@@ -129,7 +128,6 @@ void DonateModule::donateMember(qint64 gid, qint64 uid)
 DonateModule *DonateModulePrivate::instance = nullptr;
 
 DonateModulePrivate::DonateModulePrivate()
-    : q_ptr(nullptr)
 {
 }
 

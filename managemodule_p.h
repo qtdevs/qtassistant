@@ -5,6 +5,8 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
+#include <QSet>
+
 #include "cqmodule_p.h"
 #include "managemodule.h"
 
@@ -20,14 +22,25 @@ class ManageModulePrivate : public CqModulePrivate
 public:
     ManageModulePrivate();
     virtual ~ManageModulePrivate();
-protected:
-    ManageModule *q_ptr;
 
 public:
     static LevelInfoList findUsers(const QStringList &args);
 
     static void safetyNameCard(QString &nameCard);
     static void formatNameCard(QString &nameCard);
+
+protected:
+    void init(const QJsonObject &o);
+
+private:
+    QSet<qint64> superUsers;
+    QSet<qint64> managedGroups;
+    QSet<qint64> banHongbaoGroups;
+
+    QStringList  welcomeImages;
+
+protected:
+    void saveWelcomes(const QString &id, HtmlFeedback::Style style);
 
 private:
     MasterLevels *levels;

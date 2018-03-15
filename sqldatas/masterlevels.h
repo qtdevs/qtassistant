@@ -5,6 +5,7 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
+#include <QSet>
 #include <QHash>
 
 #include "cqsqlite.h"
@@ -42,6 +43,9 @@ class MasterLevels : public CqSqlite
 public:
     explicit MasterLevels(QObject *parent = Q_NULLPTR);
     virtual ~MasterLevels();
+
+public:
+    void init(const QSet<qint64> &superUsers);
 
 public:
     static MasterLevel levelCast(int level);

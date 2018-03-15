@@ -35,9 +35,11 @@ public:
 
 private:
     qint64  currentId;
+
+protected:
+    QString resPath;
     QString basePath;
     QString imagePath;
-    QString resPath;
 };
 
 #endif // CqModule_P_H

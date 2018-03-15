@@ -31,6 +31,9 @@ private:
     QPixmap warningImage;
     QPixmap promptImage;
     QPixmap successImage;
+
+    QPixmap backgroundImage;
+    QPixmap foregroundImage;
 };
 
 #endif // HTMLFEEDBACK_P_H

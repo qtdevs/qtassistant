@@ -1,4 +1,4 @@
-#include "searchmodule.h"
+﻿#include "searchmodule.h"
 #include "searchmodule_p.h"
 
 #include <QJsonDocument>
@@ -15,12 +15,11 @@ Q_GLOBAL_STATIC(SearchModule, theSearchModule2)
 // class SearchModule
 
 SearchModule::SearchModule(CqEngine *engine)
-    : CqModule(engine)
-    , d_ptr(new SearchModulePrivate())
+    : CqModule(*new SearchModulePrivate(), engine)
 {
-    d_ptr->q_ptr = this;
+    Q_D(SearchModule);
 
-    d_ptr->network = new QNetworkAccessManager(this);
+    d->network = new QNetworkAccessManager(this);
 }
 
 SearchModule::~SearchModule()
@@ -105,8 +104,7 @@ bool SearchModule::event(QEvent *event)
 // class SearchModulePrivate
 
 SearchModulePrivate::SearchModulePrivate()
-    : q_ptr(nullptr)
-    , network(nullptr)
+    : network(nullptr)
 {
     searchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyA1LRDb7Y2JnuQA_2wbXxm4zxsL1F2N1T0&cx=014406374443882396406:gkfrjqgu-08" \
                 "&c2coff=1&hl=zh-CN&gl=countryCN&googlehost=google.com.hk&safe=high" \

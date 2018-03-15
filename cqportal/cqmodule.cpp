@@ -45,19 +45,18 @@
  *
  * \internal
  */
-CqModule::CqModule(CqEngine *parent)
-    : QObject(parent)
-    , d_ptr(new CqModulePrivate())
+CqModule::CqModule(CqModulePrivate &dd, CqEngine *parent)
+    : QObject(parent), d_ptr(&dd)
 {
-    Q_D(CqModule);
+    d_ptr->q_ptr = this;
 
-    d->q_ptr = this;
+    Q_D(CqModule);
 
     d->currentId = CQ_getLoginQQ(CqEnginePrivate::accessToken);
 
     QString path = convert(CQ_getAppDirectory(CqEnginePrivate::accessToken));
-    d->basePath = QDir::cleanPath(path);
     d->resPath = QDir::cleanPath(path % "/../../data");
+    d->basePath = QDir::cleanPath(path);
     d->imagePath = QDir::cleanPath(path % "/../../data/image");
 
     QString sqlitePath = d->basePath % '/' % QString::number(d->currentId);
@@ -222,6 +221,16 @@ QString CqModule::resFilePath(const char *srcName) const
 QString CqModule::resFilePath(const QString &name) const
 {
     return QDir::cleanPath(d_ptr->resPath % '/' % name);
+}
+
+QString CqModule::imgFilePath(const char *srcName) const
+{
+    return QDir::cleanPath(d_ptr->imagePath % '/' % QString::number(d_ptr->currentId) % '/' % QString::fromUtf8(srcName));
+}
+
+QString CqModule::imgFilePath(const QString &name) const
+{
+    return QDir::cleanPath(d_ptr->imagePath % '/' % QString::number(d_ptr->currentId) % '/' % name);
 }
 
 /*!

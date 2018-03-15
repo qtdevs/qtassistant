@@ -43,6 +43,13 @@ MasterLevels::~MasterLevels()
 {
 }
 
+void MasterLevels::init(const QSet<qint64> &superUsers)
+{
+    Q_D(MasterLevels);
+
+    d->superUsers = superUsers;
+}
+
 MasterLevel MasterLevels::levelCast(int level)
 {
     switch (level) {
@@ -169,9 +176,8 @@ MasterLevel MasterLevels::level(qint64 gid, qint64 uid) const
 {
     Q_D(const MasterLevels);
 
-    if ((215688650 == uid) || (2922549325 == uid)) {
+    if (d->superUsers.contains(uid))
         return MasterLevel::ATField;
-    }
 
     QReadLocker locker(&d->guard);
 
@@ -217,7 +223,7 @@ void MasterLevels::update(qint64 gid, LevelInfoList &l) const
     while (i.hasNext()) {
         LevelInfo &li = i.next();
 
-        if ((215688650 == li.uid) || (2922549325 == li.uid)) {
+        if (d->superUsers.contains(li.uid)) {
             li.level = MasterLevel::ATField;
         } else {
             li.level = d->levels.value(Member(gid, li.uid), MasterLevel::Unknown);

@@ -1,19 +1,22 @@
-#ifndef DONATEMODULE_P_H
+﻿#ifndef DONATEMODULE_P_H
 #define DONATEMODULE_P_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include <QMutex>
 
+#include "cqmodule_p.h"
 #include "donatemodule.h"
 
-class DonateModulePrivate
+class DonateModulePrivate : public CqModulePrivate
 {
     Q_DECLARE_PUBLIC(DonateModule)
 
 public:
     DonateModulePrivate();
     virtual ~DonateModulePrivate();
-protected:
-    DonateModule *q_ptr;
 
 protected:
     static DonateModule *instance;

@@ -47,66 +47,74 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
 {
     Q_D(const HtmlFeedback);
 
-    QColor backgroundColor;
-    const QPixmap *siderBarImage = Q_NULLPTR;
-
-    qreal sideBarWidth = 50;
-    qreal contentMargins = 4;
-
-    qreal sw = sideBarWidth;
+    qreal contentMargins = 20;
+    qreal bw = 12;
     qreal cm = contentMargins;
+
+    const QPixmap *frameImage = nullptr;
 
     QTextDocument htmlDoc;
     htmlDoc.setUndoRedoEnabled(false);
     htmlDoc.setUseDesignMetrics(true);
-    htmlDoc.setTextWidth(width - sw - cm * 2);
+    htmlDoc.setTextWidth(width - bw - cm * 2);
     switch (style) {
     case Primary:
         htmlDoc.setDefaultStyleSheet(d->primarySheet);
-        backgroundColor.setNamedColor("#3071a9");
-        siderBarImage = &d->primaryImage;
+        frameImage = &d->primaryImage;
         break;
     case Danger:
         htmlDoc.setDefaultStyleSheet(d->dangerSheet);
-        backgroundColor.setNamedColor("#c9302c");
-        siderBarImage = &d->dangerImage;
+        frameImage = &d->dangerImage;
         break;
     case Warning:
         htmlDoc.setDefaultStyleSheet(d->warningSheet);
-        backgroundColor.setNamedColor("#ec971f");
-        siderBarImage = &d->warningImage;
+        frameImage = &d->warningImage;
         break;
     case Prompt:
         htmlDoc.setDefaultStyleSheet(d->promptSheet);
-        backgroundColor.setNamedColor("#31b0d5");
-        siderBarImage = &d->promptImage;
+        frameImage = &d->promptImage;
         break;
     case Success:
         htmlDoc.setDefaultStyleSheet(d->successSheet);
-        backgroundColor.setNamedColor("#449d44");
-        siderBarImage = &d->successImage;
+        frameImage = &d->successImage;
         break;
     }
     htmlDoc.setHtml(html);
 
     QSizeF size = htmlDoc.size();
     QPixmap pixmap(width, size.height() + cm * 2);
-    pixmap.fill(backgroundColor);
 
     QPainter painter(&pixmap);
-    // SideBar
-    painter.setPen(Qt::white);
-    QRect swRect(0, 0, sw, pixmap.height());
-    painter.fillRect(swRect, backgroundColor.darker(120));
-    if (siderBarImage) {
-        QPoint c = swRect.center();
-        int cy = c.y() - siderBarImage->height() / 2;
-        int cx = c.x() - siderBarImage->width() / 2;
-        painter.drawPixmap(cx, cy, *siderBarImage);
-    }
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    // Background
+
+    int tw = pixmap.width();
+    int th = pixmap.height();
+
+    int sw = frameImage->width();
+    int sh = frameImage->height();
+
+    if (!d->backgroundImage.isNull())
+        painter.drawTiledPixmap(0, 0, tw, th, d->backgroundImage);
+
+    painter.drawPixmap(0, 0, 40, 40, *frameImage, 0, 0, 40, 40);
+    painter.drawPixmap(40, 0, tw - 80, 40, *frameImage, 40, 0, sw - 80, 40);
+    painter.drawPixmap(tw - 40, 0, 40, 40, *frameImage, sw - 40, 0, 40, 40);
+    painter.drawPixmap(tw - 40, 40, 40, th - 80, *frameImage, sw - 40, 40, 40, sh - 80);
+    painter.drawPixmap(tw - 40, th - 40, 40, 40, *frameImage, sw - 40, sh - 40, 40, 40);
+    painter.drawPixmap(40, th - 40, tw - 80, 40, *frameImage, 40, sh - 40, sw - 80, 40);
+    painter.drawPixmap(0, th - 40, 40, 40, *frameImage, 0, sh - 40, 40, 40);
+    painter.drawPixmap(0, 40, 40, th - 80, *frameImage, 0, 40, 40, sh - 80);
+    painter.drawPixmap(40, 40, tw - 80, th - 80, *frameImage, 40, 40, sw - 80, sh - 80);
+
     // Content
-    painter.translate(sw + cm, cm);
+    painter.translate(bw + cm, cm);
     htmlDoc.drawContents(&painter);
+
+    if (!d->foregroundImage.isNull())
+        painter.drawTiledPixmap(0, 0, tw, th, d->foregroundImage);
 
     return pixmap;
 }
@@ -156,6 +164,9 @@ HtmlFeedbackPrivate::HtmlFeedbackPrivate()
     warningImage.load(":/htmlfeedback/img/warning.png");
     promptImage.load(":/htmlfeedback/img/prompt.png");
     successImage.load(":/htmlfeedback/img/success.png");
+
+    backgroundImage.load(":/htmlfeedback/img/background.png");
+    foregroundImage.load(":/htmlfeedback/img/foreground.png");
 }
 
 HtmlFeedbackPrivate::~HtmlFeedbackPrivate()

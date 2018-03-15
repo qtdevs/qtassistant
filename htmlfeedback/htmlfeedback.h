@@ -34,6 +34,7 @@ public:
         Prompt,
         Success,
     };
+    Q_ENUM(Style)
 
 public:
     QPixmap draw(const QString &html, int width, Style style) const;

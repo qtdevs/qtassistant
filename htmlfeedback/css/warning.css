@@ -1,6 +1,6 @@
-* {
-font-family: "微软雅黑 Light";
-color: "#ffffff";
+﻿* {
+font-family: "微软雅黑";
+color: "#343a40";
 }
 
 .t {
@@ -8,8 +8,12 @@ font-size: 18pt;
 }
 
 .c {
-font-size: 12pt;
-line-height: 120%
+font-size: 10pt;
+line-height: 110%
+}
+
+.warning {
+color: "#dc3545";
 }
 
 code {

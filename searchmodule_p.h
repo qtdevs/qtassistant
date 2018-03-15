@@ -1,10 +1,15 @@
-#ifndef SEARCHMODULE_P_H
+﻿#ifndef SEARCHMODULE_P_H
 #define SEARCHMODULE_P_H
+
+#if _MSC_VER >= 1600
+#  pragma execution_character_set("utf-8")
+#endif
 
 #include <QEvent>
 #include <QMetaMethod>
 #include <QNetworkAccessManager>
 
+#include "cqmodule_p.h"
 #include "searchmodule.h"
 
 class SearchEvent : public QEvent
@@ -39,15 +44,13 @@ public:
     QString     siteSpec;
 };
 
-class SearchModulePrivate
+class SearchModulePrivate : public CqModulePrivate
 {
     Q_DECLARE_PUBLIC(SearchModule)
 
 public:
     SearchModulePrivate();
     virtual ~SearchModulePrivate();
-protected:
-    SearchModule *q_ptr;
 
 public:
     bool search(qint64 did, qint64 gid, const MessageEvent &ev);

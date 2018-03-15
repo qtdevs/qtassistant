@@ -1,0 +1,7 @@
+﻿<html><body><span class="t">招聘公告</span>
+<div><p class="c">
+如果您需要发布招聘信息，我们可以替您发布群公告。<br />
+请您按照“群公告模版”的格式编写招聘信息，<br />
+然后，将信息发送给管理员 <span class="warning">冷幽</span>、<span class="warning">心魔</span> 或 <span class="warning">么么</span>。<br />
+（公告有 500 字限制，请按照模版，尽量简明扼要）<br />
+</p></div></body></html>

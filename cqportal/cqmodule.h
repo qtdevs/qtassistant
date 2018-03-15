@@ -16,11 +16,12 @@ class CqModule : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(CqModule)
 
-public:
-    CqModule(CqEngine *parent = nullptr);
-    virtual ~CqModule();
+protected:
+    CqModule(CqModulePrivate &dd, CqEngine *parent = nullptr);
 protected:
     QScopedPointer<CqModulePrivate> d_ptr;
+public:
+    virtual ~CqModule();
 
 public:
     static QByteArray convert(const QString &str);
@@ -46,6 +47,8 @@ public:
     QString usrFilePath(const QString &name) const;
     QString resFilePath(const char *srcName) const;
     QString resFilePath(const QString &name) const;
+    QString imgFilePath(const char *srcName) const;
+    QString imgFilePath(const QString &name) const;
 
 public:
     virtual bool privateMessageEvent(const MessageEvent &ev);

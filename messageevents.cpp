@@ -25,18 +25,21 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
 {
     Q_D(ManageModule);
 
+    if (!d->managedGroups.contains(ev.from)) {
+        return false;
+    }
+
     // 黑名单检查，如果发现匹配，直接踢出。
     if (d->blacklist->contains(ev.from, ev.sender)) {
         kickGroupMember(ev.from, ev.sender, false);
-        qDebug("kickGroupMember(ev.from, ev.sender, false)");
         return true;
     }
 
     if (strncmp(ev.gbkMsg, "[CQ:hb", 6) == 0) {
-        if (ev.from == 228352761) {
-            QString msg = at(ev.sender) + tr(", HongBao is not allowed. You will be banned for %1 miniutes, and contact to owner.").arg(10);
+        if (d->banHongbaoGroups.contains(ev.from)) {
+            QString msg = at(ev.sender) + tr(", HongBao is not allowed. You will be banned for %1 miniutes, and contact to owner.").arg(60);
             sendGroupMessage(ev.from, msg);
-            banGroupMember(ev.from, ev.sender, 600);
+            banGroupMember(ev.from, ev.sender, 3600);
             return true;
         }
     }
@@ -60,9 +63,6 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
     // 命令派发。
     if (!args.isEmpty()) {
         QString c = args.value(0);
-        if (c == "q") {
-            qtdevsSearch(ev, args.mid(1));
-        }
 
         if ((c == "h") || (c == "help")) {
             groupHelp(ev, args.mid(1));
@@ -117,6 +117,15 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
         }
         if ((c == "bl") || (c == "blacklist")) {
             groupBlacklist(ev, args.mid(1));
+            return true;
+        }
+
+        if (c == "show") {
+            showWelcomes(ev.from, ev.sender);
+            return true;
+        }
+        if (c == "save") {
+            saveWelcomes(ev.from, ev.sender);
             return true;
         }
     }
@@ -187,16 +196,16 @@ void ManageModule::groupHelp(const MessageEvent &ev, const QStringList &args)
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>  </code>" << tr("帮助信息") << " <code>(5+): help(h)</code>\n";
-    ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level(l)</code>\n";
-    ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename(r)</code>\n";
-    ts << "<code>  </code>" << tr("格式名片") << " <code>(5+): format(f)</code>\n";
-    ts << "<code>  </code>" << tr("禁言命令") << " <code>(5+): ban(b)</code>\n";
-    ts << "<code>  </code>" << tr("取消禁言") << " <code>(5+): unban(ub)</code>\n";
-    ts << "<code>  </code>" << tr("踢出命令") << " <code>(3+): kill(k)</code>\n";
-    ts << "<code>  </code>" << tr("取消踢出") << " <code>(3+): unkill(uk)</code>\n";
-    ts << "<code>  </code>" << tr("提权命令") << " <code>(1+): power(p)</code>\n";
-    ts << "<code>  </code>" << tr("取消提权") << " <code>(1+): unpower(up)</code>\n";
+    ts << "<code>  </code>" << tr("帮助信息") << " <code>(5+): help     (h)</code>\n";
+    ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level    (l)</code>\n";
+    ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename   (r)</code>\n";
+    ts << "<code>  </code>" << tr("格式名片") << " <code>(5+): format   (f)</code>\n";
+    ts << "<code>  </code>" << tr("禁言命令") << " <code>(5+): ban      (b)</code>\n";
+    ts << "<code>  </code>" << tr("取消禁言") << " <code>(5+): unban    (ub)</code>\n";
+    ts << "<code>  </code>" << tr("踢出命令") << " <code>(3+): kill     (k)</code>\n";
+    ts << "<code>  </code>" << tr("取消踢出") << " <code>(3+): unkill   (uk)</code>\n";
+    ts << "<code>  </code>" << tr("提权命令") << " <code>(1+): power    (p)</code>\n";
+    ts << "<code>  </code>" << tr("取消提权") << " <code>(1+): unpower  (up)</code>\n";
     ts << "</pre>";
 
     ts.flush();
@@ -705,6 +714,7 @@ void ManageModule::groupKill(const MessageEvent &ev, const QStringList &args)
     // 执行具体操作
 
     for (const LevelInfo &li : ll) {
+        banGroupMember(ev.from, li.uid, 600);
         d->deathHouse->addMember(ev.from, li.uid);
     }
 
@@ -934,6 +944,7 @@ void ManageModule::groupUnkill(const MessageEvent &ev, const QStringList &args)
     // 执行具体操作
 
     for (const LevelInfo &li : ll) {
+        banGroupMember(ev.from, li.uid, 0);
         d->deathHouse->removeMember(ev.from, li.uid);
     }
 

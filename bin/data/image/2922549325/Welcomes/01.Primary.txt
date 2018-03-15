@@ -1,0 +1,6 @@
+﻿<html><body><span class="t">欢迎您的加入！</span>
+<div><p class="c">
+请您务必 <span class="warning">在三十分钟内发言一次</span>；<br/>
+并 <span class="warning">按照“[当前所在城市]昵称”的格式，修改您的群名片</span>。<br />
+否则，您将被系统自动踢出。感谢您的配合！
+</p></div></body></html>
