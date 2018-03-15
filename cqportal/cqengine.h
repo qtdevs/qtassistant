@@ -1,4 +1,4 @@
-#ifndef CQENGINE_H
+﻿#ifndef CQENGINE_H
 #define CQENGINE_H
 
 #include <QObject>

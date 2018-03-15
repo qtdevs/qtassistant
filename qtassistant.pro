@@ -46,7 +46,8 @@ CONFIG += openssl-linked
 HEADERS +=
 SOURCES +=
 
-OTHER_FILES += \
-    addon/org.qtdevs.assistant.json
+DESTDIR = $$PWD/bin/app
 
-DESTDIR = "C:/CQPro/app"
+OTHER_FILES += \
+    $$PWD/README.md \
+    $$PWD/bin/README.md

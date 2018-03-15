@@ -1,0 +1,116 @@
+{
+  "ret": 1,
+  "apiver": 9,
+  "name": "Qt Assistant",
+  "version": "1.0.0",
+  "version_id": 1,
+  "author": "Qt Developers",
+  "description": "Qt Assistant",
+  "event": [
+    {
+      "id": 1001,
+      "type": 1001,
+      "name": "SystemStartupEvent",
+      "priority": 20000,
+      "function": "_systemStartupEvent"
+    },
+    {
+      "id": 1002,
+      "type": 1002,
+      "name": "SystemShutdownEvent",
+      "priority": 20000,
+      "function": "_systemShutdownEvent"
+    },
+    {
+      "id": 1003,
+      "type": 1003,
+      "name": "PluginEnableEvent",
+      "priority": 20000,
+      "function": "_pluginEnableEvent"
+    },
+    {
+      "id": 1004,
+      "type": 1004,
+      "name": "PluginDisableEvent",
+      "priority": 20000,
+      "function": "_pluginDisableEvent"
+    },
+    {
+      "id": 1,
+      "type": 21,
+      "name": "PrivateMessageEvent",
+      "function": "_privateMessageEvent",
+      "priority": 20000
+    },
+    {
+      "id": 2,
+      "type": 2,
+      "name": "GroupMessageEvent",
+      "function": "_groupMessageEvent",
+      "priority": 20000
+    },
+    {
+      "id": 3,
+      "type": 4,
+      "name": "DiscussMessageEvent",
+      "function": "_discussMessageEvent",
+      "priority": 20000
+    },
+    {
+      "id": 4,
+      "type": 101,
+      "name": "MasterChangeEvent",
+      "function": "_masterChangeEvent",
+      "priority": 20000
+    },
+    {
+      "id": 5,
+      "type": 301,
+      "name": "FriendRequestEvent",
+      "function": "_friendRequestEvent",
+      "priority": 20000
+    },
+    {
+      "id": 6,
+      "type": 302,
+      "name": "GroupRequestEvent",
+      "function": "_groupRequestEvent",
+      "priority": 20000
+    },
+    {
+      "id": 7,
+      "type": 201,
+      "name": "FriendAddEvent",
+      "function": "_friendAddEvent",
+      "priority": 20000
+    },
+    {
+      "id": 8,
+      "type": 103,
+      "name": "MemberJoinEvent",
+      "function": "_memberJoinEvent",
+      "priority": 20000
+    },
+    {
+      "id": 9,
+      "type": 102,
+      "name": "MemberLeaveEvent",
+      "function": "_memberLeaveEvent",
+      "priority": 20000
+    }
+  ],
+  "auth": [
+    101,
+    103,
+    106,
+    120,
+    121,
+    122,
+    123,
+    126,
+    130,
+    131,
+    150,
+    151
+  ]
+}
