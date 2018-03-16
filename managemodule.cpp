@@ -21,15 +21,19 @@
 #include "sqldatas/memberdeathhouse.h"
 
 #include "htmlfeedback/htmlfeedback.h"
+#include "ManagementFilters.h"
 
 #include "searchmodule.h"
 #include "donatemodule.h"
 
 // class ManageModule
 
-ManageModule::ManageModule(CqEngine *engine)
-    : CqModule(*new ManageModulePrivate(), engine)
+ManageModule::ManageModule(CoolQ::ServicePortal *engine)
+    : CoolQ::ServiceModule(*new ManageModulePrivate(), engine)
 {
+    Q_ASSERT(ManageModulePrivate::instance == nullptr);
+    ManageModulePrivate::instance = this;
+
     Q_D(ManageModule);
 
     QTranslator *translator = new QTranslator(qApp);
@@ -67,13 +71,32 @@ ManageModule::ManageModule(CqEngine *engine)
             }
         }
     }
+
+    new RestartComputer(this);
+
+    new CreateStartupShortcut(this);
+    new DeleteStartupShortcut(this);
 }
 
 ManageModule::~ManageModule()
 {
     Q_D(ManageModule);
 
+    ManageModulePrivate::instance = nullptr;
+
     killTimer(d->checkTimerId);
+}
+
+ManageModule *ManageModule::instance()
+{
+    return ManageModulePrivate::instance;
+}
+
+MasterLevel ManageModule::level(qint64 gid, qint64 uid) const
+{
+    Q_D(const ManageModule);
+
+    return d->levels->level(gid, uid);
 }
 
 void ManageModule::timerEvent(QTimerEvent *)
@@ -82,10 +105,10 @@ void ManageModule::timerEvent(QTimerEvent *)
 
     // 检查新手名单。
     do {
-        MemberList members;
+        CoolQ::MemberList members;
         d->welcome->expiredMembers(members);
         for (const auto &member : members) {
-            CqMemberInfo mi = memberInfo(member.first, member.second, false);
+            CoolQ::MemberInfo mi = memberInfo(member.first, member.second, false);
             if (mi.isValid() && mi.lastSent().isNull()) {
                 kickGroupMember(member.first, member.second, false);
             }
@@ -94,7 +117,7 @@ void ManageModule::timerEvent(QTimerEvent *)
 
     // 检查踢出名单。
     do {
-        MemberList members;
+        CoolQ::MemberList members;
         d->deathHouse->expiredMembers(members);
         for (const auto &member : members) {
             kickGroupMember(member.first, member.second, false);
@@ -197,7 +220,7 @@ void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInf
                 if (level) {
                     ds << MasterLevels::levelName(li.level) << tr(": ");
                 }
-                CqMemberInfo mi = memberInfo(gid, li.uid);
+                CoolQ::MemberInfo mi = memberInfo(gid, li.uid);
                 if (mi.isValid()) {
                     if (!mi.nameCard().isEmpty()) {
                         ds << mi.nameCard();
@@ -205,7 +228,7 @@ void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInf
                         ds << mi.nickName();
                     }
                 } else {
-                    CqPersonInfo pi = personInfo(li.uid);
+                    CoolQ::PersonInfo pi = personInfo(li.uid);
                     if (pi.isValid()) {
                         ds << pi.nickName();
                     } else {
@@ -241,10 +264,12 @@ void ManageModule::showWelcomes(qint64 gid, qint64 uid)
     QString msg;
     QTextStream ts(&msg);
 
-    for (auto fileName : d->welcomeImages) {
+    for (auto fileName : d->welcomeImages)
         ts << cqImage(fileName) << "\n";
-    }
-    ts << at(uid);
+
+    auto keys = QUuid::createUuid().toRfc4122().toHex();
+    ts << QString::fromLatin1(keys).left(8) << " - " << at(uid);
+
     ts.flush();
 
     sendGroupMessage(gid, msg);
@@ -288,6 +313,8 @@ void ManageModule::saveWelcomes(qint64 gid, qint64 uid)
 }
 
 // class ManageModulePrivate
+
+ManageModule *ManageModulePrivate::instance = nullptr;
 
 ManageModulePrivate::ManageModulePrivate()
     : levels(Q_NULLPTR)

@@ -1,32 +1,32 @@
-﻿#ifndef CQMODULE_H
-#define CQMODULE_H
+﻿#ifndef CQSERVICEMODULE_H
+#define CQSERVICEMODULE_H
 
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
+#include "CqInterface.h"
 
-#include "cqglobalevents.h"
-#include "cqpersoninfo.h"
-#include "cqmemberinfo.h"
+#include "CqPersonInfo.h"
+#include "CqMemberInfo.h"
 
-class CqEngine;
-class CqModulePrivate;
-class CqModule : public QObject
+namespace CoolQ {
+
+class ServicePortal;
+class ServiceModulePrivate;
+class ServiceModule : public Interface
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(CqModule)
+    Q_DECLARE_PRIVATE(ServiceModule)
 
 protected:
-    CqModule(CqModulePrivate &dd, CqEngine *parent = nullptr);
-protected:
-    QScopedPointer<CqModulePrivate> d_ptr;
+    ServiceModule(ServiceModulePrivate &dd, ServicePortal *parent);
 public:
-    virtual ~CqModule();
+    explicit ServiceModule(ServicePortal *parent);
+public:
+    virtual ~ServiceModule();
 
 public:
-    static QByteArray convert(const QString &str);
-    static QString convert(const char *gbkStr);
-    static QString convert(const QByteArray &str);
+    ServicePortal *portal() const;
+
+public:
+    virtual bool initialize() override;
 
 public:
     static QString at(qint64 uid);
@@ -49,6 +49,19 @@ public:
     QString resFilePath(const QString &name) const;
     QString imgFilePath(const char *srcName) const;
     QString imgFilePath(const QString &name) const;
+
+public:
+    int privateMessageEventPriority() const;
+    int groupMessageEventPriority() const;
+    int discussMessageEventPriority() const;
+
+    int masterChangeEventPriority() const;
+    int friendRequestEventPriority() const;
+    int groupRequestEventPriority() const;
+
+    int friendAddEventPriority() const;
+    int memberJoinEventPriority() const;
+    int memberLeaveEventPriority() const;
 
 public:
     virtual bool privateMessageEvent(const MessageEvent &ev);
@@ -99,12 +112,14 @@ public:
     Result mute(qint64 gid, bool muted);
 
 public:
-    CqPersonInfo personInfo(qint64 uid, bool cached = true);
-    CqMemberInfo memberInfo(qint64 gid, qint64 uid, bool cached = true);
+    PersonInfo personInfo(qint64 uid, bool cached = true);
+    MemberInfo memberInfo(qint64 gid, qint64 uid, bool cached = true);
 
 public:
     QString saveImage(const QPixmap &data) const;
     QPixmap loadImage(const QString &name) const;
 };
 
-#endif // CQMODULE_H
+} // namespace CoolQ
+
+#endif // CQSERVICEMODULE_H

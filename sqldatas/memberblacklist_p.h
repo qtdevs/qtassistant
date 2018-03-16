@@ -5,10 +5,10 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqsqlite_p.h"
+#include "CqSqliteService_p.h"
 #include "memberblacklist.h"
 
-class MemberBlacklistPrivate : public CqSqlitePrivate
+class MemberBlacklistPrivate : public CoolQ::SqliteServicePrivate
 {
     Q_DECLARE_PUBLIC(MemberBlacklist)
 
@@ -17,7 +17,7 @@ public:
     virtual ~MemberBlacklistPrivate();
 
 public:
-    QHash<Member, qint64> members;
+    QHash<CoolQ::Member, qint64> members;
 };
 
 #endif // MEMBERBLACKLIST_P_H

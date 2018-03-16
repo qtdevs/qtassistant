@@ -14,8 +14,8 @@ Q_GLOBAL_STATIC(SearchModule, theSearchModule2)
 
 // class SearchModule
 
-SearchModule::SearchModule(CqEngine *engine)
-    : CqModule(*new SearchModulePrivate(), engine)
+SearchModule::SearchModule(CoolQ::ServicePortal *parent)
+    : CoolQ::ServiceModule(*new SearchModulePrivate(), parent)
 {
     Q_D(SearchModule);
 
@@ -26,7 +26,7 @@ SearchModule::~SearchModule()
 {
 }
 
-bool SearchModule::privateMessageEvent(const MessageEvent &ev)
+bool SearchModule::privateMessageEvent(const CoolQ::MessageEvent &ev)
 {
     Q_D(SearchModule);
 
@@ -37,7 +37,7 @@ bool SearchModule::privateMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool SearchModule::groupMessageEvent(const MessageEvent &ev)
+bool SearchModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
 {
     Q_D(SearchModule);
 
@@ -48,7 +48,7 @@ bool SearchModule::groupMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool SearchModule::discussMessageEvent(const MessageEvent &ev)
+bool SearchModule::discussMessageEvent(const CoolQ::MessageEvent &ev)
 {
     Q_D(SearchModule);
 
@@ -98,7 +98,7 @@ bool SearchModule::event(QEvent *event)
         // qInfo() << sev->did << sev->gid << sev->uid << sev->keywords;
     }
 
-    return CqModule::event(event);
+    return ServiceModule::event(event);
 }
 
 // class SearchModulePrivate
@@ -115,7 +115,7 @@ SearchModulePrivate::~SearchModulePrivate()
 {
 }
 
-bool SearchModulePrivate::search(qint64 did, qint64 gid, const MessageEvent &ev)
+bool SearchModulePrivate::search(qint64 did, qint64 gid, const CoolQ::MessageEvent &ev)
 {
     Q_Q(SearchModule);
 
@@ -128,17 +128,17 @@ bool SearchModulePrivate::search(qint64 did, qint64 gid, const MessageEvent &ev)
     if (ev.equals(6, 0x20)
             && (ev.equals(0, 0x73) || ev.equals(0, 0x53))    // s S
             && (ev.equals(0, 0x73) || ev.equals(0, 0x53))) { // s S
-        keywords = q->convert(&ev.gbkMsg[7]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[7]).split(' ', QString::SkipEmptyParts);
         banned = true;
     } else if (ev.equals(4, 0x20)
                && ev.equals(0, 0xcb) && ev.equals(1, 0xd1)   // Sou
                && ev.equals(2, 0xcb) && ev.equals(3, 0xf7)) {// Suo
-        keywords = q->convert(&ev.gbkMsg[5]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[5]).split(' ', QString::SkipEmptyParts);
         banned = true;
     } else if (ev.equals(2, 0x20)
                && (ev.equals(0, 0x65) || ev.equals(0, 0x45))    // e E
                && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
-        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
         langSpec = SearchEvent::EnglishOnly;
         banned = true;
     } else if (ev.equals(8, 0x20)
@@ -146,13 +146,13 @@ bool SearchModulePrivate::search(qint64 did, qint64 gid, const MessageEvent &ev)
                && ev.equals(2, 0xce) && ev.equals(3, 0xc4)   // Wen
                && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
                && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
-        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
         langSpec = SearchEvent::EnglishOnly;
         banned = true;
     } else if (ev.equals(2, 0x20)
                && (ev.equals(0, 0x63) || ev.equals(0, 0x43))    // c C
                && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
-        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
         langSpec = SearchEvent::ChineseOnly;
         banned = true;
     } else if (ev.equals(8, 0x20)
@@ -160,32 +160,32 @@ bool SearchModulePrivate::search(qint64 did, qint64 gid, const MessageEvent &ev)
                && ev.equals(2, 0xce) && ev.equals(3, 0xc4)   // Wen
                && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
                && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
-        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
         langSpec = SearchEvent::ChineseOnly;
         banned = true;
     } else if (ev.equals(2, 0x20)
                && (ev.equals(0, 0x71) || ev.equals(0, 0x51))    // q Q
                && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
-        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
         siteSpec = "qtdevs.org";
     } else if (ev.equals(8, 0x20)
                && ev.equals(0, 0xc9) && ev.equals(1, 0xe7)   // She
                && ev.equals(2, 0xc7) && ev.equals(3, 0xf8)   // Qu
                && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
                && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
-        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
         siteSpec = "qtdevs.org";
     } else if (ev.equals(2, 0x20)
                && (ev.equals(0, 0x67) || ev.equals(0, 0x47))    // g G
                && (ev.equals(1, 0x73) || ev.equals(1, 0x53))) { // s S
-        keywords = q->convert(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[3]).split(' ', QString::SkipEmptyParts);
         siteSpec = QLatin1Literal("qtdebug.com");
     } else if (ev.equals(8, 0x20)
                && ev.equals(0, 0xb6) && ev.equals(1, 0xfe)   // Er
                && ev.equals(2, 0xb9) && ev.equals(3, 0xb7)   // Gou
                && ev.equals(4, 0xcb) && ev.equals(5, 0xd1)   // Sou
                && ev.equals(6, 0xcb) && ev.equals(7, 0xf7)) {// Suo
-        keywords = q->convert(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
+        keywords = CoolQ::trGbk(&ev.gbkMsg[9]).split(' ', QString::SkipEmptyParts);
         siteSpec = QLatin1Literal("qtdebug.com");
     }
 

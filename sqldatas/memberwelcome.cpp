@@ -13,7 +13,7 @@ Q_LOGGING_CATEGORY(qlcMemberWelcome, "Welcome")
 // class MemberWelcome
 
 MemberWelcome::MemberWelcome(QObject *parent)
-    : CqSqlite(*new MemberWelcomePrivate(), parent)
+    : CoolQ::SqliteService(*new MemberWelcomePrivate(), parent)
 {
     Q_D(MemberWelcome);
 
@@ -36,7 +36,7 @@ MemberWelcome::MemberWelcome(QObject *parent)
                 qint64 gid = query.value(0).toLongLong();
                 qint64 uid = query.value(1).toLongLong();
                 qint64 stamp = query.value(2).toLongLong();
-                d->welcome.insert(Member(gid, uid), stamp);
+                d->welcome.insert(CoolQ::Member(gid, uid), stamp);
             }
         } while (false);
     }
@@ -46,12 +46,12 @@ MemberWelcome::~MemberWelcome()
 {
 }
 
-CqSqlite::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
+CoolQ::SqliteService::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberWelcome);
     QWriteLocker locker(&d->guard);
 
-    Member member(gid, uid);
+    CoolQ::Member member(gid, uid);
     if (!d->welcome.contains(member)) {
         qint64 stamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
         const char sql[] = "REPLACE INTO [Welcome] VALUES(%1, %2, %3);";
@@ -71,12 +71,12 @@ CqSqlite::Result MemberWelcome::addMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-CqSqlite::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
+CoolQ::SqliteService::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
 {
     Q_D(MemberWelcome);
     QWriteLocker locker(&d->guard);
 
-    Member member(gid, uid);
+    CoolQ::Member member(gid, uid);
     if (d->welcome.contains(member)) {
         const char sql[] = "DELETE FROM [Welcome] WHERE [gid] = %1 AND [uid] = %2;";
         QString qtSql = QString::fromLatin1(sql).arg(gid).arg(uid);
@@ -95,20 +95,20 @@ CqSqlite::Result MemberWelcome::removeMember(qint64 gid, qint64 uid)
     return NoChange;
 }
 
-QHash<Member, qint64> MemberWelcome::members() const
+QHash<CoolQ::Member, qint64> MemberWelcome::members() const
 {
     Q_D(const MemberWelcome);
 
     return d->welcome;
 }
 
-void MemberWelcome::expiredMembers(MemberList &members)
+void MemberWelcome::expiredMembers(CoolQ::MemberList &members)
 {
     Q_D(MemberWelcome);
     QWriteLocker locker(&d->guard);
 
     qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
-    QMutableHashIterator<Member, qint64> iter(d->welcome);
+    QMutableHashIterator<CoolQ::Member, qint64> iter(d->welcome);
     while (iter.hasNext()) {
         iter.next();
         if ((iter.value() + 1800000) < now) {

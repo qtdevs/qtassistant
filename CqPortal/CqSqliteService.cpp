@@ -31,8 +31,8 @@
  * 如果数据库操作执行失败，返回此枚举值。更多信息可以看酷Q的日志。
  */
 
-#include "cqsqlite.h"
-#include "cqsqlite_p.h"
+#include "CqSqliteService.h"
+#include "CqSqliteService_p.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -43,20 +43,25 @@
 
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(qlcCqSqlite, "CqSqlite")
+Q_LOGGING_CATEGORY(qlcSqliteService, "CoolQ::SqliteService")
 
-// class CqSqlite
+namespace CoolQ {
+
+// class SqliteService
 
 /*!
  * \brief 构造函数
  *
  * \internal
  */
-CqSqlite::CqSqlite(CqSqlitePrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
+SqliteService::SqliteService(SqliteServicePrivate &dd, QObject *parent)
+    : Interface(dd, parent)
 {
-    d_ptr->q_ptr = this;
+}
+
+SqliteService::SqliteService(QObject *parent)
+    : Interface(*new SqliteServicePrivate(), parent)
+{
 }
 
 /*!
@@ -64,7 +69,7 @@ CqSqlite::CqSqlite(CqSqlitePrivate &dd, QObject *parent)
  *
  * \internal
  */
-CqSqlite::~CqSqlite()
+SqliteService::~SqliteService()
 {
 }
 
@@ -73,9 +78,9 @@ CqSqlite::~CqSqlite()
  *
  * 这里的文件名 \a fileName 不包含路径，只有文件名和扩展名；文件位置在插件目录内。
  */
-void CqSqlite::setFileName(const QString &fileName)
+void SqliteService::setFileName(const QString &fileName)
 {
-    Q_D(CqSqlite);
+    Q_D(SqliteService);
 
     d->fileName = fileName;
 }
@@ -85,9 +90,9 @@ void CqSqlite::setFileName(const QString &fileName)
  *
  * 添加预处理命令。每次文件加载后都将执行 \a s 语句。可以添加多条语句。
  */
-void CqSqlite::prepare(const QString &s)
+void SqliteService::prepare(const QString &s)
 {
-    Q_D(CqSqlite);
+    Q_D(SqliteService);
 
     d->prepareSqls.append(s);
 }
@@ -97,9 +102,9 @@ void CqSqlite::prepare(const QString &s)
  *
  * 此方法将打开数据库文件，如果成功返回 true；否则返回 false。
  */
-bool CqSqlite::openDatabase()
+bool SqliteService::openDatabase()
 {
-    Q_D(CqSqlite);
+    Q_D(SqliteService);
 
     if (d->fileName.isEmpty()) {
         return false;
@@ -109,7 +114,7 @@ bool CqSqlite::openDatabase()
     QString sqliteFileName = QDir::cleanPath(d->basePath % "/" % d->fileName);
     d->dbs.setDatabaseName(sqliteFileName);
     if (!d->dbs.open()) {
-        qCCritical(qlcCqSqlite, "%s: Open failed: %s",
+        qCCritical(qlcSqliteService, "%s: Open failed: %s",
                    qPrintable(sqliteFileName),
                    qPrintable(d->dbs.lastError().text()));
         return false;
@@ -118,14 +123,14 @@ bool CqSqlite::openDatabase()
     for (const auto &sql: d->prepareSqls) {
         QSqlQuery result = d->dbs.exec(sql);
         if (result.lastError().isValid()) {
-            qCCritical(qlcCqSqlite, "%s: Prepare failed: %s",
+            qCCritical(qlcSqliteService, "%s: Prepare failed: %s",
                        qPrintable(sqliteFileName),
                        qPrintable(result.lastError().text()));
             return false;
         }
     }
 
-    qCInfo(qlcCqSqlite, "%s: Ready.",
+    qCInfo(qlcSqliteService, "%s: Ready.",
            qPrintable(sqliteFileName));
 
     return true;
@@ -136,9 +141,9 @@ bool CqSqlite::openDatabase()
  *
  * 此方法将创建一个 QSqlQuery 并返回该对象，该对象将执行 \a sql 语句。
  */
-QSqlQuery CqSqlite::query(const QString &sql)
+QSqlQuery SqliteService::query(const QString &sql)
 {
-    Q_D(CqSqlite);
+    Q_D(SqliteService);
 
     return QSqlQuery(sql, d->dbs);
 }
@@ -148,22 +153,23 @@ QSqlQuery CqSqlite::query(const QString &sql)
  *
  * 此方法将创建一个 QSqlQuery 并返回该对象，该对象将执行 UTF-8 编码的 \a srcSql 语句。
  */
-QSqlQuery CqSqlite::query(const char *srcSql)
+QSqlQuery SqliteService::query(const char *srcSql)
 {
-    Q_D(CqSqlite);
+    Q_D(SqliteService);
 
     return QSqlQuery(QString::fromUtf8(srcSql), d->dbs);
 }
 
-// class CqSqlitePrivate
+// class SqliteServicePrivate
 
-QString CqSqlitePrivate::basePath;
+QString SqliteServicePrivate::basePath;
 
-CqSqlitePrivate::CqSqlitePrivate()
-    : q_ptr(Q_NULLPTR)
+SqliteServicePrivate::SqliteServicePrivate()
 {
 }
 
-CqSqlitePrivate::~CqSqlitePrivate()
+SqliteServicePrivate::~SqliteServicePrivate()
 {
 }
+
+} // namespace CoolQ

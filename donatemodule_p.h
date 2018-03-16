@@ -7,10 +7,10 @@
 
 #include <QMutex>
 
-#include "cqmodule_p.h"
+#include "CqServiceModule_p.h"
 #include "donatemodule.h"
 
-class DonateModulePrivate : public CqModulePrivate
+class DonateModulePrivate : public CoolQ::ServiceModulePrivate
 {
     Q_DECLARE_PUBLIC(DonateModule)
 

@@ -5,10 +5,10 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqsqlite_p.h"
+#include "CqSqliteService_p.h"
 #include "memberwelcome.h"
 
-class MemberWelcomePrivate : public CqSqlitePrivate
+class MemberWelcomePrivate : public CoolQ::SqliteServicePrivate
 {
     Q_DECLARE_PUBLIC(MemberWelcome)
 
@@ -17,7 +17,7 @@ public:
     virtual ~MemberWelcomePrivate();
 
 public:
-    QHash<Member, qint64> welcome;
+    QHash<CoolQ::Member, qint64> welcome;
 };
 
 #endif // MEMBERWELCOME_P_H

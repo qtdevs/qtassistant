@@ -1,6 +1,4 @@
-﻿#include "cqglobalevents.h"
-
-/*!
+﻿/*!
  * \struct MessageEvent
  * \brief 通用消息事件
  */
@@ -67,6 +65,11 @@
  */
 
 /*!
+ * \var qint64 MemberJoinEvent::master
+ * \brief 执行管理
+ */
+
+/*!
  * \var qint64 MasterChangeEvent::member
  * \brief 目标成员
  */
@@ -77,6 +80,7 @@
     qint32 time;
     qint64 from;
 
+    qint64 master;
     qint64 member;
 };*/
 
@@ -272,3 +276,69 @@
     qint64 master;
     qint64 member;
 };*/
+
+#include "CqInterface.h"
+#include "CqInterface_p.h"
+
+namespace CoolQ {
+
+
+/*!
+ * \brief 字符串编码转换函数
+ *
+ * 将 QString 类型的 \a str 转换成 GBK 编码的 QByteArray。
+ */
+QByteArray trGbk(const QString &str)
+{
+    return str.toLocal8Bit();
+}
+
+/*!
+ * \brief 字符串编码转换函数
+ *
+ * 将 GBK 编码的 \a gbkStr 转换成 QString。
+ */
+QString trGbk(const char *gbkStr)
+{
+    return QString::fromLocal8Bit(gbkStr);
+}
+
+/*!
+ * \brief 字符串编码转换函数
+ *
+ * 将 GBK 编码的 \a str 转换成 QString。
+ */
+QString trGbk(const QByteArray &str)
+{
+    return QString::fromLocal8Bit(str);
+}
+
+// class Interface
+
+Interface::Interface(InterfacePrivate &dd, QObject *parent)
+    : QObject(parent), d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
+}
+
+Interface::~Interface()
+{
+}
+
+bool Interface::initialize()
+{
+    return true;
+}
+
+// class InterfacePrivate
+
+InterfacePrivate::InterfacePrivate()
+    : q_ptr(nullptr)
+{
+}
+
+InterfacePrivate::~InterfacePrivate()
+{
+}
+
+} // namespace CoolQ

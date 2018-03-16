@@ -2,12 +2,12 @@
  * \brief 个人信息
  */
 
-#include "cqpersoninfo.h"
-#include "cqpersoninfo_p.h"
+#include "CqPersonInfo.h"
+#include "CqPersonInfo_p.h"
 
 #include <QDataStream>
 
-#include "cqmodule.h"
+namespace CoolQ {
 
 // class CqPersonInfo
 
@@ -15,8 +15,8 @@
  *
  * 通过裸数据构造一个 CqPersonInfo 的对象。
  */
-CqPersonInfo::CqPersonInfo(const char *info)
-    : data(new CqPersonInfoData())
+PersonInfo::PersonInfo(const char *info)
+    : data(new PersonInfoData())
 {
     if (Q_NULLPTR == info) {
         return;
@@ -37,7 +37,7 @@ CqPersonInfo::CqPersonInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqModule::convert(name);
+        data->nickName = trGbk(name);
     } while (false);
 
     ds >> data->sex;
@@ -48,7 +48,7 @@ CqPersonInfo::CqPersonInfo(const char *info)
  *
  * \internal
  */
-CqPersonInfo::CqPersonInfo(const CqPersonInfo &other)
+PersonInfo::PersonInfo(const PersonInfo &other)
     : data(other.data)
 {
 }
@@ -57,10 +57,11 @@ CqPersonInfo::CqPersonInfo(const CqPersonInfo &other)
  *
  * \internal
  */
-CqPersonInfo &CqPersonInfo::operator=(const CqPersonInfo &rhs)
+PersonInfo &PersonInfo::operator=(const PersonInfo &r)
 {
-    if (this != &rhs)
-        data.operator=(rhs.data);
+    if (this != &r)
+        data.operator=(r.data);
+
     return *this;
 }
 
@@ -68,7 +69,7 @@ CqPersonInfo &CqPersonInfo::operator=(const CqPersonInfo &rhs)
  *
  * \internal
  */
-CqPersonInfo::~CqPersonInfo()
+PersonInfo::~PersonInfo()
 {
 }
 
@@ -76,7 +77,7 @@ CqPersonInfo::~CqPersonInfo()
  *
  * 如果填充的个人信息有效，此函数会返回 true；否则返回 false。
  */
-bool CqPersonInfo::isValid() const
+bool PersonInfo::isValid() const
 {
     return (data->uid != 0);
 }
@@ -85,7 +86,7 @@ bool CqPersonInfo::isValid() const
  *
  * 如果个人信息有效，返回个人号码；否则返回 0。
  */
-qint64 CqPersonInfo::uid() const
+qint64 PersonInfo::uid() const
 {
     return data->uid;
 }
@@ -94,7 +95,7 @@ qint64 CqPersonInfo::uid() const
  *
  * 如果个人信息有效，返回性别，1 代表男性，2 代表女性，99 代表未知；否则返回 0。
  */
-qint32 CqPersonInfo::sex() const
+qint32 PersonInfo::sex() const
 {
     return data->sex;
 }
@@ -103,7 +104,7 @@ qint32 CqPersonInfo::sex() const
  *
  * 如果个人信息有效，返回年龄；否则返回 0。
  */
-qint32 CqPersonInfo::age() const
+qint32 PersonInfo::age() const
 {
     return data->age;
 }
@@ -112,16 +113,18 @@ qint32 CqPersonInfo::age() const
  *
  * 如果个人信息有效，返回昵称，不为空；如果信息无效，返回空。
  */
-QString CqPersonInfo::nickName() const
+QString PersonInfo::nickName() const
 {
     return data->nickName;
 }
 
 // class CqPersonInfoData
 
-CqPersonInfoData::CqPersonInfoData()
+PersonInfoData::PersonInfoData()
     : uid(0)
     , sex(0)
     , age(0)
 {
 }
+
+} // namespace CoolQ

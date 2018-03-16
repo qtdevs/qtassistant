@@ -9,7 +9,7 @@
 #include <QMetaMethod>
 #include <QNetworkAccessManager>
 
-#include "cqmodule_p.h"
+#include "CqServiceModule_p.h"
 #include "searchmodule.h"
 
 class SearchEvent : public QEvent
@@ -44,7 +44,7 @@ public:
     QString     siteSpec;
 };
 
-class SearchModulePrivate : public CqModulePrivate
+class SearchModulePrivate : public CoolQ::ServiceModulePrivate
 {
     Q_DECLARE_PUBLIC(SearchModule)
 
@@ -53,7 +53,7 @@ public:
     virtual ~SearchModulePrivate();
 
 public:
-    bool search(qint64 did, qint64 gid, const MessageEvent &ev);
+    bool search(qint64 did, qint64 gid, const CoolQ::MessageEvent &ev);
     void parseSearchResult(QNetworkReply *reply);
 
 protected:

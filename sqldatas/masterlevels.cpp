@@ -12,7 +12,7 @@ Q_LOGGING_CATEGORY(qlcMasterLevels, "MasterLevels")
 // class MasterLevels
 
 MasterLevels::MasterLevels(QObject *parent)
-    : CqSqlite(*new MasterLevelsPrivate(), parent)
+    : CoolQ::SqliteService(*new MasterLevelsPrivate(), parent)
 {
     Q_D(MasterLevels);
 
@@ -34,7 +34,7 @@ MasterLevels::MasterLevels(QObject *parent)
             qint64 gid = query.value(0).toLongLong();
             qint64 uid = query.value(1).toLongLong();
             qint64 level = query.value(2).toLongLong();
-            d->levels.insert(Member(gid, uid), levelCast(level));
+            d->levels.insert(CoolQ::Member(gid, uid), levelCast(level));
         }
     }
 }
@@ -122,7 +122,7 @@ int MasterLevels::levelCast(MasterLevel level)
     return 99;
 }
 
-QHash<Member, MasterLevel> MasterLevels::levels() const
+QHash<CoolQ::Member, MasterLevel> MasterLevels::levels() const
 {
     Q_D(const MasterLevels);
     return d->levels;
@@ -136,7 +136,7 @@ bool MasterLevels::setLevel(qint64 gid, qint64 uid, MasterLevel level)
         return false;
     }
 
-    Member member(gid, uid);
+    CoolQ::Member member(gid, uid);
     QWriteLocker locker(&d->guard);
 
     if (MasterLevel::Unknown != level) {
@@ -181,11 +181,11 @@ MasterLevel MasterLevels::level(qint64 gid, qint64 uid) const
 
     QReadLocker locker(&d->guard);
 
-    MasterLevel level = d->levels.value(Member(gid, uid), MasterLevel::Unknown);
+    MasterLevel level = d->levels.value(CoolQ::Member(gid, uid), MasterLevel::Unknown);
     if (MasterLevel::Unknown != level) {
         return level;
     }
-    return d->levels.value(Member(0, uid), MasterLevel::Unknown);
+    return d->levels.value(CoolQ::Member(0, uid), MasterLevel::Unknown);
 }
 
 bool mlSortLevel(const LevelInfo &lhs, const LevelInfo &rhs)
@@ -201,7 +201,7 @@ LevelInfoList MasterLevels::levels(qint64 gid) const
 
     QReadLocker locker(&d->guard);
 
-    QHashIterator<Member, MasterLevel> i(d->levels);
+    QHashIterator<CoolQ::Member, MasterLevel> i(d->levels);
     while (i.hasNext()) {
         i.next();
         if (i.key().first == gid) {
@@ -226,9 +226,9 @@ void MasterLevels::update(qint64 gid, LevelInfoList &l) const
         if (d->superUsers.contains(li.uid)) {
             li.level = MasterLevel::ATField;
         } else {
-            li.level = d->levels.value(Member(gid, li.uid), MasterLevel::Unknown);
+            li.level = d->levels.value(CoolQ::Member(gid, li.uid), MasterLevel::Unknown);
             if (MasterLevel::Unknown == li.level) {
-                li.level = d->levels.value(Member(0, li.uid), MasterLevel::Unknown);
+                li.level = d->levels.value(CoolQ::Member(0, li.uid), MasterLevel::Unknown);
             }
         }
     }

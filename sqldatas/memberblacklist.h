@@ -7,10 +7,10 @@
 
 #include <QHash>
 
-#include "cqsqlite.h"
+#include "CqSqliteService.h"
 
 class MemberBlacklistPrivate;
-class MemberBlacklist : public CqSqlite
+class MemberBlacklist : public CoolQ::SqliteService
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MemberBlacklist)
@@ -24,7 +24,7 @@ public:
     Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> members() const;
+    QHash<CoolQ::Member, qint64> members() const;
     bool contains(qint64 gid, qint64 uid) const;
 };
 

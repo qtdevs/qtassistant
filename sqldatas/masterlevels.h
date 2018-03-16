@@ -8,7 +8,7 @@
 #include <QSet>
 #include <QHash>
 
-#include "cqsqlite.h"
+#include "CqSqliteService.h"
 
 enum class MasterLevel {
     ATField = -1,
@@ -35,7 +35,7 @@ public:
 typedef QList<LevelInfo> LevelInfoList;
 
 class MasterLevelsPrivate;
-class MasterLevels : public CqSqlite
+class MasterLevels : public CoolQ::SqliteService
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MasterLevels)
@@ -53,7 +53,7 @@ public:
     static int levelCast(MasterLevel level);
 
 public:
-    QHash<Member, MasterLevel> levels() const;
+    QHash<CoolQ::Member, MasterLevel> levels() const;
 
 public:
     bool setLevel(qint64 gid, qint64 uid, MasterLevel level);

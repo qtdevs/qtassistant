@@ -5,7 +5,7 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqmodule.h"
+#include "CqServiceModule.h"
 
 #include "sqldatas/masterlevels.h"
 #include "htmlfeedback/htmlfeedback.h"
@@ -13,48 +13,53 @@
 // class ManageModule
 
 class ManageModulePrivate;
-class ManageModule : public CqModule
+class ManageModule : public CoolQ::ServiceModule
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(ManageModule)
 
 public:
-    explicit ManageModule(CqEngine *engine = nullptr);
+    explicit ManageModule(CoolQ::ServicePortal *engine = nullptr);
     virtual ~ManageModule();
+public:
+    static ManageModule *instance();
 
 public:
-    bool privateMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
-    bool groupMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
-    bool discussMessageEvent(const MessageEvent &ev) Q_DECL_FINAL;
+    MasterLevel level(qint64 gid, qint64 uid) const;
 
-    bool masterChangeEvent(const MasterChangeEvent &ev) Q_DECL_FINAL;
-    bool friendRequestEvent(const FriendRequestEvent &ev) Q_DECL_FINAL;
-    bool groupRequestEvent(const GroupRequestEvent &ev) Q_DECL_FINAL;
+public:
+    bool privateMessageEvent(const CoolQ::MessageEvent &ev) Q_DECL_FINAL;
+    bool groupMessageEvent(const CoolQ::MessageEvent &ev) Q_DECL_FINAL;
+    bool discussMessageEvent(const CoolQ::MessageEvent &ev) Q_DECL_FINAL;
 
-    bool friendAddEvent(const FriendAddEvent &ev) Q_DECL_FINAL;
-    bool memberJoinEvent(const MemberJoinEvent &ev) Q_DECL_FINAL;
-    bool memberLeaveEvent(const MemberLeaveEvent &ev) Q_DECL_FINAL;
+    bool masterChangeEvent(const CoolQ::MasterChangeEvent &ev) Q_DECL_FINAL;
+    bool friendRequestEvent(const CoolQ::FriendRequestEvent &ev) Q_DECL_FINAL;
+    bool groupRequestEvent(const CoolQ::GroupRequestEvent &ev) Q_DECL_FINAL;
+
+    bool friendAddEvent(const CoolQ::FriendAddEvent &ev) Q_DECL_FINAL;
+    bool memberJoinEvent(const CoolQ::MemberJoinEvent &ev) Q_DECL_FINAL;
+    bool memberLeaveEvent(const CoolQ::MemberLeaveEvent &ev) Q_DECL_FINAL;
 
 private:
     void timerEvent(QTimerEvent *) Q_DECL_FINAL;
 
 private:
-    void groupHelp(const MessageEvent &ev, const QStringList &args);
-    void groupLevel(const MessageEvent &ev, const QStringList &args);
-    void groupRename(const MessageEvent &ev, const QStringList &args);
-    void groupFormat(const MessageEvent &ev, const QStringList &args);
-    void groupMember(const MessageEvent &ev, const QStringList &args);
+    void groupHelp(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupRename(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupMember(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupBan(const MessageEvent &ev, const QStringList &args);
-    void groupKill(const MessageEvent &ev, const QStringList &args);
-    void groupPower(const MessageEvent &ev, const QStringList &args);
+    void groupBan(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupKill(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupPower(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupUnban(const MessageEvent &ev, const QStringList &args);
-    void groupUnkill(const MessageEvent &ev, const QStringList &args);
-    void groupUnpower(const MessageEvent &ev, const QStringList &args);
+    void groupUnban(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupUnkill(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupUnpower(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupWelcome(const MessageEvent &ev, const QStringList &args);
-    void groupBlacklist(const MessageEvent &ev, const QStringList &args);
+    void groupWelcome(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupBlacklist(const CoolQ::MessageEvent &ev, const QStringList &args);
 
 private:
     void groupHelpHelp(qint64 gid);

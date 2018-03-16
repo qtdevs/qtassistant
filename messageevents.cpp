@@ -15,18 +15,29 @@
 
 // class ManageModule
 
-bool ManageModule::privateMessageEvent(const MessageEvent &ev)
+bool ManageModule::privateMessageEvent(const CoolQ::MessageEvent &ev)
 {
-    Q_UNUSED(ev);
+    if (CoolQ::ServiceModule::privateMessageEvent(ev)) {
+        return true;
+    }
+
     return false;
 }
 
-bool ManageModule::groupMessageEvent(const MessageEvent &ev)
+bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
 {
     Q_D(ManageModule);
 
+    qInfo("222");
+
     if (!d->managedGroups.contains(ev.from)) {
         return false;
+    }
+
+    qInfo("333");
+
+    if (CoolQ::ServiceModule::groupMessageEvent(ev)) {
+        return true;
     }
 
     // 黑名单检查，如果发现匹配，直接踢出。
@@ -50,13 +61,13 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
     // 分离参数。
     QStringList args;
     if ((ev.gbkMsg[0] == '!')) {
-        QString msgs = convert(ev.gbkMsg).mid(1);
+        QString msgs = CoolQ::trGbk(ev.gbkMsg).mid(1);
         args = msgs.split(' ', QString::SkipEmptyParts);
     } else if (strncmp(ev.gbkMsg, "sudo", 4) == 0) {
-        QString msgs = convert(ev.gbkMsg).mid(4);
+        QString msgs = CoolQ::trGbk(ev.gbkMsg).mid(4);
         args = msgs.split(' ', QString::SkipEmptyParts);
     } else if ((-93 == ev.gbkMsg[0]) && (-95 == ev.gbkMsg[1])) {
-        QString msgs = convert(ev.gbkMsg).mid(1);
+        QString msgs = CoolQ::trGbk(ev.gbkMsg).mid(1);
         args = msgs.split(' ', QString::SkipEmptyParts);
     }
 
@@ -133,13 +144,16 @@ bool ManageModule::groupMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool ManageModule::discussMessageEvent(const MessageEvent &ev)
+bool ManageModule::discussMessageEvent(const CoolQ::MessageEvent &ev)
 {
-    Q_UNUSED(ev);
+    if (CoolQ::ServiceModule::discussMessageEvent(ev)) {
+        return true;
+    }
+
     return false;
 }
 
-void ManageModule::groupHelp(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupHelp(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -213,7 +227,7 @@ void ManageModule::groupHelp(const MessageEvent &ev, const QStringList &args)
     showPrompt(ev.from, tr("全部命令清单"), usage);
 }
 
-void ManageModule::groupLevel(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -295,7 +309,7 @@ void ManageModule::groupLevel(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void ManageModule::groupRename(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupRename(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -312,7 +326,7 @@ void ManageModule::groupRename(const MessageEvent &ev, const QStringList &args)
 
     // !!! 由于此操作的特殊性，命令行解析自行分析
 
-    QString nameCard = convert(ev.gbkMsg);
+    QString nameCard = CoolQ::trGbk(ev.gbkMsg);
 
     LevelInfoList ll;
     bool prefixFound = false;
@@ -376,7 +390,7 @@ void ManageModule::groupRename(const MessageEvent &ev, const QStringList &args)
     showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(nameCard));
 }
 
-void ManageModule::groupFormat(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -419,7 +433,7 @@ void ManageModule::groupFormat(const MessageEvent &ev, const QStringList &args)
 
         for (const LevelInfo &li : ll) {
             // 尝试修改昵称。
-            CqMemberInfo mi = memberInfo(ev.from, li.uid, false);
+            CoolQ::MemberInfo mi = memberInfo(ev.from, li.uid, false);
             if (mi.isValid()) {
                 QString nameCard = mi.nameCard().remove(' ');
                 d->safetyNameCard(nameCard);
@@ -457,7 +471,7 @@ void ManageModule::groupFormat(const MessageEvent &ev, const QStringList &args)
         showSuccessList(ev.from, tr("格式化后新的名片"), ll, false);
     } else {
         // 尝试修改昵称。
-        CqMemberInfo mi = memberInfo(ev.from, ev.sender, false);
+        CoolQ::MemberInfo mi = memberInfo(ev.from, ev.sender, false);
         if (mi.isValid()) {
             QString nameCard = mi.nameCard().remove(' ');
             d->safetyNameCard(nameCard);
@@ -497,7 +511,7 @@ void ManageModule::groupFormat(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void ManageModule::groupMember(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupMember(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -528,7 +542,7 @@ void ManageModule::groupMember(const MessageEvent &ev, const QStringList &args)
     // 执行具体操作
 
     for (const LevelInfo &li : ll) {
-        CqMemberInfo mi = memberInfo(ev.from, li.uid, false);
+        CoolQ::MemberInfo mi = memberInfo(ev.from, li.uid, false);
 
         QString reports;
         QTextStream ts(&reports);
@@ -554,7 +568,7 @@ void ManageModule::groupMember(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void ManageModule::groupBan(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupBan(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -668,7 +682,7 @@ void ManageModule::groupBan(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
 }
 
-void ManageModule::groupKill(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupKill(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -721,7 +735,7 @@ void ManageModule::groupKill(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
 }
 
-void ManageModule::groupPower(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -846,7 +860,7 @@ void ManageModule::groupPower(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
 }
 
-void ManageModule::groupUnban(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnban(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -898,7 +912,7 @@ void ManageModule::groupUnban(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
 }
 
-void ManageModule::groupUnkill(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnkill(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -951,7 +965,7 @@ void ManageModule::groupUnkill(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
 }
 
-void ManageModule::groupUnpower(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupUnpower(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -1032,7 +1046,7 @@ void ManageModule::groupUnpower(const MessageEvent &ev, const QStringList &args)
     showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
 }
 
-void ManageModule::groupWelcome(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -1087,7 +1101,7 @@ void ManageModule::groupWelcome(const MessageEvent &ev, const QStringList &args)
 
     // 打印新人监控。
     if (0 == argvOption) { // list
-        QHashIterator<Member, qint64> i(d->welcome->members());
+        QHashIterator<CoolQ::Member, qint64> i(d->welcome->members());
         while (i.hasNext()) {
             i.next();
             if (i.key().first == ev.from) {
@@ -1135,7 +1149,7 @@ void ManageModule::groupWelcome(const MessageEvent &ev, const QStringList &args)
     }
 }
 
-void ManageModule::groupBlacklist(const MessageEvent &ev, const QStringList &args)
+void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(ManageModule);
 
@@ -1198,7 +1212,7 @@ void ManageModule::groupBlacklist(const MessageEvent &ev, const QStringList &arg
     // 打印黑名单列表。
     if (0 == argvOption) {
         qint64 gid = argvGlobal ? 0 : ev.from;
-        QHashIterator<Member, qint64> i(d->blacklist->members());
+        QHashIterator<CoolQ::Member, qint64> i(d->blacklist->members());
         while (i.hasNext()) {
             i.next();
             if (i.key().first == gid) {

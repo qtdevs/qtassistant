@@ -7,10 +7,10 @@
 
 #include <QHash>
 
-#include "cqsqlite.h"
+#include "CqSqliteService.h"
 
 class MemberWelcomePrivate;
-class MemberWelcome : public CqSqlite
+class MemberWelcome : public CoolQ::SqliteService
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MemberWelcome)
@@ -24,8 +24,8 @@ public:
     Result removeMember(qint64 gid, qint64 uid);
 
 public:
-    QHash<Member, qint64> members() const;
-    void expiredMembers(MemberList &members);
+    QHash<CoolQ::Member, qint64> members() const;
+    void expiredMembers(CoolQ::MemberList &members);
 };
 
 #endif // MEMBERWELCOME_H

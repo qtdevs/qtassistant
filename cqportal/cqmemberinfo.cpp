@@ -3,22 +3,22 @@
  * \brief 成员信息
  */
 
-#include "cqmemberinfo.h"
-#include "cqmemberinfo_p.h"
+#include "CqMemberInfo.h"
+#include "CqMemberInfo_p.h"
 
 #include <QDataStream>
 
-#include "cqmodule.h"
+namespace CoolQ {
 
-// class CqMemberInfo
+// class MemberInfo
 
 /*!
  * \brief 构造函数
  *
  * 通过裸数据构造一个 CqMemberInfo 的对象。
  */
-CqMemberInfo::CqMemberInfo(const char *info)
-    : data(new CqMemberInfoData())
+MemberInfo::MemberInfo(const char *info)
+    : data(new MemberInfoData())
 {
     if (Q_NULLPTR == info) {
         return;
@@ -42,7 +42,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nickName = CqModule::convert(name);
+        data->nickName = trGbk(name);
     } while (false);
 
     do {
@@ -50,7 +50,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray name(size, 0);
         ds.readRawData(name.data(), size);
-        data->nameCard = CqModule::convert(name);
+        data->nameCard = trGbk(name);
     } while (false);
 
     ds >> data->sex;
@@ -61,7 +61,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray location(size, 0);
         ds.readRawData(location.data(), size);
-        data->location = CqModule::convert(location);
+        data->location = trGbk(location);
     } while (false);
 
     do {
@@ -85,7 +85,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
         ds >> size;
         QByteArray levelName(size, 0);
         ds.readRawData(levelName.data(), size);
-        data->levelName = CqModule::convert(levelName);
+        data->levelName = trGbk(levelName);
     } while (false);
 
     ds >> data->permission;
@@ -97,7 +97,7 @@ CqMemberInfo::CqMemberInfo(const char *info)
  *
  * \internal
  */
-CqMemberInfo::CqMemberInfo(const CqMemberInfo &other)
+MemberInfo::MemberInfo(const MemberInfo &other)
     : data(other.data)
 {
 }
@@ -107,10 +107,11 @@ CqMemberInfo::CqMemberInfo(const CqMemberInfo &other)
  *
  * \internal
  */
-CqMemberInfo &CqMemberInfo::operator=(const CqMemberInfo &rhs)
+MemberInfo &MemberInfo::operator=(const MemberInfo &r)
 {
-    if (this != &rhs)
-        data.operator=(rhs.data);
+    if (this != &r)
+        data.operator=(r.data);
+
     return *this;
 }
 
@@ -119,7 +120,7 @@ CqMemberInfo &CqMemberInfo::operator=(const CqMemberInfo &rhs)
  *
  * \internal
  */
-CqMemberInfo::~CqMemberInfo()
+MemberInfo::~MemberInfo()
 {
 }
 
@@ -128,7 +129,7 @@ CqMemberInfo::~CqMemberInfo()
  *
  * 如果填充的成员信息有效，此函数会返回 true；否则返回 false。
  */
-bool CqMemberInfo::isValid() const
+bool MemberInfo::isValid() const
 {
     return (data->gid != 0);
 }
@@ -138,7 +139,7 @@ bool CqMemberInfo::isValid() const
  *
  * 如果成员信息有效，返回群组号码；否则返回 0。
  */
-qint64 CqMemberInfo::gid() const
+qint64 MemberInfo::gid() const
 {
     return data->gid;
 }
@@ -148,7 +149,7 @@ qint64 CqMemberInfo::gid() const
  *
  * 如果成员信息有效，返回成员号码；否则返回 0。
  */
-qint64 CqMemberInfo::uid() const
+qint64 MemberInfo::uid() const
 {
     return data->uid;
 }
@@ -158,7 +159,7 @@ qint64 CqMemberInfo::uid() const
  *
  * 如果成员信息有效，返回性别，1 代表男性，2 代表女性，99 代表未知；否则返回 0。
  */
-qint32 CqMemberInfo::sex() const
+qint32 MemberInfo::sex() const
 {
     return data->sex;
 }
@@ -168,7 +169,7 @@ qint32 CqMemberInfo::sex() const
  *
  * 如果成员信息有效，返回年龄；否则返回 0。
  */
-qint32 CqMemberInfo::age() const
+qint32 MemberInfo::age() const
 {
     return data->age;
 }
@@ -178,7 +179,7 @@ qint32 CqMemberInfo::age() const
  *
  * 如果成员信息有效，返回昵称，不为空；如果信息无效，返回空。
  */
-QString CqMemberInfo::nickName() const
+QString MemberInfo::nickName() const
 {
     return data->nickName;
 }
@@ -188,7 +189,7 @@ QString CqMemberInfo::nickName() const
  *
  * 如果成员信息有效，返回名片；如果没有设置名片，或信息无效，返回空。
  */
-QString CqMemberInfo::nameCard() const
+QString MemberInfo::nameCard() const
 {
     return data->nameCard;
 }
@@ -198,7 +199,7 @@ QString CqMemberInfo::nameCard() const
  *
  * 如果成员信息有效，返回地区。地区一般是用户设置所在地的最后一个字段；如果设置不可见，或未设置，否则返回空。
  */
-QString CqMemberInfo::location() const
+QString MemberInfo::location() const
 {
     return data->location;
 }
@@ -208,7 +209,7 @@ QString CqMemberInfo::location() const
  *
  * 如果成员信息有效，返回等级，具体等级由群内设置决定；否则返回空。
  */
-QString CqMemberInfo::levelName() const
+QString MemberInfo::levelName() const
 {
     return data->levelName;
 }
@@ -218,7 +219,7 @@ QString CqMemberInfo::levelName() const
  *
  * 如果成员信息有效，返回成员权限。1 为成员，2 为管理，3 为群主；否则返回 0。
  */
-qint32 CqMemberInfo::permission() const
+qint32 MemberInfo::permission() const
 {
     return data->permission;
 }
@@ -228,7 +229,7 @@ qint32 CqMemberInfo::permission() const
  *
  * 如果成员信息有效，返回失信状态；否则返回 0。
  */
-qint32 CqMemberInfo::unfriendly() const
+qint32 MemberInfo::unfriendly() const
 {
     return data->unfriendly;
 }
@@ -238,7 +239,7 @@ qint32 CqMemberInfo::unfriendly() const
  *
  * 如果成员信息有效，返回加入群组时间；否则返回一个无效的 QDateTime()。
  */
-QDateTime CqMemberInfo::joinTime() const
+QDateTime MemberInfo::joinTime() const
 {
     return data->joinTime;
 }
@@ -248,14 +249,14 @@ QDateTime CqMemberInfo::joinTime() const
  *
  * 如果成员信息有效，返回最后发送时间；否则返回一个无效的 QDateTime()。
  */
-QDateTime CqMemberInfo::lastSent() const
+QDateTime MemberInfo::lastSent() const
 {
     return data->lastSent;
 }
 
-// class CqMemberInfoData
+// class MemberInfoData
 
-CqMemberInfoData::CqMemberInfoData()
+MemberInfoData::MemberInfoData()
     : gid(0)
     , uid(0)
     , sex(0)
@@ -264,3 +265,5 @@ CqMemberInfoData::CqMemberInfoData()
     , unfriendly(0)
 {
 }
+
+} // namespace CoolQ

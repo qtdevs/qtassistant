@@ -5,10 +5,10 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqsqlite_p.h"
+#include "CqSqliteService_p.h"
 #include "masterlevels.h"
 
-class MasterLevelsPrivate : public CqSqlitePrivate
+class MasterLevelsPrivate : public CoolQ::SqliteServicePrivate
 {
     Q_DECLARE_PUBLIC(MasterLevels)
 
@@ -18,7 +18,7 @@ public:
 
 private:
     QSet<qint64> superUsers;
-    QHash<Member, MasterLevel> levels;
+    QHash<CoolQ::Member, MasterLevel> levels;
 };
 
 #endif // MASTERLEVELS_P_H

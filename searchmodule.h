@@ -5,22 +5,22 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqmodule.h"
+#include "CqServiceModule.h"
 
 class SearchModulePrivate;
-class SearchModule : public CqModule
+class SearchModule : public CoolQ::ServiceModule
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(SearchModule)
 
 public:
-    explicit SearchModule(CqEngine *engine = nullptr);
+    explicit SearchModule(CoolQ::ServicePortal *parent = nullptr);
     virtual ~SearchModule();
 
 public:
-    bool privateMessageEvent(const MessageEvent &ev);
-    bool groupMessageEvent(const MessageEvent &ev);
-    bool discussMessageEvent(const MessageEvent &ev);
+    bool privateMessageEvent(const CoolQ::MessageEvent &ev);
+    bool groupMessageEvent(const CoolQ::MessageEvent &ev);
+    bool discussMessageEvent(const CoolQ::MessageEvent &ev);
 
 private:
     bool event(QEvent *event) final;

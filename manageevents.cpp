@@ -3,6 +3,7 @@
 
 #include <QStringBuilder>
 #include <QTextStream>
+#include <QUuid>
 
 #include "sqldatas/masterlevels.h"
 #include "sqldatas/memberwelcome.h"
@@ -11,19 +12,19 @@
 
 // class ManageModule
 
-bool ManageModule::masterChangeEvent(const MasterChangeEvent &ev)
+bool ManageModule::masterChangeEvent(const CoolQ::MasterChangeEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool ManageModule::friendRequestEvent(const FriendRequestEvent &ev)
+bool ManageModule::friendRequestEvent(const CoolQ::FriendRequestEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool ManageModule::groupRequestEvent(const GroupRequestEvent &ev)
+bool ManageModule::groupRequestEvent(const CoolQ::GroupRequestEvent &ev)
 {
     Q_D(ManageModule);
 
@@ -40,13 +41,13 @@ bool ManageModule::groupRequestEvent(const GroupRequestEvent &ev)
     return false;
 }
 
-bool ManageModule::friendAddEvent(const FriendAddEvent &ev)
+bool ManageModule::friendAddEvent(const CoolQ::FriendAddEvent &ev)
 {
     Q_UNUSED(ev);
     return false;
 }
 
-bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
+bool ManageModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
 {
     Q_D(ManageModule);
 
@@ -66,7 +67,7 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
     // 尝试修改昵称。
     QString nameCard;
     bool unknownLocation = false;
-    CqMemberInfo mi = memberInfo(ev.from, ev.member, false);
+    CoolQ::MemberInfo mi = memberInfo(ev.from, ev.member, false);
     if (mi.isValid()) {
         QString nickName = mi.nickName().trimmed();
         QString location = mi.location().trimmed();
@@ -85,10 +86,12 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
     QString msg;
     QTextStream ts(&msg);
 
-    for (auto fileName : d->welcomeImages) {
+    for (auto fileName : d->welcomeImages)
         ts << cqImage(fileName) << "\n";
-    }
-    ts << at(ev.member);
+
+    auto keys = QUuid::createUuid().toRfc4122().toHex();
+    ts << QString::fromLatin1(keys).left(8) << " - " << at(ev.member);
+
     ts.flush();
 
     sendGroupMessage(ev.from, msg);
@@ -96,7 +99,7 @@ bool ManageModule::memberJoinEvent(const MemberJoinEvent &ev)
     return false;
 }
 
-bool ManageModule::memberLeaveEvent(const MemberLeaveEvent &ev)
+bool ManageModule::memberLeaveEvent(const CoolQ::MemberLeaveEvent &ev)
 {
     Q_D(ManageModule);
 

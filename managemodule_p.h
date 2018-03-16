@@ -7,7 +7,7 @@
 
 #include <QSet>
 
-#include "cqmodule_p.h"
+#include "CqServiceModule_p.h"
 #include "managemodule.h"
 
 class MasterLevels;
@@ -15,13 +15,16 @@ class MemberWelcome;
 class MemberBlacklist;
 class MemberDeathHouse;
 
-class ManageModulePrivate : public CqModulePrivate
+class ManageModulePrivate : public CoolQ::ServiceModulePrivate
 {
     Q_DECLARE_PUBLIC(ManageModule)
 
 public:
     ManageModulePrivate();
     virtual ~ManageModulePrivate();
+
+protected:
+    static ManageModule *instance;
 
 public:
     static LevelInfoList findUsers(const QStringList &args);

@@ -5,25 +5,25 @@
 #  pragma execution_character_set("utf-8")
 #endif
 
-#include "cqmodule.h"
+#include "CqServiceModule.h"
 
 class DonateModulePrivate;
-class DonateModule : public CqModule
+class DonateModule : public CoolQ::ServiceModule
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(DonateModule)
 
 public:
-    explicit DonateModule(CqEngine *parent = nullptr);
+    explicit DonateModule(CoolQ::ServicePortal *parent = nullptr);
     virtual ~DonateModule();
 
 public:
     static DonateModule *instance();
 
 public:
-    bool privateMessageEvent(const MessageEvent &ev);
-    bool groupMessageEvent(const MessageEvent &ev);
-    bool discussMessageEvent(const MessageEvent &ev);
+    bool privateMessageEvent(const CoolQ::MessageEvent &ev);
+    bool groupMessageEvent(const CoolQ::MessageEvent &ev);
+    bool discussMessageEvent(const CoolQ::MessageEvent &ev);
 
 public:
     void donateMember(qint64 gid, qint64 uid);
