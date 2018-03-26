@@ -1,33 +1,33 @@
-﻿#include "CqServicePortal.h"
-#include "CqServicePortal_p.h"
+﻿#include "CqServiceEngine.h"
+#include "CqServiceEngine_p.h"
 
 #include "CqServiceModule.h"
 #include "CqServiceModule_p.h"
 
 namespace CoolQ {
 
-// class ServicePortal
+// class ServiceEngine
 
-ServicePortal::ServicePortal(QObject *parent)
-    : Interface(*new ServicePortalPrivate(), parent)
+ServiceEngine::ServiceEngine(QObject *parent)
+    : Interface(*new ServiceEnginePrivate(), parent)
 {
-    Q_ASSERT(nullptr == ServicePortalPrivate::instance);
-    ServicePortalPrivate::instance = this;
+    Q_ASSERT(nullptr == ServiceEnginePrivate::instance);
+    ServiceEnginePrivate::instance = this;
 }
 
-ServicePortal::~ServicePortal()
+ServiceEngine::~ServiceEngine()
 {
-    ServicePortalPrivate::instance = nullptr;
+    ServiceEnginePrivate::instance = nullptr;
 }
 
-ServicePortal *ServicePortal::instance()
+ServiceEngine *ServiceEngine::instance()
 {
-    return ServicePortalPrivate::instance;
+    return ServiceEnginePrivate::instance;
 }
 
-bool ServicePortal::initialize()
+bool ServiceEngine::initialize()
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for(ServiceModule *module : d->modules) {
         if (!module->initialize())
@@ -60,9 +60,9 @@ bool ServicePortal::initialize()
     return true;
 }
 
-bool ServicePortal::privateMessageEvent(const MessageEvent &ev)
+bool ServiceEngine::privateMessageEvent(const MessageEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->privateMessageModules)
         if (module->privateMessageEvent(ev))
@@ -71,9 +71,9 @@ bool ServicePortal::privateMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool ServicePortal::groupMessageEvent(const MessageEvent &ev)
+bool ServiceEngine::groupMessageEvent(const MessageEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->groupMessageModules)
         if (module->groupMessageEvent(ev))
@@ -82,9 +82,9 @@ bool ServicePortal::groupMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool ServicePortal::discussMessageEvent(const MessageEvent &ev)
+bool ServiceEngine::discussMessageEvent(const MessageEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->discussMessageModules)
         if (module->discussMessageEvent(ev))
@@ -93,9 +93,9 @@ bool ServicePortal::discussMessageEvent(const MessageEvent &ev)
     return false;
 }
 
-bool ServicePortal::masterChangeEvent(const MasterChangeEvent &ev)
+bool ServiceEngine::masterChangeEvent(const MasterChangeEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->masterChangeModules)
         if (module->masterChangeEvent(ev))
@@ -104,9 +104,9 @@ bool ServicePortal::masterChangeEvent(const MasterChangeEvent &ev)
     return false;
 }
 
-bool ServicePortal::friendRequestEvent(const FriendRequestEvent &ev)
+bool ServiceEngine::friendRequestEvent(const FriendRequestEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->friendRequestModules)
         if (module->friendRequestEvent(ev))
@@ -115,9 +115,9 @@ bool ServicePortal::friendRequestEvent(const FriendRequestEvent &ev)
     return false;
 }
 
-bool ServicePortal::groupRequestEvent(const GroupRequestEvent &ev)
+bool ServiceEngine::groupRequestEvent(const GroupRequestEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->groupRequestModules)
         if (module->groupRequestEvent(ev))
@@ -126,9 +126,9 @@ bool ServicePortal::groupRequestEvent(const GroupRequestEvent &ev)
     return false;
 }
 
-bool ServicePortal::friendAddEvent(const FriendAddEvent &ev)
+bool ServiceEngine::friendAddEvent(const FriendAddEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->friendAddModules)
         if (module->friendAddEvent(ev))
@@ -137,9 +137,9 @@ bool ServicePortal::friendAddEvent(const FriendAddEvent &ev)
     return false;
 }
 
-bool ServicePortal::memberJoinEvent(const MemberJoinEvent &ev)
+bool ServiceEngine::memberJoinEvent(const MemberJoinEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->memberJoinModules)
         if (module->memberJoinEvent(ev))
@@ -148,9 +148,9 @@ bool ServicePortal::memberJoinEvent(const MemberJoinEvent &ev)
     return false;
 }
 
-bool ServicePortal::memberLeaveEvent(const MemberLeaveEvent &ev)
+bool ServiceEngine::memberLeaveEvent(const MemberLeaveEvent &ev)
 {
-    Q_D(ServicePortal);
+    Q_D(ServiceEngine);
 
     for (ServiceModule *module : d->memberLeaveModules)
         if (module->memberLeaveEvent(ev))
@@ -159,21 +159,21 @@ bool ServicePortal::memberLeaveEvent(const MemberLeaveEvent &ev)
     return false;
 }
 
-// class ServicePortalPrivate
+// class ServiceEnginePrivate
 
-ServicePortal *ServicePortalPrivate::instance = nullptr;
+ServiceEngine *ServiceEnginePrivate::instance = nullptr;
 
-qint32 ServicePortalPrivate::accessToken = 0;
+qint32 ServiceEnginePrivate::accessToken = 0;
 
-ServicePortalPrivate::ServicePortalPrivate()
+ServiceEnginePrivate::ServiceEnginePrivate()
 {
 }
 
-ServicePortalPrivate::~ServicePortalPrivate()
+ServiceEnginePrivate::~ServiceEnginePrivate()
 {
 }
 
-void ServicePortalPrivate::installModule(ServiceModule *module)
+void ServiceEnginePrivate::installModule(ServiceModule *module)
 {
     Q_CHECK_PTR(module);
 

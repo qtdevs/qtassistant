@@ -1,9 +1,9 @@
-﻿#include "CqServicePortal.h"
-#include "CqServicePortal_p.h"
+﻿#include "CqServiceEngine.h"
+#include "CqServiceEngine_p.h"
 
 #include <QCoreApplication>
-#include <process.h>
 #include "CqApi/CqLib.h"
+#include <process.h>
 
 #include "CqServiceModule.h"
 #include "CqServiceModule_p.h"
@@ -13,7 +13,7 @@ CQEVENT(const char *, AppInfo, 0)()
     return CQAPIVERTEXT "," TARGET;
 }
 
-void cqHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
+void cqMsgHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
 {
     qint32 priority = 0;
 
@@ -42,16 +42,15 @@ void cqHandler(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
     static char log[4096] = {0};
     QByteArray gbkMsg = CoolQ::trGbk(msg);
     sprintf(log, "%s (%s: %u)", gbkMsg.constData(), ctx.file, ctx.line);
-    CQ_addLog(CoolQ::ServicePortalPrivate::accessToken, priority, "Cq Portal", log);
-    if (CQLOG_FATAL == priority) {
-        CQ_setFatal(CoolQ::ServicePortalPrivate::accessToken, gbkMsg.constData());
-    }
+    CQ_addLog(CoolQ::ServiceEnginePrivate::accessToken, priority, "Qt Logs", log);
+    if (CQLOG_FATAL == priority)
+        CQ_setFatal(CoolQ::ServiceEnginePrivate::accessToken, gbkMsg.constData());
 }
 
 CQEVENT(qint32, Initialize, 4)(qint32 ac)
 {
-    qInstallMessageHandler(cqHandler);
-    CoolQ::ServicePortalPrivate::accessToken = ac;
+    CoolQ::ServiceEnginePrivate::accessToken = ac;
+    qInstallMessageHandler(cqMsgHandler);
 
     return 0;
 }
@@ -75,9 +74,8 @@ CQEVENT(qint32, __systemStartupEvent, 0)()
 
 CQEVENT(qint32, __systemShutdownEvent, 0)()
 {
-    if (qApp) {
+    if (qApp)
         qApp->quit();
-    }
 
     return 0;
 }
@@ -94,9 +92,9 @@ CQEVENT(qint32, __pluginDisableEvent, 0)()
 
 CQEVENT(qint32, __privateMessageEvent, 24)(qint32 type, qint32 time, qint64 from, const char *msg, qint32 font)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MessageEvent event{ type, time, 0, font, from, msg };
-        if (portal->privateMessageEvent(event))
+        if (engine->privateMessageEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -105,9 +103,9 @@ CQEVENT(qint32, __privateMessageEvent, 24)(qint32 type, qint32 time, qint64 from
 
 CQEVENT(qint32, __groupMessageEvent, 36)(qint32 type, qint32 time, qint64 from, qint64 sender, const char *, const char *msg, qint32 font)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MessageEvent event{ type, time, from, font, sender, msg };
-        if (portal->groupMessageEvent(event))
+        if (engine->groupMessageEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -116,9 +114,9 @@ CQEVENT(qint32, __groupMessageEvent, 36)(qint32 type, qint32 time, qint64 from, 
 
 CQEVENT(qint32, __discussMessageEvent, 32)(qint32 type, qint32 time, qint64 from, qint64 sender, const char *msg, qint32 font)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MessageEvent event{ type, time, from, font, sender, msg };
-        if (portal->discussMessageEvent(event))
+        if (engine->discussMessageEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -127,9 +125,9 @@ CQEVENT(qint32, __discussMessageEvent, 32)(qint32 type, qint32 time, qint64 from
 
 CQEVENT(qint32, __masterChangeEvent, 24)(qint32 type, qint32 time, qint64 from, qint64 member)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MasterChangeEvent event{ type, time, from, 0, member };
-        if (portal->masterChangeEvent(event))
+        if (engine->masterChangeEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -138,9 +136,9 @@ CQEVENT(qint32, __masterChangeEvent, 24)(qint32 type, qint32 time, qint64 from, 
 
 CQEVENT(qint32, __friendRequestEvent, 24)(qint32 type, qint32 time, qint64 from, const char *msg, const char *tag)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::FriendRequestEvent event{ type, time, from, msg, tag };
-        if (portal->friendRequestEvent(event))
+        if (engine->friendRequestEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -149,9 +147,9 @@ CQEVENT(qint32, __friendRequestEvent, 24)(qint32 type, qint32 time, qint64 from,
 
 CQEVENT(qint32, __groupRequestEvent, 32)(qint32 type, qint32 time, qint64 from, qint64 user, const char *msg, const char *tag)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::GroupRequestEvent event{ type, time, from, user, msg, tag };
-        if (portal->groupRequestEvent(event))
+        if (engine->groupRequestEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -160,9 +158,9 @@ CQEVENT(qint32, __groupRequestEvent, 32)(qint32 type, qint32 time, qint64 from, 
 
 CQEVENT(qint32, __friendAddEvent, 16)(qint32 type, qint32 time, qint64 from)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::FriendAddEvent event{ type, time, from };
-        if (portal->friendAddEvent(event))
+        if (engine->friendAddEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -171,9 +169,9 @@ CQEVENT(qint32, __friendAddEvent, 16)(qint32 type, qint32 time, qint64 from)
 
 CQEVENT(qint32, __memberJoinEvent, 32)(qint32 type, qint32 time, qint64 from, qint64 master, qint64 member)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MemberJoinEvent event{ type, time, from, master, member };
-        if (portal->memberJoinEvent(event))
+        if (engine->memberJoinEvent(event))
             return EVENT_BLOCK;
     }
 
@@ -182,9 +180,9 @@ CQEVENT(qint32, __memberJoinEvent, 32)(qint32 type, qint32 time, qint64 from, qi
 
 CQEVENT(qint32, __memberLeaveEvent, 32)(qint32 type, qint32 time, qint64 from, qint64 master, qint64 member)
 {
-    if (auto portal = CoolQ::ServicePortal::instance()) {
+    if (auto engine = CoolQ::ServiceEngine::instance()) {
         CoolQ::MemberLeaveEvent event{ type, time, from, master, member };
-        if (portal->memberLeaveEvent(event))
+        if (engine->memberLeaveEvent(event))
             return EVENT_BLOCK;
     }
 

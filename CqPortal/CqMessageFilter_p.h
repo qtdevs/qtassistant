@@ -15,7 +15,7 @@ public:
     virtual ~MessageFilterPrivate();
 
 protected:
-    ServicePortal *portal;
+    ServiceEngine *engine;
     ServiceModule *module;
 };
 

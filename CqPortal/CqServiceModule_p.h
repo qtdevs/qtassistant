@@ -16,7 +16,7 @@ public:
     virtual ~ServiceModulePrivate();
 
 protected:
-    ServicePortal *portal;
+    ServiceEngine *engine;
 
 public:
     static ServiceModulePrivate *get(ServiceModule *o) { return o ? o->d_func() : nullptr; }

@@ -8,7 +8,7 @@
 
 namespace CoolQ {
 
-class ServicePortal;
+class ServiceEngine;
 class ServiceModule;
 
 class MessageFilterPrivate;
@@ -25,7 +25,7 @@ public:
     virtual ~MessageFilter();
 
 public:
-    ServicePortal *portal() const;
+    ServiceEngine *engine() const;
     ServiceModule *module() const;
 
 public:

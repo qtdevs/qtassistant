@@ -27,7 +27,7 @@
 
 // class ManagementModule
 
-ManagementModule::ManagementModule(CoolQ::ServicePortal *engine)
+ManagementModule::ManagementModule(CoolQ::ServiceEngine *engine)
     : CoolQ::ServiceModule(*new ManagementModulePrivate(), engine)
 {
     Q_ASSERT(ManagementModulePrivate::instance == nullptr);
@@ -45,6 +45,7 @@ ManagementModule::ManagementModule(CoolQ::ServicePortal *engine)
     d->watchlist = new MemberWatchlist(this);
 
     d->htmlFeedback = new HtmlFeedback(this);
+    d->htmlFeedback->updateMaterials(usrFilePath("Htmls"));
 
     d->checkTimerId = startTimer(10000);
 
@@ -153,7 +154,7 @@ void ManagementModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel leve
     QString content = reason.isEmpty() ? tr("作为一个%1，你没有权限执行此操作。").arg(MasterLevels::levelName(level)) : reason;
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("没有相关权限"), content);
 
-    QPixmap feedback = d->htmlFeedback->drawDanger(html, 400);
+    QPixmap feedback = d->htmlFeedback->drawDangerText(html, 400, gid);
     QString fileName = saveImage(feedback);
     sendGroupMessage(gid, cqImage(fileName));
 }
@@ -189,7 +190,7 @@ void ManagementModule::feedback(qint64 gid, const QString &title, const QString 
 
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
-    QPixmap feedback = d->htmlFeedback->draw(html, 400, style);
+    QPixmap feedback = d->htmlFeedback->drawText(html, 400, style, gid);
     QString fileName = saveImage(feedback);
     sendGroupMessage(gid, cqImage(fileName));
 }
@@ -265,7 +266,7 @@ void ManagementModule::feedbackList(qint64 gid, const QString &title, const Leve
             ds << "</div></body></html>";
         } while (false);
 
-        QPixmap feedback = d->htmlFeedback->draw(html, 400, style);
+        QPixmap feedback = d->htmlFeedback->drawText(html, 400, style, gid);
         QString fileName = saveImage(feedback);
         sendGroupMessage(gid, cqImage(fileName));
     }
@@ -315,7 +316,7 @@ void ManagementModule::saveWelcomes(qint64 gid, qint64 uid)
                         auto html = QString::fromUtf8(file.readAll());
                         auto styleEnum = QMetaEnum::fromType<HtmlFeedback::Style>();
                         auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
-                        auto image = d->htmlFeedback->draw(html, 400, (HtmlFeedback::Style)style);
+                        auto image = d->htmlFeedback->drawText(html, 400, (HtmlFeedback::Style)style, gid);
                         auto fileName = imgFilePath(QString("Welcomes/%1.PNG").arg(nameParts.at(0)));
                         if (image.save(fileName, "PNG")) {
                             qInfo() << "Save Welcomes:" << fileName;
@@ -446,8 +447,7 @@ void ManagementModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Styl
     if (file.open(QFile::ReadOnly)) {
         auto htmlText = QString::fromUtf8(file.readAll());
 
-        QString path = q->imgFilePath("Welcomes");
-        QPixmap image = htmlFeedback->draw(htmlText, 400, style);
+        QPixmap image = htmlFeedback->drawText(htmlText, 400, style, 0);
         if (image.save(q->imgFilePath(QString("Welcomes/%1.png").arg(id)), "PNG")) {
             qInfo() << "Output 1";
         } else {

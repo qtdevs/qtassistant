@@ -14,7 +14,7 @@ Q_GLOBAL_STATIC(SearchModule, theSearchModule2)
 
 // class SearchModule
 
-SearchModule::SearchModule(CoolQ::ServicePortal *parent)
+SearchModule::SearchModule(CoolQ::ServiceEngine *parent)
     : CoolQ::ServiceModule(*new SearchModulePrivate(), parent)
 {
     Q_D(SearchModule);

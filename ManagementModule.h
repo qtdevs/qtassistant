@@ -15,7 +15,7 @@ class ManagementModule : public CoolQ::ServiceModule
     Q_DECLARE_PRIVATE(ManagementModule)
 
 public:
-    explicit ManagementModule(CoolQ::ServicePortal *engine = nullptr);
+    explicit ManagementModule(CoolQ::ServiceEngine *engine = nullptr);
     virtual ~ManagementModule();
 public:
     static ManagementModule *instance();

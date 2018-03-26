@@ -1,16 +1,16 @@
-<RCC>
+﻿<RCC>
     <qresource prefix="/htmlfeedback">
-        <file>css/danger.css</file>
-        <file>css/primary.css</file>
-        <file>css/prompt.css</file>
-        <file>css/success.css</file>
-        <file>css/warning.css</file>
-        <file>img/danger.png</file>
-        <file>img/primary.png</file>
-        <file>img/prompt.png</file>
-        <file>img/success.png</file>
-        <file>img/warning.png</file>
-        <file>img/background.png</file>
-        <file>img/foreground.png</file>
+        <file>css/Danger.css</file>
+        <file>css/Primary.css</file>
+        <file>css/Prompt.css</file>
+        <file>css/Success.css</file>
+        <file>css/Warning.css</file>
+        <file>img/Background.png</file>
+        <file>img/Foreground.png</file>
+        <file>img/Danger.png</file>
+        <file>img/Primary.png</file>
+        <file>img/Prompt.png</file>
+        <file>img/Success.png</file>
+        <file>img/Warning.png</file>
     </qresource>
 </RCC>

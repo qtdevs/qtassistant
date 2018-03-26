@@ -8,7 +8,7 @@
 
 // class DonateModule
 
-DonateModule::DonateModule(CoolQ::ServicePortal *parent)
+DonateModule::DonateModule(CoolQ::ServiceEngine *parent)
     : CoolQ::ServiceModule(*new DonateModulePrivate(), parent)
 {
     Q_D(DonateModule);

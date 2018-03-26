@@ -1,10 +1,6 @@
 ﻿#ifndef HTMLFEEDBACK_H
 #define HTMLFEEDBACK_H
 
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
-
 #include <QObject>
 
 class HtmlFeedbackPrivate;
@@ -16,15 +12,11 @@ class HtmlFeedback : public QObject
 public:
     explicit HtmlFeedback(QObject *parent = Q_NULLPTR);
     virtual ~HtmlFeedback();
-private:
+protected:
     QScopedPointer<HtmlFeedbackPrivate> d_ptr;
 
 public:
-    QPixmap drawPrimary(const QString &html, int width) const;
-    QPixmap drawDanger(const QString &html, int width) const;
-    QPixmap drawWarning(const QString &html, int width) const;
-    QPixmap drawPrompt(const QString &html, int width) const;
-    QPixmap drawSuccess(const QString &html, int width) const;
+    void updateMaterials(const QString &path);
 
 public:
     enum Style {
@@ -37,7 +29,14 @@ public:
     Q_ENUM(Style)
 
 public:
-    QPixmap draw(const QString &html, int width, Style style) const;
+    QPixmap drawText(const QString &text, int width, Style style, qint64 theme = 0) const;
+
+public:
+    QPixmap drawPrimaryText(const QString &text, int width, qint64 theme = 0) const;
+    QPixmap drawDangerText(const QString &text, int width, qint64 theme = 0) const;
+    QPixmap drawWarningText(const QString &text, int width, qint64 theme = 0) const;
+    QPixmap drawPromptText(const QString &text, int width, qint64 theme = 0) const;
+    QPixmap drawSuccessText(const QString &text, int width, qint64 theme = 0) const;
 };
 
 #endif // HTMLFEEDBACK_H

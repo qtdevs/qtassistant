@@ -1,5 +1,5 @@
-﻿#ifndef CQSERVICEPORTAL_H
-#define CQSERVICEPORTAL_H
+﻿#ifndef CQSERVICEENGINE_H
+#define CQSERVICEENGINE_H
 
 #include "CqInterface.h"
 
@@ -9,16 +9,16 @@
 namespace CoolQ {
 
 class ServiceModule;
-class ServicePortalPrivate;
-class ServicePortal : public Interface
+class ServiceEnginePrivate;
+class ServiceEngine : public Interface
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(ServicePortal)
+    Q_DECLARE_PRIVATE(ServiceEngine)
 
 public:
-    explicit ServicePortal(QObject *parent);
-    static ServicePortal *instance();
-    virtual ~ServicePortal();
+    explicit ServiceEngine(QObject *parent);
+    static ServiceEngine *instance();
+    virtual ~ServiceEngine();
 
 public:
     virtual bool initialize() override;
@@ -39,4 +39,4 @@ public:
 
 } // namespace CoolQ
 
-#endif // CQSERVICEPORTAL_H
+#endif // CQSERVICEENGINE_H

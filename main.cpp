@@ -1,7 +1,7 @@
 ﻿#include <QtCore>
 #include <QtWidgets>
 
-#include "CqServicePortal.h"
+#include "CqServiceEngine.h"
 
 #include "ManagementModule.h"
 #include "donatemodule.h"
@@ -10,12 +10,12 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
-    auto portal = new CoolQ::ServicePortal(&app);
+    auto engine = new CoolQ::ServiceEngine(&app);
 
-    new ManagementModule(portal);
-    new DonateModule(portal);
+    new DonateModule(engine);
+    new ManagementModule(engine);
 
-    if (!portal->initialize()) {
+    if (!engine->initialize()) {
         return false;
     }
 

@@ -14,7 +14,7 @@ class DonateModule : public CoolQ::ServiceModule
     Q_DECLARE_PRIVATE(DonateModule)
 
 public:
-    explicit DonateModule(CoolQ::ServicePortal *parent = nullptr);
+    explicit DonateModule(CoolQ::ServiceEngine *parent = nullptr);
     virtual ~DonateModule();
 
 public:

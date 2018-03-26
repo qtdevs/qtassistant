@@ -1,8 +1,8 @@
 ﻿#include "CqMessageFilter.h"
 #include "CqMessageFilter_p.h"
 
-#include "CqServicePortal.h"
-#include "CqServicePortal_p.h"
+#include "CqServiceEngine.h"
+#include "CqServiceEngine_p.h"
 
 #include "CqServiceModule.h"
 #include "CqServiceModule_p.h"
@@ -19,7 +19,7 @@ MessageFilter::MessageFilter(MessageFilterPrivate &dd, ServiceModule *parent)
     }
 
     Q_D(MessageFilter);
-    d->portal = parent->portal();
+    d->engine = parent->engine();
     d->module = parent;
 }
 
@@ -31,7 +31,7 @@ MessageFilter::MessageFilter(ServiceModule *parent)
     }
 
     Q_D(MessageFilter);
-    d->portal = parent->portal();
+    d->engine = parent->engine();
     d->module = parent;
 }
 
@@ -39,11 +39,11 @@ MessageFilter::~MessageFilter()
 {
 }
 
-ServicePortal *MessageFilter::portal() const
+ServiceEngine *MessageFilter::engine() const
 {
     Q_D(const MessageFilter);
 
-    return d->portal;
+    return d->engine;
 }
 
 ServiceModule *MessageFilter::module() const
@@ -90,7 +90,7 @@ bool MessageFilter::discussMessageFilter(int i, const MessageEvent &ev)
 // class MessageFilterPrivate
 
 MessageFilterPrivate::MessageFilterPrivate()
-    : portal(nullptr)
+    : engine(nullptr)
     , module(nullptr)
 {
 }

@@ -27,8 +27,8 @@
 #include "CqServiceModule.h"
 #include "CqServiceModule_p.h"
 
-#include "CqServicePortal.h"
-#include "CqServicePortal_p.h"
+#include "CqServiceEngine.h"
+#include "CqServiceEngine_p.h"
 
 #include <QDir>
 #include <QPixmap>
@@ -48,19 +48,18 @@ namespace CoolQ {
  *
  * \internal
  */
-ServiceModule::ServiceModule(ServiceModulePrivate &dd, ServicePortal *parent)
+ServiceModule::ServiceModule(ServiceModulePrivate &dd, ServiceEngine *parent)
     : Interface(dd, parent)
 {
-    if (auto portal = ServicePortalPrivate::get(parent)) {
-        portal->installModule(this);
-    }
+    if (auto engine = ServiceEnginePrivate::get(parent))
+        engine->installModule(this);
 
     Q_D(ServiceModule);
-    d->portal = parent;
+    d->engine = parent;
 
-    d->currentId = CQ_getLoginQQ(ServicePortalPrivate::accessToken);
+    d->currentId = CQ_getLoginQQ(ServiceEnginePrivate::accessToken);
 
-    QString path = trGbk(CQ_getAppDirectory(ServicePortalPrivate::accessToken));
+    QString path = trGbk(CQ_getAppDirectory(ServiceEnginePrivate::accessToken));
     d->resPath = QDir::cleanPath(path % "/../../data");
     d->basePath = QDir::cleanPath(path);
     d->imagePath = QDir::cleanPath(path % "/../../data/image");
@@ -70,19 +69,18 @@ ServiceModule::ServiceModule(ServiceModulePrivate &dd, ServicePortal *parent)
     QDir().mkpath(SqliteServicePrivate::basePath);
 }
 
-ServiceModule::ServiceModule(ServicePortal *parent)
+ServiceModule::ServiceModule(ServiceEngine *parent)
     : Interface(*new ServiceModulePrivate(), parent)
 {
-    if (auto portal = ServicePortalPrivate::get(parent)) {
-        portal->installModule(this);
-    }
+    if (auto engine = ServiceEnginePrivate::get(parent))
+        engine->installModule(this);
 
     Q_D(ServiceModule);
-    d->portal = parent;
+    d->engine = parent;
 
-    d->currentId = CQ_getLoginQQ(ServicePortalPrivate::accessToken);
+    d->currentId = CQ_getLoginQQ(ServiceEnginePrivate::accessToken);
 
-    QString path = trGbk(CQ_getAppDirectory(ServicePortalPrivate::accessToken));
+    QString path = trGbk(CQ_getAppDirectory(ServiceEnginePrivate::accessToken));
     d->resPath = QDir::cleanPath(path % "/../../data");
     d->basePath = QDir::cleanPath(path);
     d->imagePath = QDir::cleanPath(path % "/../../data/image");
@@ -101,11 +99,11 @@ ServiceModule::~ServiceModule()
 {
 }
 
-ServicePortal *ServiceModule::portal() const
+ServiceEngine *ServiceModule::engine() const
 {
     Q_D(const ServiceModule);
 
-    return d->portal;
+    return d->engine;
 }
 
 bool ServiceModule::initialize()
@@ -530,7 +528,7 @@ bool ServiceModule::memberLeaveEvent(const MemberLeaveEvent &ev)
  */
 ServiceModule::Result ServiceModule::sendPrivateMessage(qint64 uid, const char *gbkMsg) const
 {
-    return ServiceModulePrivate::result(CQ_sendPrivateMsg(ServicePortalPrivate::accessToken, uid, gbkMsg));
+    return ServiceModulePrivate::result(CQ_sendPrivateMsg(ServiceEnginePrivate::accessToken, uid, gbkMsg));
 }
 
 /*!
@@ -542,7 +540,7 @@ ServiceModule::Result ServiceModule::sendPrivateMessage(qint64 uid, const char *
  */
 ServiceModule::Result ServiceModule::sendGroupMessage(qint64 gid, const char *gbkMsg) const
 {
-    return ServiceModulePrivate::result(CQ_sendGroupMsg(ServicePortalPrivate::accessToken, gid, gbkMsg));
+    return ServiceModulePrivate::result(CQ_sendGroupMsg(ServiceEnginePrivate::accessToken, gid, gbkMsg));
 }
 
 /*!
@@ -554,7 +552,7 @@ ServiceModule::Result ServiceModule::sendGroupMessage(qint64 gid, const char *gb
  */
 ServiceModule::Result ServiceModule::sendDiscussMessage(qint64 did, const char *gbkMsg) const
 {
-    return ServiceModulePrivate::result(CQ_sendDiscussMsg(ServicePortalPrivate::accessToken, did, gbkMsg));
+    return ServiceModulePrivate::result(CQ_sendDiscussMsg(ServiceEnginePrivate::accessToken, did, gbkMsg));
 }
 
 /*!
@@ -598,7 +596,7 @@ ServiceModule::Result ServiceModule::sendDiscussMessage(qint64 did, const QStrin
  */
 ServiceModule::Result ServiceModule::banGroupMember(qint64 gid, qint64 uid, int duration)
 {
-    return ServiceModulePrivate::result(CQ_setGroupBan(ServicePortalPrivate::accessToken, gid, uid, duration));
+    return ServiceModulePrivate::result(CQ_setGroupBan(ServiceEnginePrivate::accessToken, gid, uid, duration));
 }
 
 /*!
@@ -609,7 +607,7 @@ ServiceModule::Result ServiceModule::banGroupMember(qint64 gid, qint64 uid, int 
  */
 ServiceModule::Result ServiceModule::kickGroupMember(qint64 gid, qint64 uid, bool lasting)
 {
-    return ServiceModulePrivate::result(CQ_setGroupKick(ServicePortalPrivate::accessToken, gid, uid, lasting));
+    return ServiceModulePrivate::result(CQ_setGroupKick(ServiceEnginePrivate::accessToken, gid, uid, lasting));
 }
 
 /*!
@@ -620,7 +618,7 @@ ServiceModule::Result ServiceModule::kickGroupMember(qint64 gid, qint64 uid, boo
  */
 ServiceModule::Result ServiceModule::adminGroupMember(qint64 gid, qint64 uid, bool enabled)
 {
-    return ServiceModulePrivate::result(CQ_setGroupAdmin(ServicePortalPrivate::accessToken, gid, uid, enabled));
+    return ServiceModulePrivate::result(CQ_setGroupAdmin(ServiceEnginePrivate::accessToken, gid, uid, enabled));
 }
 
 /*!
@@ -632,7 +630,7 @@ ServiceModule::Result ServiceModule::adminGroupMember(qint64 gid, qint64 uid, bo
  */
 ServiceModule::Result ServiceModule::renameGroupMember(qint64 gid, qint64 uid, const char *gbkNewNameCard)
 {
-    return ServiceModulePrivate::result(CQ_setGroupCard(ServicePortalPrivate::accessToken, gid, uid, gbkNewNameCard));
+    return ServiceModulePrivate::result(CQ_setGroupCard(ServiceEnginePrivate::accessToken, gid, uid, gbkNewNameCard));
 }
 
 /*!
@@ -643,7 +641,7 @@ ServiceModule::Result ServiceModule::renameGroupMember(qint64 gid, qint64 uid, c
  */
 ServiceModule::Result ServiceModule::renameGroupMember(qint64 gid, qint64 uid, const QString &newNameCard)
 {
-    return ServiceModulePrivate::result(CQ_setGroupCard(ServicePortalPrivate::accessToken, gid, uid, trGbk(newNameCard).constData()));
+    return ServiceModulePrivate::result(CQ_setGroupCard(ServiceEnginePrivate::accessToken, gid, uid, trGbk(newNameCard).constData()));
 }
 
 /*!
@@ -654,7 +652,7 @@ ServiceModule::Result ServiceModule::renameGroupMember(qint64 gid, qint64 uid, c
  */
 ServiceModule::Result ServiceModule::acceptRequest(const char *gbkTag)
 {
-    return ServiceModulePrivate::result(CQ_setFriendAddRequest(ServicePortalPrivate::accessToken, gbkTag, REQUEST_ALLOW, ""));
+    return ServiceModulePrivate::result(CQ_setFriendAddRequest(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_ALLOW, ""));
 }
 
 /*!
@@ -665,7 +663,7 @@ ServiceModule::Result ServiceModule::acceptRequest(const char *gbkTag)
  */
 ServiceModule::Result ServiceModule::rejectRequest(const char *gbkTag)
 {
-    return ServiceModulePrivate::result(CQ_setFriendAddRequest(ServicePortalPrivate::accessToken, gbkTag, REQUEST_DENY, ""));
+    return ServiceModulePrivate::result(CQ_setFriendAddRequest(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_DENY, ""));
 }
 
 /*!
@@ -677,9 +675,9 @@ ServiceModule::Result ServiceModule::rejectRequest(const char *gbkTag)
 ServiceModule::Result ServiceModule::acceptRequest(qint32 type, const char *gbkTag)
 {
     if (1 == type) {
-        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServicePortalPrivate::accessToken, gbkTag, REQUEST_GROUPADD, REQUEST_ALLOW, ""));
+        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_GROUPADD, REQUEST_ALLOW, ""));
     } else if (2 == type) {
-        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServicePortalPrivate::accessToken, gbkTag, REQUEST_GROUPINVITE, REQUEST_ALLOW, ""));
+        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_GROUPINVITE, REQUEST_ALLOW, ""));
     }
 
     return Result::Unknown;
@@ -694,9 +692,9 @@ ServiceModule::Result ServiceModule::acceptRequest(qint32 type, const char *gbkT
 ServiceModule::Result ServiceModule::rejectRequest(qint32 type, const char *gbkTag)
 {
     if (1 == type) {
-        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServicePortalPrivate::accessToken, gbkTag, REQUEST_GROUPADD, REQUEST_DENY, ""));
+        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_GROUPADD, REQUEST_DENY, ""));
     } else if (2 == type) {
-        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServicePortalPrivate::accessToken, gbkTag, REQUEST_GROUPINVITE, REQUEST_DENY, ""));
+        return ServiceModulePrivate::result(CQ_setGroupAddRequestV2(ServiceEnginePrivate::accessToken, gbkTag, REQUEST_GROUPINVITE, REQUEST_DENY, ""));
     }
 
     return Result::Unknown;
@@ -710,7 +708,7 @@ ServiceModule::Result ServiceModule::rejectRequest(qint32 type, const char *gbkT
  */
 ServiceModule::Result ServiceModule::leaveGroup(qint64 gid)
 {
-    return ServiceModulePrivate::result(CQ_setGroupLeave(ServicePortalPrivate::accessToken, gid, false));
+    return ServiceModulePrivate::result(CQ_setGroupLeave(ServiceEnginePrivate::accessToken, gid, false));
 }
 
 /*!
@@ -721,7 +719,7 @@ ServiceModule::Result ServiceModule::leaveGroup(qint64 gid)
  */
 ServiceModule::Result ServiceModule::leaveDiscuss(qint64 did)
 {
-    return ServiceModulePrivate::result(CQ_setDiscussLeave(ServicePortalPrivate::accessToken, did));
+    return ServiceModulePrivate::result(CQ_setDiscussLeave(ServiceEnginePrivate::accessToken, did));
 }
 
 /*!
@@ -732,7 +730,7 @@ ServiceModule::Result ServiceModule::leaveDiscuss(qint64 did)
  */
 ServiceModule::Result ServiceModule::mute(qint64 gid, bool muted)
 {
-    return ServiceModulePrivate::result(CQ_setGroupWholeBan(ServicePortalPrivate::accessToken, gid, muted));
+    return ServiceModulePrivate::result(CQ_setGroupWholeBan(ServiceEnginePrivate::accessToken, gid, muted));
 }
 
 /*!
@@ -743,7 +741,7 @@ ServiceModule::Result ServiceModule::mute(qint64 gid, bool muted)
  */
 PersonInfo ServiceModule::personInfo(qint64 uid, bool cached)
 {
-    return PersonInfo(CQ_getStrangerInfo(ServicePortalPrivate::accessToken, uid, !cached));
+    return PersonInfo(CQ_getStrangerInfo(ServiceEnginePrivate::accessToken, uid, !cached));
 }
 
 /*!
@@ -754,7 +752,7 @@ PersonInfo ServiceModule::personInfo(qint64 uid, bool cached)
  */
 MemberInfo ServiceModule::memberInfo(qint64 gid, qint64 uid, bool cached)
 {
-    return MemberInfo(CQ_getGroupMemberInfoV2(ServicePortalPrivate::accessToken, gid, uid, !cached));
+    return MemberInfo(CQ_getGroupMemberInfoV2(ServiceEnginePrivate::accessToken, gid, uid, !cached));
 }
 
 /*!
@@ -789,7 +787,7 @@ QPixmap ServiceModule::loadImage(const QString &name) const
 // class ServiceModulePrivate
 
 ServiceModulePrivate::ServiceModulePrivate()
-    : portal(nullptr)
+    : engine(nullptr)
     , currentId(0)
     //
     , privateMessageEventPriority(1)

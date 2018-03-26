@@ -1,10 +1,7 @@
 ﻿#ifndef HTMLFEEDBACK_P_H
 #define HTMLFEEDBACK_P_H
 
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
-
+#include <QHash>
 #include <QPixmap>
 
 #include "htmlfeedback.h"
@@ -16,8 +13,11 @@ class HtmlFeedbackPrivate
 public:
     HtmlFeedbackPrivate();
     virtual ~HtmlFeedbackPrivate();
-private:
+protected:
     HtmlFeedback *q_ptr;
+
+public:
+    QString readCssFile(const QString &fileName);
 
 private:
     QString primarySheet;
@@ -26,14 +26,34 @@ private:
     QString promptSheet;
     QString successSheet;
 
+private:
+    QPixmap backgroundImage;
+    QPixmap foregroundImage;
+
+private:
     QPixmap primaryImage;
     QPixmap dangerImage;
     QPixmap warningImage;
     QPixmap promptImage;
     QPixmap successImage;
 
-    QPixmap backgroundImage;
-    QPixmap foregroundImage;
+private:
+    QHash<qint64, QString> primarySheets;
+    QHash<qint64, QString> dangerSheets;
+    QHash<qint64, QString> warningSheets;
+    QHash<qint64, QString> promptSheets;
+    QHash<qint64, QString> successSheets;
+
+private:
+    QHash<qint64, QPixmap> backgroundImages;
+    QHash<qint64, QPixmap> foregroundImages;
+
+private:
+    QHash<qint64, QPixmap> primaryImages;
+    QHash<qint64, QPixmap> dangerImages;
+    QHash<qint64, QPixmap> warningImages;
+    QHash<qint64, QPixmap> promptImages;
+    QHash<qint64, QPixmap> successImages;
 };
 
 #endif // HTMLFEEDBACK_P_H

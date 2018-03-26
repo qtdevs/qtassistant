@@ -14,7 +14,7 @@ class SearchModule : public CoolQ::ServiceModule
     Q_DECLARE_PRIVATE(SearchModule)
 
 public:
-    explicit SearchModule(CoolQ::ServicePortal *parent = nullptr);
+    explicit SearchModule(CoolQ::ServiceEngine *parent = nullptr);
     virtual ~SearchModule();
 
 public:

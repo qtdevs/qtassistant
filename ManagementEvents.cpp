@@ -104,7 +104,7 @@ bool ManagementModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
                         auto html = QString::fromUtf8(file.readAll());
                         auto styleEnum = QMetaEnum::fromType<HtmlFeedback::Style>();
                         auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
-                        auto image = d->htmlFeedback->draw(html, 400, (HtmlFeedback::Style)style);
+                        auto image = d->htmlFeedback->drawText(html, 400, (HtmlFeedback::Style)style, ev.from);
                         if (++i > 1) ts << '\n';
                         ts << cqImage(saveImage(image));
                     }

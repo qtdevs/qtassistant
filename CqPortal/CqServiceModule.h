@@ -8,7 +8,7 @@
 
 namespace CoolQ {
 
-class ServicePortal;
+class ServiceEngine;
 class ServiceModulePrivate;
 class ServiceModule : public Interface
 {
@@ -16,14 +16,14 @@ class ServiceModule : public Interface
     Q_DECLARE_PRIVATE(ServiceModule)
 
 protected:
-    ServiceModule(ServiceModulePrivate &dd, ServicePortal *parent);
+    ServiceModule(ServiceModulePrivate &dd, ServiceEngine *parent);
 public:
-    explicit ServiceModule(ServicePortal *parent);
+    explicit ServiceModule(ServiceEngine *parent);
 public:
     virtual ~ServiceModule();
 
 public:
-    ServicePortal *portal() const;
+    ServiceEngine *engine() const;
 
 public:
     virtual bool initialize() override;

@@ -1,31 +1,29 @@
-﻿#ifndef CQSERVICEPORTAL_P_H
-#define CQSERVICEPORTAL_P_H
+﻿#ifndef CQSERVICEENGINE_P_H
+#define CQSERVICEENGINE_P_H
 
 #include "CqInterface_p.h"
-#include "CqServicePortal.h"
+#include "CqServiceEngine.h"
 
 namespace CoolQ {
 
-class ServicePortalPrivate : public InterfacePrivate
+class ServiceEnginePrivate : public InterfacePrivate
 {
-    Q_DECLARE_PUBLIC(ServicePortal)
+    Q_DECLARE_PUBLIC(ServiceEngine)
 
 public:
-    ServicePortalPrivate();
-    virtual ~ServicePortalPrivate();
+    ServiceEnginePrivate();
+    virtual ~ServiceEnginePrivate();
 
 public:
-    static ServicePortalPrivate *get(ServicePortal *o) { return o ? o->d_func() : nullptr; }
-    static const ServicePortalPrivate *get(const ServicePortal *o) { return o ? o->d_func() : nullptr; }
+    static ServiceEnginePrivate *get(ServiceEngine *o) { return o ? o->d_func() : nullptr; }
+    static const ServiceEnginePrivate *get(const ServiceEngine *o) { return o ? o->d_func() : nullptr; }
 
 public:
     void installModule(ServiceModule *module);
-protected:
-    QList<ServiceModule *> modules;
-
 public:
+    QList<ServiceModule *> modules;
     static qint32 accessToken;
-    static ServicePortal *instance;
+    static ServiceEngine *instance;
 
 protected:
     QVector<ServiceModule *> privateMessageModules;
@@ -43,4 +41,4 @@ protected:
 
 } // namespace CoolQ
 
-#endif // CQSERVICEPORTAL_P_H
+#endif // CQSERVICEENGINE_P_H
