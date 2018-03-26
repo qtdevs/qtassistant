@@ -1,9 +1,8 @@
 ﻿#include <QtCore>
 #include <QtWidgets>
 
-#include "CqServiceEngine.h"
-
-#include "ManagementModule.h"
+#include "CoolQServiceEngine.h"
+#include "AssistantModule.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +10,7 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(false);
     auto engine = new CoolQ::ServiceEngine(&app);
 
-    new ManagementModule(engine);
+    new AssistantModule(engine);
     if (!engine->initialize()) {
         return false;
     }

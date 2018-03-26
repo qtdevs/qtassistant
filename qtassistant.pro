@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT      += widgets network
+QT      += widgets
 TEMPLATE = lib
 
 TARGET   = org.qtdevs.assistant
@@ -20,29 +20,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-include(CqPortal/CqPortal.pri)
-include(SqlDatas/SqlDatas.pri)
-include(HtmlDraw/HtmlDraw.pri)
-include(translations/translations.pri)
-
-SOURCES += main.cpp \
-    ManagementFilters.cpp \
-    ManagementModule.cpp \
-    ManagementEvents.cpp \
-    ManagementOrderes.cpp
-
-HEADERS += \
-    ManagementFilters.h \
-    ManagementModule.h \
-    ManagementModule_p.h
-SOURCES +=
+include(CoolQPortal/CoolQPortal.pri)
+include(QtAssistant/QtAssistant.pri)
 
 CONFIG += openssl-linked
+DESTDIR  = $$PWD/bin/app
 
-HEADERS +=
-SOURCES +=
-
-DESTDIR = $$PWD/bin/app
+SOURCES += main.cpp
 
 OTHER_FILES += \
     $$PWD/README.md \
