@@ -28,9 +28,13 @@ protected:
     QList<MessageFilter *> filters;
 
 protected:
-    QHash<QByteArray, MessageFilter *> privateFilters;
-    QHash<QByteArray, MessageFilter *> groupFilters;
-    QHash<QByteArray, MessageFilter *> discussFilters;
+    QVector<MessageFilter *> privateFilters;
+    QVector<MessageFilter *> groupFilters;
+    QVector<MessageFilter *> discussFilters;
+
+    QHash<QByteArray, MessageFilter *> privateKeywordFilters;
+    QHash<QByteArray, MessageFilter *> groupKeywordFilters;
+    QHash<QByteArray, MessageFilter *> discussKeywordFilters;
 
 public:
     static ServiceModule::Result result(qint32 r);

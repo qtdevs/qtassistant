@@ -1,5 +1,5 @@
-﻿#include "memberblacklist.h"
-#include "memberblacklist_p.h"
+﻿#include "MemberBlacklist.h"
+#include "MemberBlacklist_p.h"
 
 #include <QDateTime>
 #include <QSqlError>
@@ -8,7 +8,7 @@
 #include <QLoggingCategory>
 #include <QReadWriteLock>
 
-Q_LOGGING_CATEGORY(qlcMemberBlacklist, "MemberBlacklist")
+Q_LOGGING_CATEGORY(qlcMemberBlacklist, "Blacklist")
 
 // class MemberBlacklist
 

@@ -3,7 +3,7 @@
 
 #include "CqServicePortal.h"
 
-#include "managemodule.h"
+#include "ManagementModule.h"
 #include "donatemodule.h"
 
 int main(int argc, char *argv[])
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(false);
     auto portal = new CoolQ::ServicePortal(&app);
 
-    new ManageModule(portal);
+    new ManagementModule(portal);
     new DonateModule(portal);
 
     if (!portal->initialize()) {

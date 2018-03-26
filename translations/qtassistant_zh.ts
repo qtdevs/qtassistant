@@ -64,7 +64,7 @@
     </message>
 </context>
 <context>
-    <name>ManageModule</name>
+    <name>ManagementModule</name>
     <message>
         <source>%1 is in the blacklist, reject.</source>
         <translation type="vanished">%1 在黑名单中，拒绝申请。</translation>
@@ -491,33 +491,33 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../managemodule.cpp" line="92"/>
+        <location filename="../ManagementModule.cpp" line="92"/>
         <source>作为一个%1，你没有权限执行此操作。</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../managemodule.cpp" line="93"/>
+        <location filename="../ManagementModule.cpp" line="93"/>
         <source>没有相关权限</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../managemodule.cpp" line="172"/>
+        <location filename="../ManagementModule.cpp" line="172"/>
         <source>(Part %1)</source>
         <translation>（第%1部分）</translation>
     </message>
     <message>
-        <location filename="../managemodule.cpp" line="179"/>
+        <location filename="../ManagementModule.cpp" line="179"/>
         <source>: </source>
         <translation>：</translation>
     </message>
     <message>
-        <location filename="../managemodule.cpp" line="195"/>
+        <location filename="../ManagementModule.cpp" line="195"/>
         <source>不在本群</source>
         <translation></translation>
     </message>
 </context>
 <context>
-    <name>ManageModulePrivate</name>
+    <name>ManagementModulePrivate</name>
     <message>
         <source>Level List:</source>
         <translation type="vanished">等级列表：</translation>

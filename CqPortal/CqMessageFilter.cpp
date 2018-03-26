@@ -53,6 +53,11 @@ ServiceModule *MessageFilter::module() const
     return d->module;
 }
 
+QStringList MessageFilter::keywords() const
+{
+    return QStringList();
+}
+
 QString MessageFilter::description() const
 {
     return QString();

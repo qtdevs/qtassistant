@@ -27,21 +27,21 @@ include(htmlfeedback/htmlfeedback.pri)
 
 SOURCES += main.cpp \
     donatemodule.cpp \
-    managemodule.cpp \
     searchmodule.cpp \
-    ManagementFilters.cpp
+    ManagementFilters.cpp \
+    ManagementModule.cpp \
+    ManagementEvents.cpp \
+    ManagementOrderes.cpp
 
 HEADERS += \
     donatemodule.h \
     donatemodule_p.h \
-    managemodule.h \
-    managemodule_p.h \
     searchmodule.h \
     searchmodule_p.h \
-    ManagementFilters.h
-SOURCES += \
-    manageevents.cpp \
-    messageevents.cpp
+    ManagementFilters.h \
+    ManagementModule.h \
+    ManagementModule_p.h
+SOURCES +=
 
 CONFIG += openssl-linked
 

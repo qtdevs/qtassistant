@@ -1,5 +1,5 @@
-﻿#include "managemodule.h"
-#include "managemodule_p.h"
+﻿#include "ManagementModule.h"
+#include "ManagementModule_p.h"
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -15,10 +15,9 @@
 #include <QtDebug>
 #include <QMetaEnum>
 
-#include "sqldatas/masterlevels.h"
-#include "sqldatas/memberwelcome.h"
-#include "sqldatas/memberblacklist.h"
-#include "sqldatas/memberdeathhouse.h"
+#include "sqldatas/MasterLevels.h"
+#include "sqldatas/MemberBlacklist.h"
+#include "sqldatas/MemberWatchlist.h"
 
 #include "htmlfeedback/htmlfeedback.h"
 #include "ManagementFilters.h"
@@ -26,15 +25,15 @@
 #include "searchmodule.h"
 #include "donatemodule.h"
 
-// class ManageModule
+// class ManagementModule
 
-ManageModule::ManageModule(CoolQ::ServicePortal *engine)
-    : CoolQ::ServiceModule(*new ManageModulePrivate(), engine)
+ManagementModule::ManagementModule(CoolQ::ServicePortal *engine)
+    : CoolQ::ServiceModule(*new ManagementModulePrivate(), engine)
 {
-    Q_ASSERT(ManageModulePrivate::instance == nullptr);
-    ManageModulePrivate::instance = this;
+    Q_ASSERT(ManagementModulePrivate::instance == nullptr);
+    ManagementModulePrivate::instance = this;
 
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     QTranslator *translator = new QTranslator(qApp);
     if (translator->load("qtassistant_zh.qm", ":/translations")) {
@@ -42,9 +41,8 @@ ManageModule::ManageModule(CoolQ::ServicePortal *engine)
     }
 
     d->levels = new MasterLevels(this);
-    d->welcome = new MemberWelcome(this);
     d->blacklist = new MemberBlacklist(this);
-    d->deathHouse = new MemberDeathHouse(this);
+    d->watchlist = new MemberWatchlist(this);
 
     d->htmlFeedback = new HtmlFeedback(this);
 
@@ -72,41 +70,71 @@ ManageModule::ManageModule(CoolQ::ServicePortal *engine)
         }
     }
 
-    new RestartComputer(this);
+    // Private Commands
 
-    new CreateStartupShortcut(this);
-    new DeleteStartupShortcut(this);
+    new PrivateRestartComputer(this);
+
+    new PrivateCreateStartupShortcut(this);
+    new PrivateDeleteStartupShortcut(this);
+
+    // Group Commands
+
+    new GroupBanHongbaoAction(d->banHongbaoGroups, this);
+
+    new GroupCommandsAction(this);
+
+    new GroupBanMemberAction(this);
+    new GroupKickMemberAction(this);
+    new GroupRaiseMemberAction(this);
+
+    new GroupUnbanMemberAction(this);
+    new GroupLowerMemberAction(this);
+
+    new GroupWatchlistAction(this);
+    new GroupBlacklistAction(this);
+
+    // Group Help Commands
+
+    new GroupBanMemberHelpAction(this);
+    new GroupKickMemberHelpAction(this);
+    new GroupRaiseMemberHelpAction(this);
+
+    new GroupUnbanMemberHelpAction(this);
+    new GroupLowerMemberHelpAction(this);
+
+    new GroupWatchlistHelpAction(this);
+    new GroupBlacklistHelpAction(this);
 }
 
-ManageModule::~ManageModule()
+ManagementModule::~ManagementModule()
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
-    ManageModulePrivate::instance = nullptr;
+    ManagementModulePrivate::instance = nullptr;
 
     killTimer(d->checkTimerId);
 }
 
-ManageModule *ManageModule::instance()
+ManagementModule *ManagementModule::instance()
 {
-    return ManageModulePrivate::instance;
+    return ManagementModulePrivate::instance;
 }
 
-MasterLevel ManageModule::level(qint64 gid, qint64 uid) const
+MasterLevel ManagementModule::level(qint64 gid, qint64 uid) const
 {
-    Q_D(const ManageModule);
+    Q_D(const ManagementModule);
 
     return d->levels->level(gid, uid);
 }
 
-void ManageModule::timerEvent(QTimerEvent *)
+void ManagementModule::timerEvent(QTimerEvent *)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 检查新手名单。
     do {
         CoolQ::MemberList members;
-        d->welcome->expiredMembers(members);
+        d->watchlist->expiredMembers(members);
         for (const auto &member : members) {
             CoolQ::MemberInfo mi = memberInfo(member.first, member.second, false);
             if (mi.isValid() && mi.lastSent().isNull()) {
@@ -114,22 +142,13 @@ void ManageModule::timerEvent(QTimerEvent *)
             }
         }
     } while (false);
-
-    // 检查踢出名单。
-    do {
-        CoolQ::MemberList members;
-        d->deathHouse->expiredMembers(members);
-        for (const auto &member : members) {
-            kickGroupMember(member.first, member.second, false);
-        }
-    } while (false);
 }
 
-void ManageModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
+void ManagementModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
 {
     Q_UNUSED(uid);
 
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     QString content = reason.isEmpty() ? tr("作为一个%1，你没有权限执行此操作。").arg(MasterLevels::levelName(level)) : reason;
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("没有相关权限"), content);
@@ -139,34 +158,34 @@ void ManageModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, c
     sendGroupMessage(gid, cqImage(fileName));
 }
 
-void ManageModule::showPrimary(qint64 gid, const QString &title, const QString &content)
+void ManagementModule::showPrimary(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Primary);
 }
 
-void ManageModule::showDanger(qint64 gid, const QString &title, const QString &content)
+void ManagementModule::showDanger(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Danger);
 }
 
-void ManageModule::showWarning(qint64 gid, const QString &title, const QString &content)
+void ManagementModule::showWarning(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Warning);
 }
 
-void ManageModule::showPrompt(qint64 gid, const QString &title, const QString &content)
+void ManagementModule::showPrompt(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Prompt);
 }
 
-void ManageModule::showSuccess(qint64 gid, const QString &title, const QString &content)
+void ManagementModule::showSuccess(qint64 gid, const QString &title, const QString &content)
 {
     feedback(gid, title, content, HtmlFeedback::Success);
 }
 
-void ManageModule::feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style)
+void ManagementModule::feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
@@ -175,34 +194,34 @@ void ManageModule::feedback(qint64 gid, const QString &title, const QString &con
     sendGroupMessage(gid, cqImage(fileName));
 }
 
-void ManageModule::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManagementModule::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Primary);
 }
 
-void ManageModule::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManagementModule::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Danger);
 }
 
-void ManageModule::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManagementModule::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Warning);
 }
 
-void ManageModule::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManagementModule::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Prompt);
 }
 
-void ManageModule::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void ManagementModule::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
     feedbackList(gid, title, members, level, HtmlFeedback::Success);
 }
 
-void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
+void ManagementModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     for (int i = 0, part = 0; i < members.count();) {
         QString html;
@@ -252,9 +271,9 @@ void ManageModule::feedbackList(qint64 gid, const QString &title, const LevelInf
     }
 }
 
-void ManageModule::showWelcomes(qint64 gid, qint64 uid)
+void ManagementModule::showWelcomes(qint64 gid, qint64 uid)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     MasterLevel level = d->levels->level(gid, uid);
     if (MasterLevel::ATField < level) {
@@ -275,9 +294,9 @@ void ManageModule::showWelcomes(qint64 gid, qint64 uid)
     sendGroupMessage(gid, msg);
 }
 
-void ManageModule::saveWelcomes(qint64 gid, qint64 uid)
+void ManagementModule::saveWelcomes(qint64 gid, qint64 uid)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     MasterLevel level = d->levels->level(gid, uid);
     if (MasterLevel::ATField < level) {
@@ -312,25 +331,24 @@ void ManageModule::saveWelcomes(qint64 gid, qint64 uid)
     sendGroupMessage(gid, tr("Save Welcomes finished"));
 }
 
-// class ManageModulePrivate
+// class ManagementModulePrivate
 
-ManageModule *ManageModulePrivate::instance = nullptr;
+ManagementModule *ManagementModulePrivate::instance = nullptr;
 
-ManageModulePrivate::ManageModulePrivate()
+ManagementModulePrivate::ManagementModulePrivate()
     : levels(Q_NULLPTR)
-    , welcome(Q_NULLPTR)
+    , watchlist(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
-    , deathHouse(Q_NULLPTR)
     , htmlFeedback(Q_NULLPTR)
     , checkTimerId(-1)
 {
 }
 
-ManageModulePrivate::~ManageModulePrivate()
+ManagementModulePrivate::~ManagementModulePrivate()
 {
 }
 
-LevelInfoList ManageModulePrivate::findUsers(const QStringList &args)
+LevelInfoList ManagementModulePrivate::findUsers(const QStringList &args)
 {
     QListIterator<QString> i(args);
     LevelInfoList levels;
@@ -376,7 +394,7 @@ LevelInfoList ManageModulePrivate::findUsers(const QStringList &args)
     return levels;
 }
 
-void ManageModulePrivate::safetyNameCard(QString &nameCard)
+void ManagementModulePrivate::safetyNameCard(QString &nameCard)
 {
     // 屏蔽 emoji 表情
     do {
@@ -393,7 +411,7 @@ void ManageModulePrivate::safetyNameCard(QString &nameCard)
     } while (true);
 }
 
-void ManageModulePrivate::formatNameCard(QString &nameCard)
+void ManagementModulePrivate::formatNameCard(QString &nameCard)
 {
     // 在这里，我们对新名片做规范化处理。
     nameCard.remove(' '); // 消除空格，不允许有空格。
@@ -401,7 +419,7 @@ void ManageModulePrivate::formatNameCard(QString &nameCard)
     nameCard.replace("】", "]"); // 替换全角方括号，用半角方括号替代。
 }
 
-void ManageModulePrivate::init(const QJsonObject &o)
+void ManagementModulePrivate::init(const QJsonObject &o)
 {
     QJsonArray superUsers = o.value("superUsers").toArray();
     for (int i = 0; i < superUsers.count(); ++i)
@@ -420,9 +438,9 @@ void ManageModulePrivate::init(const QJsonObject &o)
     qInfo() << "banHongbaoGroups" << this->banHongbaoGroups;
 }
 
-void ManageModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Style style)
+void ManagementModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Style style)
 {
-    Q_Q(ManageModule);
+    Q_Q(ManagementModule);
 
     QFile file(QString(":/Welcomes/%1.utf8.txt").arg(id));
     if (file.open(QFile::ReadOnly)) {

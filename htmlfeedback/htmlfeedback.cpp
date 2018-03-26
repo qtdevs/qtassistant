@@ -83,6 +83,7 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
 
     QSizeF size = htmlDoc.size();
     QPixmap pixmap(width, size.height() + cm * 2);
+    pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -96,8 +97,12 @@ QPixmap HtmlFeedback::draw(const QString &html, int width, Style style) const
     int sw = frameImage->width();
     int sh = frameImage->height();
 
-    if (!d->backgroundImage.isNull())
-        painter.drawTiledPixmap(0, 0, tw, th, d->backgroundImage);
+    if (!d->backgroundImage.isNull()) {
+        painter.save();
+        painter.translate(qrand() % 10, qrand() % 10);
+        painter.drawTiledPixmap(-tw, -th, tw * 3, th * 3, d->backgroundImage);
+        painter.restore();
+    }
 
     painter.drawPixmap(0, 0, 40, 40, *frameImage, 0, 0, 40, 40);
     painter.drawPixmap(40, 0, tw - 80, 40, *frameImage, 40, 0, sw - 80, 40);

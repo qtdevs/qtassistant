@@ -1,28 +1,24 @@
-﻿#ifndef MANAGEMODULE_H
-#define MANAGEMODULE_H
-
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
+﻿#ifndef MANAGEMENTMODULE_H
+#define MANAGEMENTMODULE_H
 
 #include "CqServiceModule.h"
 
-#include "sqldatas/masterlevels.h"
+#include "sqldatas/MasterLevels.h"
 #include "htmlfeedback/htmlfeedback.h"
 
-// class ManageModule
+// class ManagementModule
 
-class ManageModulePrivate;
-class ManageModule : public CoolQ::ServiceModule
+class ManagementModulePrivate;
+class ManagementModule : public CoolQ::ServiceModule
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(ManageModule)
+    Q_DECLARE_PRIVATE(ManagementModule)
 
 public:
-    explicit ManageModule(CoolQ::ServicePortal *engine = nullptr);
-    virtual ~ManageModule();
+    explicit ManagementModule(CoolQ::ServicePortal *engine = nullptr);
+    virtual ~ManagementModule();
 public:
-    static ManageModule *instance();
+    static ManagementModule *instance();
 
 public:
     MasterLevel level(qint64 gid, qint64 uid) const;
@@ -43,46 +39,44 @@ public:
 private:
     void timerEvent(QTimerEvent *) Q_DECL_FINAL;
 
-private:
-    void groupHelp(const CoolQ::MessageEvent &ev, const QStringList &args);
+public:
+    void groupHelpAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+
     void groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args);
     void groupRename(const CoolQ::MessageEvent &ev, const QStringList &args);
     void groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args);
     void groupMember(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupBan(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupKill(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupPower(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupBanAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupKickAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupRaiseAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupUnban(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupUnkill(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupUnpower(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupUnbanAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupLowerAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupWelcome(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupBlacklist(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupWatchlistAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupBlacklistAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-private:
-    void groupHelpHelp(qint64 gid);
+public:
     void groupLevelHelp(qint64 gid);
     void groupRenameHelp(qint64 gid);
     void groupFormatHelp(qint64 gid);
     void groupMemberHelp(qint64 gid);
 
-    void groupBanHelp(qint64 gid);
-    void groupKillHelp(qint64 gid);
-    void groupPowerHelp(qint64 gid);
+    void groupBanHelpAction(qint64 gid);
+    void groupKickHelpAction(qint64 gid);
+    void groupRaiseHelpAction(qint64 gid);
 
-    void groupUnbanHelp(qint64 gid);
-    void groupUnkillHelp(qint64 gid);
-    void groupUnpowerHelp(qint64 gid);
+    void groupUnbanHelpAction(qint64 gid);
+    void groupLowerHelpAction(qint64 gid);
 
-    void groupWelcomeHelp(qint64 gid);
-    void groupBlacklistHelp(qint64 gid);
+    void groupWatchlistHelpAction(qint64 gid);
+    void groupBlacklistHelpAction(qint64 gid);
 
-private:
+public:
     void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());
 
-private:
+public:
     void showPrimary(qint64 gid, const QString &title, const QString &content);
     void showDanger(qint64 gid, const QString &title, const QString &content);
     void showWarning(qint64 gid, const QString &title, const QString &content);
@@ -91,7 +85,7 @@ private:
 
     void feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style);
 
-private:
+public:
     void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
     void showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
     void showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
@@ -100,9 +94,9 @@ private:
 
     void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
 
-private:
+public:
     void showWelcomes(qint64 gid, qint64 uid);
     void saveWelcomes(qint64 gid, qint64 uid);
 };
 
-#endif // MANAGEMODULE_H
+#endif // MANAGEMENTMODULE_H

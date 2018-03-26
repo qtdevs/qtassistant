@@ -38,7 +38,7 @@ public:
 
 public:
     virtual Filters filters() const = 0;
-    virtual QStringList keywords() const = 0;
+    virtual QStringList keywords() const;
     virtual QString description() const;
 
 public:

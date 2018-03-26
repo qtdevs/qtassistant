@@ -35,6 +35,7 @@ public:
 
     QDateTime joinTime() const;
     QDateTime lastSent() const;
+    QString safetyName() const;
 
 private:
     QSharedDataPointer<MemberInfoData> data;

@@ -254,6 +254,12 @@ QDateTime MemberInfo::lastSent() const
     return data->lastSent;
 }
 
+QString MemberInfo::safetyName() const
+{
+    QString name = data->nameCard.trimmed();
+    return name.isEmpty() ? data->nickName : name;
+}
+
 // class MemberInfoData
 
 MemberInfoData::MemberInfoData()

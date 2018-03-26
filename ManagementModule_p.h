@@ -1,30 +1,25 @@
-﻿#ifndef MANAGEMODULE_P_H
-#define MANAGEMODULE_P_H
-
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
+﻿#ifndef MANAGEMENTMODULE_P_H
+#define MANAGEMENTMODULE_P_H
 
 #include <QSet>
 
 #include "CqServiceModule_p.h"
-#include "managemodule.h"
+#include "ManagementModule.h"
 
 class MasterLevels;
-class MemberWelcome;
+class MemberWatchlist;
 class MemberBlacklist;
-class MemberDeathHouse;
 
-class ManageModulePrivate : public CoolQ::ServiceModulePrivate
+class ManagementModulePrivate : public CoolQ::ServiceModulePrivate
 {
-    Q_DECLARE_PUBLIC(ManageModule)
+    Q_DECLARE_PUBLIC(ManagementModule)
 
 public:
-    ManageModulePrivate();
-    virtual ~ManageModulePrivate();
+    ManagementModulePrivate();
+    virtual ~ManagementModulePrivate();
 
 protected:
-    static ManageModule *instance;
+    static ManagementModule *instance;
 
 public:
     static LevelInfoList findUsers(const QStringList &args);
@@ -47,13 +42,12 @@ protected:
 
 private:
     MasterLevels *levels;
-    MemberWelcome *welcome;
+    MemberWatchlist *watchlist;
     MemberBlacklist *blacklist;
-    MemberDeathHouse *deathHouse;
 
     HtmlFeedback *htmlFeedback;
 
     int checkTimerId;
 };
 
-#endif // MANAGEMODULE_P_H
+#endif // MANAGEMENTMODULE_P_H

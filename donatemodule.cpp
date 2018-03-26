@@ -4,7 +4,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-#include "managemodule_p.h"
+#include "ManagementModule_p.h"
 
 // class DonateModule
 
@@ -60,7 +60,7 @@ bool DonateModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
             return true;
         } else {
             QStringList args = CoolQ::trGbk(&ev.gbkMsg[4]).split(' ', QString::SkipEmptyParts);
-            for (auto li : ManageModulePrivate::findUsers(args)) {
+            for (auto li : ManagementModulePrivate::findUsers(args)) {
                 donateMember(ev.from, li.uid);
             }
             return true;

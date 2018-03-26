@@ -1,12 +1,8 @@
 ﻿#ifndef MEMBERBLACKLIST_P_H
 #define MEMBERBLACKLIST_P_H
 
-#if _MSC_VER >= 1600
-#  pragma execution_character_set("utf-8")
-#endif
-
 #include "CqSqliteService_p.h"
-#include "memberblacklist.h"
+#include "MemberBlacklist.h"
 
 class MemberBlacklistPrivate : public CoolQ::SqliteServicePrivate
 {

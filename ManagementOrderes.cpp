@@ -1,21 +1,20 @@
-﻿#include "managemodule.h"
-#include "managemodule_p.h"
+﻿#include "ManagementModule.h"
+#include "ManagementModule_p.h"
 
 #include <QRegularExpression>
 #include <QStringBuilder>
 #include <QTextStream>
 #include <QtDebug>
 
-#include "sqldatas/masterlevels.h"
-#include "sqldatas/memberwelcome.h"
-#include "sqldatas/memberblacklist.h"
-#include "sqldatas/memberdeathhouse.h"
+#include "sqldatas/MasterLevels.h"
+#include "sqldatas/MemberBlacklist.h"
+#include "sqldatas/MemberWatchlist.h"
 
 #include "donatemodule.h"
 
-// class ManageModule
+// class ManagementModule
 
-bool ManageModule::privateMessageEvent(const CoolQ::MessageEvent &ev)
+bool ManagementModule::privateMessageEvent(const CoolQ::MessageEvent &ev)
 {
     if (CoolQ::ServiceModule::privateMessageEvent(ev)) {
         return true;
@@ -24,20 +23,17 @@ bool ManageModule::privateMessageEvent(const CoolQ::MessageEvent &ev)
     return false;
 }
 
-bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
+bool ManagementModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
 {
-    Q_D(ManageModule);
-
-    qInfo("222");
+    Q_D(ManagementModule);
 
     if (!d->managedGroups.contains(ev.from)) {
         return false;
     }
 
-    qInfo("333");
-
-    if (CoolQ::ServiceModule::groupMessageEvent(ev)) {
-        return true;
+    // 移出监控表，不再进行监视。
+    if (d->watchlist->contains(ev.from, ev.sender)) {
+        d->watchlist->removeMember(ev.from, ev.sender);
     }
 
     // 黑名单检查，如果发现匹配，直接踢出。
@@ -46,17 +42,9 @@ bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
         return true;
     }
 
-    if (strncmp(ev.gbkMsg, "[CQ:hb", 6) == 0) {
-        if (d->banHongbaoGroups.contains(ev.from)) {
-            QString msg = at(ev.sender) + tr(", HongBao is not allowed. You will be banned for %1 miniutes, and contact to owner.").arg(60);
-            sendGroupMessage(ev.from, msg);
-            banGroupMember(ev.from, ev.sender, 3600);
-            return true;
-        }
+    if (CoolQ::ServiceModule::groupMessageEvent(ev)) {
+        return true;
     }
-
-    // 移出新手监控，不再进行监视。
-    d->welcome->removeMember(ev.from, ev.sender);
 
     // 分离参数。
     QStringList args;
@@ -75,10 +63,6 @@ bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
     if (!args.isEmpty()) {
         QString c = args.value(0);
 
-        if ((c == "h") || (c == "help")) {
-            groupHelp(ev, args.mid(1));
-            return true;
-        }
         if ((c == "l") || (c == "level")) {
             groupLevel(ev, args.mid(1));
             return true;
@@ -96,41 +80,6 @@ bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
             return true;
         }
 
-        if ((c == "b") || (c == "ban")) {
-            groupBan(ev, args.mid(1));
-            return true;
-        }
-        if ((c == "k") || (c == "kill")) {
-            groupKill(ev, args.mid(1));
-            return true;
-        }
-        if ((c == "p") || (c == "power")) {
-            groupPower(ev, args.mid(1));
-            return true;
-        }
-
-        if ((c == "ub") || (c == "unban")) {
-            groupUnban(ev, args.mid(1));
-            return true;
-        }
-        if ((c == "uk") || (c == "unkill")) {
-            groupUnkill(ev, args.mid(1));
-            return true;
-        }
-        if ((c == "up") || (c == "unpower")) {
-            groupUnpower(ev, args.mid(1));
-            return true;
-        }
-
-        if ((c == "wl") || (c == "welcome")) {
-            groupWelcome(ev, args.mid(1));
-            return true;
-        }
-        if ((c == "bl") || (c == "blacklist")) {
-            groupBlacklist(ev, args.mid(1));
-            return true;
-        }
-
         if (c == "show") {
             showWelcomes(ev.from, ev.sender);
             return true;
@@ -144,7 +93,7 @@ bool ManageModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
     return false;
 }
 
-bool ManageModule::discussMessageEvent(const CoolQ::MessageEvent &ev)
+bool ManagementModule::discussMessageEvent(const CoolQ::MessageEvent &ev)
 {
     if (CoolQ::ServiceModule::discussMessageEvent(ev)) {
         return true;
@@ -153,9 +102,11 @@ bool ManageModule::discussMessageEvent(const CoolQ::MessageEvent &ev)
     return false;
 }
 
-void ManageModule::groupHelp(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupHelpAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_UNUSED(args);
+
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -168,68 +119,31 @@ void ManageModule::groupHelp(const CoolQ::MessageEvent &ev, const QStringList &a
         return;
     }
 
-    QString argv = args.value(0);
-    if (!argv.isEmpty()) {
-        if (argv == "h" || argv == "help") {
-            groupHelpHelp(ev.from);
-            return;
-        } else if (argv == "l" || argv == "level") {
-            groupLevelHelp(ev.from);
-            return;
-        } else if (argv == "r" || argv == "rename") {
-            groupRenameHelp(ev.from);
-            return;
-        } else if (argv == "f" || argv == "format") {
-            groupFormatHelp(ev.from);
-            return;
-        } else if (argv == "m" || argv == "member") {
-            groupMemberHelp(ev.from);
-            return;
-        } else if (argv == "b" || argv == "ban") {
-            groupBanHelp(ev.from);
-            return;
-        } else if (argv == "k" || argv == "kill") {
-            groupKillHelp(ev.from);
-            return;
-        } else if (argv == "p" || argv == "power") {
-            groupPowerHelp(ev.from);
-            return;
-        } else if (argv == "ub" || argv == "unban") {
-            groupUnbanHelp(ev.from);
-            return;
-        } else if (argv == "uk" || argv == "unkill") {
-            groupUnkillHelp(ev.from);
-            return;
-        } else if (argv == "up" || argv == "unpower") {
-            groupUnpowerHelp(ev.from);
-            return;
-        }
-    }
-
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>  </code>" << tr("帮助信息") << " <code>(5+): help     (h)</code>\n";
-    ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level    (l)</code>\n";
-    ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename   (r)</code>\n";
-    ts << "<code>  </code>" << tr("格式名片") << " <code>(5+): format   (f)</code>\n";
-    ts << "<code>  </code>" << tr("禁言命令") << " <code>(5+): ban      (b)</code>\n";
-    ts << "<code>  </code>" << tr("取消禁言") << " <code>(5+): unban    (ub)</code>\n";
-    ts << "<code>  </code>" << tr("踢出命令") << " <code>(3+): kill     (k)</code>\n";
-    ts << "<code>  </code>" << tr("取消踢出") << " <code>(3+): unkill   (uk)</code>\n";
-    ts << "<code>  </code>" << tr("提权命令") << " <code>(1+): power    (p)</code>\n";
-    ts << "<code>  </code>" << tr("取消提权") << " <code>(1+): unpower  (up)</code>\n";
+    // ts << "<code>  </code>" << tr("等级查询") << " <code>( *): level    (l)</code>\n";
+    // ts << "<code>  </code>" << tr("修改名片") << " <code>(5+): rename   (r)</code>\n";
+    // ts << "<code>  </code>" << tr("格式名片") << " <code>(5+): format   (f)</code>\n";
+    ts << "<code>  </code>" << tr("禁言命令") << tr(" <code>(5+): 禁言 @成员 @...</code>\n");
+    ts << "<code>  </code>" << tr("解禁命令") << tr(" <code>(5+): 解禁 @成员 @...</code>\n");
+    ts << "<code>  </code>" << tr("踢出命令") << tr(" <code>(3+): 踢出 @成员 @...</code>\n");
+    ts << "<code>  </code>" << tr("提权命令") << tr(" <code>(1+): 提权 @成员 @...</code>\n");
+    ts << "<code>  </code>" << tr("降权命令") << tr(" <code>(1+): 降权 @成员 @...</code>\n");
+    ts << "\n";
+    ts << "<code>  </code>" << tr("监控表命令") << tr(" <code>(1+): 监控表 [+] [@成员 @...]</code>\n");
+    ts << "<code>  </code>" << tr("黑名单命令") << tr(" <code>(1+): 黑名单 [-] [QQ号码 ...]</code>\n");
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(ev.from, tr("全部命令清单"), usage);
+    showPrompt(ev.from, tr("命令清单"), usage);
 }
 
-void ManageModule::groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     LevelInfoList ll = d->findUsers(args);
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -309,9 +223,9 @@ void ManageModule::groupLevel(const CoolQ::MessageEvent &ev, const QStringList &
     }
 }
 
-void ManageModule::groupRename(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupRename(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -390,9 +304,9 @@ void ManageModule::groupRename(const CoolQ::MessageEvent &ev, const QStringList 
     showSuccess(ev.from, tr("修改名片"), tr("新的名片：%1").arg(nameCard));
 }
 
-void ManageModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -511,9 +425,9 @@ void ManageModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringList 
     }
 }
 
-void ManageModule::groupMember(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupMember(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -568,9 +482,9 @@ void ManageModule::groupMember(const CoolQ::MessageEvent &ev, const QStringList 
     }
 }
 
-void ManageModule::groupBan(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupBanAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -586,7 +500,7 @@ void ManageModule::groupBan(const CoolQ::MessageEvent &ev, const QStringList &ar
     // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
     LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
-        groupBanHelp(ev.from);
+        groupBanHelpAction(ev.from);
         return;
     }
 
@@ -647,7 +561,7 @@ void ManageModule::groupBan(const CoolQ::MessageEvent &ev, const QStringList &ar
         }
     }
     if (invalidArg) {
-        groupBanHelp(ev.from);
+        groupBanHelpAction(ev.from);
         return;
     }
 
@@ -679,12 +593,12 @@ void ManageModule::groupBan(const CoolQ::MessageEvent &ev, const QStringList &ar
         banGroupMember(ev.from, li.uid, duration);
     }
 
-    showSuccessList(ev.from, tr("下列成员已经被禁言"), ll, false);
+    showSuccessList(ev.from, tr("下列成员已禁言"), ll, false);
 }
 
-void ManageModule::groupKill(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupKickAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -700,13 +614,13 @@ void ManageModule::groupKill(const CoolQ::MessageEvent &ev, const QStringList &a
     // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
     LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
-        groupKillHelp(ev.from);
+        groupKickHelpAction(ev.from);
         return;
     }
 
     // 检查参数有效性。
     if (args.count() != ll.count()) {
-        groupKillHelp(ev.from);
+        groupKickHelpAction(ev.from);
         return;
     }
 
@@ -728,16 +642,15 @@ void ManageModule::groupKill(const CoolQ::MessageEvent &ev, const QStringList &a
     // 执行具体操作
 
     for (const LevelInfo &li : ll) {
-        banGroupMember(ev.from, li.uid, 600);
-        d->deathHouse->addMember(ev.from, li.uid);
+        kickGroupMember(ev.from, li.uid, false);
     }
 
-    showSuccessList(ev.from, tr("下列成员已经被加入驱逐队列"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已踢出"), ll, true);
 }
 
-void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupRaiseAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -753,7 +666,7 @@ void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &
     // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
     LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
-        groupPowerHelp(ev.from);
+        groupRaiseHelpAction(ev.from);
         return;
     }
 
@@ -792,7 +705,7 @@ void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &
         }
     }
     if (invalidArg) {
-        groupPowerHelp(ev.from);
+        groupRaiseHelpAction(ev.from);
         return;
     }
 
@@ -816,7 +729,7 @@ void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &
         break;
     }
     if (MasterLevel::Unknown == newLevel) {
-        groupPowerHelp(ev.from);
+        groupRaiseHelpAction(ev.from);
         return;
     }
 
@@ -857,12 +770,12 @@ void ManageModule::groupPower(const CoolQ::MessageEvent &ev, const QStringList &
         }
     }
 
-    showSuccessList(ev.from, tr("下列成员已经被赋权"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已提权"), ll, true);
 }
 
-void ManageModule::groupUnban(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupUnbanAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -878,13 +791,13 @@ void ManageModule::groupUnban(const CoolQ::MessageEvent &ev, const QStringList &
     // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
     LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
-        groupUnbanHelp(ev.from);
+        groupUnbanHelpAction(ev.from);
         return;
     }
 
     // 检查参数有效性。
     if (args.count() != ll.count()) {
-        groupUnbanHelp(ev.from);
+        groupUnbanHelpAction(ev.from);
         return;
     }
 
@@ -909,65 +822,12 @@ void ManageModule::groupUnban(const CoolQ::MessageEvent &ev, const QStringList &
         banGroupMember(ev.from, li.uid, 0);
     }
 
-    showSuccessList(ev.from, tr("下列成员已经被解禁"), ll, false);
+    showSuccessList(ev.from, tr("下列成员已解禁"), ll, false);
 }
 
-void ManageModule::groupUnkill(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupLowerAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
-
-    // 普通成员不应答。
-    MasterLevel level = d->levels->level(ev.from, ev.sender);
-    if (MasterLevel::Unknown == level) {
-        return;
-    }
-    // 三级管理及以上。
-    if (level > MasterLevel::Master3) {
-        permissionDenied(ev.from, ev.sender, level);
-        return;
-    }
-
-    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
-    LevelInfoList ll = d->findUsers(args);
-    if (ll.isEmpty()) {
-        groupUnkillHelp(ev.from);
-        return;
-    }
-
-    // 检查参数有效性。
-    if (args.count() != ll.count()) {
-        groupUnkillHelp(ev.from);
-        return;
-    }
-
-    // 管理等级检查
-
-    // 检查一：管理只能处理比自己等级低的成员。
-    LevelInfoList ml;
-    d->levels->update(ev.from, ll);
-    for (const LevelInfo &li : ll) {
-        if (li.level <= level) {
-            ml << li;
-        }
-    }
-    if (!ml.isEmpty()) {
-        showDangerList(ev.from, tr("你没有权限执行此操作"), ml, true);
-        return;
-    }
-
-    // 执行具体操作
-
-    for (const LevelInfo &li : ll) {
-        banGroupMember(ev.from, li.uid, 0);
-        d->deathHouse->removeMember(ev.from, li.uid);
-    }
-
-    showSuccessList(ev.from, tr("下列成员已经被移出驱逐队列"), ll, false);
-}
-
-void ManageModule::groupUnpower(const CoolQ::MessageEvent &ev, const QStringList &args)
-{
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -983,7 +843,7 @@ void ManageModule::groupUnpower(const CoolQ::MessageEvent &ev, const QStringList
     // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
     LevelInfoList ll = d->findUsers(args);
     if (ll.isEmpty()) {
-        groupUnpowerHelp(ev.from);
+        groupLowerHelpAction(ev.from);
         return;
     }
 
@@ -1007,7 +867,7 @@ void ManageModule::groupUnpower(const CoolQ::MessageEvent &ev, const QStringList
         }
     }
     if (invalidArg) {
-        groupUnpowerHelp(ev.from);
+        groupLowerHelpAction(ev.from);
         return;
     }
 
@@ -1043,12 +903,12 @@ void ManageModule::groupUnpower(const CoolQ::MessageEvent &ev, const QStringList
         }
     }
 
-    showSuccessList(ev.from, tr("下列成员已经被降权"), ll, true);
+    showSuccessList(ev.from, tr("下列成员已降权"), ll, true);
 }
 
-void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupWatchlistAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -1056,7 +916,7 @@ void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList
         return;
     }
     // 首席管理及以上。
-    if (level > MasterLevel::Master1) {
+    if (level >= MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
@@ -1072,16 +932,9 @@ void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList
     for (int i = 0; i < c; ++i) {
         const auto &argv = args.at(i);
 
-        if ((argv == "a") || (argv == "add")) {
+        if ((argv == "+") || (argv == tr("加入")) || (argv == tr("添加"))) {
             if (argvOption == 0) {
                 argvOption = 1;
-            } else {
-                invalidArg = true;
-                break;
-            }
-        } else if ((argv == "d") || (argv == "delete")) {
-            if (argvOption == 0) {
-                argvOption = 2;
             } else {
                 invalidArg = true;
                 break;
@@ -1092,16 +945,16 @@ void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList
         }
     }
     if (invalidArg) {
-        groupWelcomeHelp(ev.from);
+        groupWatchlistHelpAction(ev.from);
         return;
     } else if (!ll.isEmpty() && (0 == argvOption)) {
-        groupWelcomeHelp(ev.from);
+        groupWatchlistHelpAction(ev.from);
         return;
     }
 
-    // 打印新人监控。
-    if (0 == argvOption) { // list
-        QHashIterator<CoolQ::Member, qint64> i(d->welcome->members());
+    // 打印监控表。
+    if (0 == argvOption) { // watchlist
+        QHashIterator<CoolQ::Member, qint64> i(d->watchlist->members());
         while (i.hasNext()) {
             i.next();
             if (i.key().first == ev.from) {
@@ -1109,10 +962,10 @@ void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList
             }
         }
         if (ll.isEmpty()) {
-            showPrompt(ev.from, tr("新人监控"), tr("新人监控中没有任何成员"));
+            showPrompt(ev.from, tr("监控表"), tr("监控表中没有任何成员"));
         } else {
             d->levels->update(ev.from, ll);
-            showPromptList(ev.from, tr("新人监控"), ll, true);
+            showPromptList(ev.from, tr("监控表"), ll, true);
         }
         return;
     }
@@ -1134,24 +987,18 @@ void ManageModule::groupWelcome(const CoolQ::MessageEvent &ev, const QStringList
 
     // 执行具体操作
 
-    if (1 == argvOption) { // add
+    if (1 == argvOption) {
         for (const LevelInfo &li : ll) {
-            d->welcome->addMember(ev.from, li.uid);
+            d->watchlist->addMember(ev.from, li.uid);
         }
 
-        showSuccessList(ev.from, tr("下列成员已经被加入新人监控"), ll, true);
-    } else if (2 == argvOption) { // delete
-        for (const LevelInfo &li : ll) {
-            d->welcome->removeMember(ev.from, li.uid);
-        }
-
-        showSuccessList(ev.from, tr("下列成员已经被移出新人监控"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已加入监控表"), ll, true);
     }
 }
 
-void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringList &args)
+void ManagementModule::groupBlacklistAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
-    Q_D(ManageModule);
+    Q_D(ManagementModule);
 
     // 普通成员不应答。
     MasterLevel level = d->levels->level(ev.from, ev.sender);
@@ -1159,7 +1006,7 @@ void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringLi
         return;
     }
     // 首席管理及以上。
-    if (level > MasterLevel::Master1) {
+    if (level >= MasterLevel::Master1) {
         permissionDenied(ev.from, ev.sender, level);
         return;
     }
@@ -1168,7 +1015,6 @@ void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringLi
     LevelInfoList ll = d->findUsers(args);
 
     // 分析其他命令行参数。
-    bool argvGlobal = false;
     int argvOption = 0;
 
     bool invalidArg = false;
@@ -1176,62 +1022,40 @@ void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringLi
     for (int i = 0; i < c; ++i) {
         const auto &argv = args.at(i);
 
-        if ((argv == "a") || (argv == "add")) {
+        if ((argv == "-") || (argv == tr("移出")) || (argv == tr("移除"))) {
             if (argvOption == 0) {
                 argvOption = 1;
             } else {
                 invalidArg = true;
                 break;
             }
-        } else if ((argv == "d") || (argv == "delete")) {
-            if (argvOption == 0) {
-                argvOption = 2;
-            } else {
-                invalidArg = true;
-                break;
-            }
-        } else if ((argv == "g") || (argv == "global")) {
-            if (argvGlobal) {
-                invalidArg = true;
-                break;
-            }
-            argvGlobal = true;
         } else {
             invalidArg = true;
             break;
         }
     }
     if (invalidArg) {
-        groupBlacklistHelp(ev.from);
+        groupBlacklistHelpAction(ev.from);
         return;
     } else if (!ll.isEmpty() && (0 == argvOption)) {
-        groupBlacklistHelp(ev.from);
+        groupBlacklistHelpAction(ev.from);
         return;
     }
 
     // 打印黑名单列表。
     if (0 == argvOption) {
-        qint64 gid = argvGlobal ? 0 : ev.from;
         QHashIterator<CoolQ::Member, qint64> i(d->blacklist->members());
         while (i.hasNext()) {
             i.next();
-            if (i.key().first == gid) {
+            if (i.key().first == ev.from) {
                 ll.append(LevelInfo(i.key().second, MasterLevel::Unknown));
             }
         }
         if (ll.isEmpty()) {
-            if (argvGlobal) {
-                showPrompt(ev.from, tr("跨群黑名单"), tr("黑名单中没有任何成员"));
-            } else {
-                showPrompt(ev.from, tr("本群黑名单"), tr("黑名单中没有任何成员"));
-            }
+            showPrompt(ev.from, tr("黑名单"), tr("黑名单中没有任何成员"));
         } else {
             d->levels->update(ev.from, ll);
-            if (argvGlobal) {
-                showPromptList(ev.from, tr("跨群黑名单"), ll, true);
-            } else {
-                showPromptList(ev.from, tr("本群黑名单"), ll, true);
-            }
+            showPromptList(ev.from, tr("黑名单"), ll, true);
         }
         return;
     }
@@ -1253,27 +1077,16 @@ void ManageModule::groupBlacklist(const CoolQ::MessageEvent &ev, const QStringLi
 
     // 执行具体操作
 
-    if (1 == argvOption) { // add
+    if (1 == argvOption) {
         for (const LevelInfo &li : ll) {
-            d->blacklist->addMember(argvGlobal ? 0 : ev.from, li.uid);
+            d->blacklist->removeMember(ev.from, li.uid);
         }
 
-        showSuccessList(ev.from, tr("下列成员已经被加入黑名单"), ll, true);
-    } else if (2 == argvOption) { // delete
-        for (const LevelInfo &li : ll) {
-            d->blacklist->removeMember(argvGlobal ? 0 : ev.from, li.uid);
-        }
-
-        showSuccessList(ev.from, tr("下列成员已经被移出黑名单"), ll, true);
+        showSuccessList(ev.from, tr("下列成员已移出黑名单"), ll, true);
     }
 }
 
-void ManageModule::groupHelpHelp(qint64 gid)
-{
-    Q_UNUSED(gid);
-}
-
-void ManageModule::groupLevelHelp(qint64 gid)
+void ManagementModule::groupLevelHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1291,7 +1104,7 @@ void ManageModule::groupLevelHelp(qint64 gid)
     showPrompt(gid, tr("等级查询的用法"), usage);
 }
 
-void ManageModule::groupRenameHelp(qint64 gid)
+void ManagementModule::groupRenameHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1307,7 +1120,7 @@ void ManageModule::groupRenameHelp(qint64 gid)
     showPrompt(gid, "修改名片的用法", usage);
 }
 
-void ManageModule::groupFormatHelp(qint64 gid)
+void ManagementModule::groupFormatHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1322,7 +1135,7 @@ void ManageModule::groupFormatHelp(qint64 gid)
     showPrompt(gid, tr("格式名片的用法"), usage);
 }
 
-void ManageModule::groupMemberHelp(qint64 gid)
+void ManagementModule::groupMemberHelp(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
@@ -1337,132 +1150,117 @@ void ManageModule::groupMemberHelp(qint64 gid)
     showPrompt(gid, tr("成员信息的用法"), usage);
 }
 
-void ManageModule::groupBanHelp(qint64 gid)
+void ManagementModule::groupBanHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo ban(b) [" << tr("参数") << "] " << tr("成员") << " ...</code>\n";
+    ts << tr("命令：<code>禁言 @成员 @...</code>") << "\n";
     ts << tr("权限要求：") << "5+\n";
     ts << tr("参数列表：") << "\n";
-    ts << "<code>  [1-30]d </code>" << tr("禁言天数") << "\n";
-    ts << "<code>  [1-24]h </code>" << tr("禁言时数") << "\n";
-    ts << "<code>  [1-60]m </code>" << tr("禁言分数") << "\n";
+    ts << tr("<code>  [1-30]d</code>：") << tr("天数") << "\n";
+    ts << tr("<code>  [1-24]h</code>：") << tr("小时") << "\n";
+    ts << tr("<code>  [1-60]m</code>：") << tr("分钟") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("禁言命令的用法"), usage);
+    showPrompt(gid, tr("禁言命令"), usage);
 }
 
-void ManageModule::groupKillHelp(qint64 gid)
+void ManagementModule::groupKickHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo kill(k) " << tr("成员") << " ...</code>\n";
+    ts << tr("命令：<code>踢出 @成员 @...</code>") << "\n";
     ts << tr("权限要求：") << "3+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("踢出命令的用法"), usage);
+    showPrompt(gid, tr("踢出命令"), usage);
 }
 
-void ManageModule::groupPowerHelp(qint64 gid)
+void ManagementModule::groupRaiseHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo power(p) [" << tr("参数") << "] " << tr("成员") << " ...</code>\n";
+    ts << tr("命令：<code>提权 @成员  @...</code>") << "\n";
     ts << tr("权限要求：") << "1+\n";
     ts << tr("参数列表：") << "\n";
-    ts << "<code>  m[1-5] </code>" << tr("权限等级") << "\n";
+    ts << tr("<code>  m[1-5]</code>：") << tr("等级") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("提权命令的用法"), usage);
+    showPrompt(gid, tr("提权命令"), usage);
 }
 
-void ManageModule::groupUnbanHelp(qint64 gid)
+void ManagementModule::groupUnbanHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo unban(ub) " << tr("成员") << " ...</code>\n";
+    ts << tr("命令：<code>解禁 @成员 @...</code>") << "\n";
     ts << tr("权限要求：") << "5+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("取消禁言的用法"), usage);
+    showPrompt(gid, tr("解禁命令"), usage);
 }
 
-void ManageModule::groupUnkillHelp(qint64 gid)
+void ManagementModule::groupLowerHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo unkill(uk) " << tr("成员") << " ...</code>\n";
-    ts << tr("权限要求：") << "3+\n";
-    ts << "</pre>";
-
-    ts.flush();
-
-    showPrompt(gid, tr("取消踢出的用法"), usage);
-}
-
-void ManageModule::groupUnpowerHelp(qint64 gid)
-{
-    QString usage;
-    QTextStream ts(&usage);
-
-    ts << "<pre>";
-    ts << "<code>sudo unpower(up) " << tr("成员") << " ...</code>\n";
+    ts << tr("命令：<code>降权 @成员 @...</code>") << "\n";
     ts << tr("权限要求：") << "1+\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("取消提权的用法"), usage);
+    showPrompt(gid, tr("降权命令"), usage);
 }
 
-void ManageModule::groupWelcomeHelp(qint64 gid)
+void ManagementModule::groupWatchlistHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo welcome(wl) [" << tr("参数") << "] [" << tr("成员") << "] ...</code>\n";
+    ts << tr("命令：<code>监控表 [参数] [@成员 @...]</code>") << "\n";
     ts << tr("权限要求：") << "1+\n";
     ts << tr("参数列表：") << "\n";
-    ts << "<code>  add(a)|delete(d) </code>" << tr("加入|移除新人监控") << "\n";
+    ts << tr("<code>  加入(+)</code>：") << tr("加入监控") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("新人监控的用法"), usage);
+    showPrompt(gid, tr("监控表用法"), usage);
 }
 
-void ManageModule::groupBlacklistHelp(qint64 gid)
+void ManagementModule::groupBlacklistHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo blacklist(bl) [" << tr("参数") << "] [" << tr("成员") << "] ...</code>\n";
+    ts << tr("命令：<code>黑名单 [参数] [QQ号码 ...]</code>") << "\n";
     ts << tr("权限要求：") << "1+\n";
     ts << tr("参数列表：") << "\n";
-    ts << "<code>  add(a)|delete(d) </code>" << tr("加入|移除黑名单") << "\n";
+    ts << tr("<code>  移出(-)</code>：") << tr("移出名单") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, tr("黑名单的用法"), usage);
+    showPrompt(gid, tr("黑名单命令"), usage);
 }

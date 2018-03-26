@@ -119,20 +119,32 @@ bool ServiceModule::initialize()
 
     for(MessageFilter *filter : d->filters) {
         if (filter->filters() & MessageFilter::PrivateFilter) {
-            for (const QString &keyword : filter->keywords()) {
-                d->privateFilters.insert(trGbk(keyword), filter);
+            if (filter->keywords().isEmpty()) {
+                d->privateFilters.append(filter);
+            } else {
+                for (const QString &keyword : filter->keywords()) {
+                    d->privateKeywordFilters.insert(trGbk(keyword), filter);
+                }
             }
         }
 
         if (filter->filters() & MessageFilter::GroupFilter) {
-            for (const QString &keyword : filter->keywords()) {
-                d->groupFilters.insert(trGbk(keyword), filter);
+            if (filter->keywords().isEmpty()) {
+                d->groupFilters.append(filter);
+            } else {
+                for (const QString &keyword : filter->keywords()) {
+                    d->groupKeywordFilters.insert(trGbk(keyword), filter);
+                }
             }
         }
 
         if (filter->filters() & MessageFilter::DiscussFilter) {
-            for (const QString &keyword : filter->keywords()) {
-                d->discussFilters.insert(trGbk(keyword), filter);
+            if (filter->keywords().isEmpty()) {
+                d->discussFilters.append(filter);
+            } else {
+                for (const QString &keyword : filter->keywords()) {
+                    d->discussKeywordFilters.insert(trGbk(keyword), filter);
+                }
             }
         }
     }
@@ -363,9 +375,17 @@ bool ServiceModule::privateMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceModule);
 
+    if (!d->privateFilters.isEmpty()) {
+        for (auto filter : d->privateFilters) {
+            if (filter->privateMessageFilter(0, ev)) {
+                return true;
+            }
+        }
+    }
+
     for (int i = 0; i < 33; ++i) {
         if ((ev.gbkMsg[i] == 0) || (ev.gbkMsg[i] == ' ')) {
-            if (auto filter = d->privateFilters.value(QByteArray(ev.gbkMsg, i)))
+            if (auto filter = d->privateKeywordFilters.value(QByteArray(ev.gbkMsg, i)))
                 return filter->privateMessageFilter(i, ev);
         }
     }
@@ -383,9 +403,17 @@ bool ServiceModule::groupMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceModule);
 
+    if (!d->groupFilters.isEmpty()) {
+        for (auto filter : d->groupFilters) {
+            if (filter->groupMessageFilter(0, ev)) {
+                return true;
+            }
+        }
+    }
+
     for (int i = 0; i < 33; ++i) {
         if ((ev.gbkMsg[i] == 0) || (ev.gbkMsg[i] == ' ')) {
-            if (auto filter = d->groupFilters.value(QByteArray(ev.gbkMsg, i)))
+            if (auto filter = d->groupKeywordFilters.value(QByteArray(ev.gbkMsg, i)))
                 return filter->groupMessageFilter(i, ev);
         }
     }
@@ -403,9 +431,17 @@ bool ServiceModule::discussMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceModule);
 
+    if (!d->discussFilters.isEmpty()) {
+        for (auto filter : d->discussFilters) {
+            if (filter->discussMessageFilter(0, ev)) {
+                return true;
+            }
+        }
+    }
+
     for (int i = 0; i < 33; ++i) {
         if ((ev.gbkMsg[i] == 0) || (ev.gbkMsg[i] == ' ')) {
-            if (auto filter = d->discussFilters.value(QByteArray(ev.gbkMsg, i)))
+            if (auto filter = d->discussKeywordFilters.value(QByteArray(ev.gbkMsg, i)))
                 return filter->discussMessageFilter(i, ev);
         }
     }
