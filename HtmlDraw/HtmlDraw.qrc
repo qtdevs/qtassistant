@@ -1,5 +1,5 @@
 ﻿<RCC>
-    <qresource prefix="/htmlfeedback">
+    <qresource prefix="/HtmlDraw">
         <file>css/Danger.css</file>
         <file>css/Primary.css</file>
         <file>css/Prompt.css</file>

@@ -4,7 +4,7 @@
 #include "CqServiceModule.h"
 
 #include "sqldatas/MasterLevels.h"
-#include "htmlfeedback/htmlfeedback.h"
+#include "HtmlDraw/HtmlDraw.h"
 
 // class ManagementModule
 
@@ -83,7 +83,7 @@ public:
     void showPrompt(qint64 gid, const QString &title, const QString &content);
     void showSuccess(qint64 gid, const QString &title, const QString &content);
 
-    void feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style);
+    void feedback(qint64 gid, const QString &title, const QString &content, HtmlDraw::Style style);
 
 public:
     void showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
@@ -92,7 +92,7 @@ public:
     void showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
     void showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level);
 
-    void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style);
+    void feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlDraw::Style style);
 
 public:
     void showWelcomes(qint64 gid, qint64 uid);

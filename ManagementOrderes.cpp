@@ -10,8 +10,6 @@
 #include "sqldatas/MemberBlacklist.h"
 #include "sqldatas/MemberWatchlist.h"
 
-#include "donatemodule.h"
-
 // class ManagementModule
 
 bool ManagementModule::privateMessageEvent(const CoolQ::MessageEvent &ev)

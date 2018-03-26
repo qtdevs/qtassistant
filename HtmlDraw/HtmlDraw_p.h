@@ -1,22 +1,27 @@
-﻿#ifndef HTMLFEEDBACK_P_H
-#define HTMLFEEDBACK_P_H
+﻿#ifndef HTMLDRAW_P_H
+#define HTMLDRAW_P_H
 
 #include <QHash>
 #include <QPixmap>
+#include "HtmlDraw.h"
 
-#include "htmlfeedback.h"
-
-class HtmlFeedbackPrivate
+class HtmlDrawPrivate
 {
-    Q_DECLARE_PUBLIC(HtmlFeedback)
+    Q_DECLARE_PUBLIC(HtmlDraw)
 
 public:
-    HtmlFeedbackPrivate();
-    virtual ~HtmlFeedbackPrivate();
+    HtmlDrawPrivate();
+    virtual ~HtmlDrawPrivate();
 protected:
-    HtmlFeedback *q_ptr;
+    HtmlDraw *q_ptr;
 
 public:
+    static HtmlDrawPrivate *instance;
+
+public:
+    void updateMaterialData(const QString &path);
+    QPixmap drawText(const QString &text, HtmlDraw::Style style,
+                     int width, qint64 theme = 0) const;
     QString readCssFile(const QString &fileName);
 
 private:
@@ -54,6 +59,9 @@ private:
     QHash<qint64, QPixmap> warningImages;
     QHash<qint64, QPixmap> promptImages;
     QHash<qint64, QPixmap> successImages;
+
+public:
+
 };
 
-#endif // HTMLFEEDBACK_P_H
+#endif // HTMLDRAW_P_H

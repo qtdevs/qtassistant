@@ -13,7 +13,7 @@
 #include "sqldatas/MemberBlacklist.h"
 #include "sqldatas/MemberWatchlist.h"
 
-#include "htmlfeedback.h"
+#include "HtmlDraw.h"
 
 // class ManagementModule
 
@@ -102,9 +102,9 @@ bool ManagementModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
                     QFile file(fileInfo.absoluteFilePath());
                     if (file.open(QFile::ReadOnly)) {
                         auto html = QString::fromUtf8(file.readAll());
-                        auto styleEnum = QMetaEnum::fromType<HtmlFeedback::Style>();
+                        auto styleEnum = QMetaEnum::fromType<HtmlDraw::Style>();
                         auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
-                        auto image = d->htmlFeedback->drawText(html, 400, (HtmlFeedback::Style)style, ev.from);
+                        auto image = d->htmlDraw->drawText(html, (HtmlDraw::Style)style, 400, ev.from);
                         if (++i > 1) ts << '\n';
                         ts << cqImage(saveImage(image));
                     }

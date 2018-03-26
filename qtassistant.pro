@@ -21,23 +21,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(CqPortal/CqPortal.pri)
-include(sqldatas/sqldatas.pri)
+include(SqlDatas/SqlDatas.pri)
+include(HtmlDraw/HtmlDraw.pri)
 include(translations/translations.pri)
-include(htmlfeedback/htmlfeedback.pri)
 
 SOURCES += main.cpp \
-    donatemodule.cpp \
-    searchmodule.cpp \
     ManagementFilters.cpp \
     ManagementModule.cpp \
     ManagementEvents.cpp \
     ManagementOrderes.cpp
 
 HEADERS += \
-    donatemodule.h \
-    donatemodule_p.h \
-    searchmodule.h \
-    searchmodule_p.h \
     ManagementFilters.h \
     ManagementModule.h \
     ManagementModule_p.h

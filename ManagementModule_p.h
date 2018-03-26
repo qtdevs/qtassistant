@@ -38,14 +38,14 @@ private:
     QStringList  welcomeImages;
 
 protected:
-    void saveWelcomes(const QString &id, HtmlFeedback::Style style);
+    void saveWelcomes(const QString &id, HtmlDraw::Style style);
 
 private:
     MasterLevels *levels;
     MemberWatchlist *watchlist;
     MemberBlacklist *blacklist;
 
-    HtmlFeedback *htmlFeedback;
+    HtmlDraw *htmlDraw;
 
     int checkTimerId;
 };

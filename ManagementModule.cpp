@@ -19,11 +19,8 @@
 #include "sqldatas/MemberBlacklist.h"
 #include "sqldatas/MemberWatchlist.h"
 
-#include "htmlfeedback/htmlfeedback.h"
+#include "HtmlDraw/HtmlDraw.h"
 #include "ManagementFilters.h"
-
-#include "searchmodule.h"
-#include "donatemodule.h"
 
 // class ManagementModule
 
@@ -44,8 +41,7 @@ ManagementModule::ManagementModule(CoolQ::ServiceEngine *engine)
     d->blacklist = new MemberBlacklist(this);
     d->watchlist = new MemberWatchlist(this);
 
-    d->htmlFeedback = new HtmlFeedback(this);
-    d->htmlFeedback->updateMaterials(usrFilePath("Htmls"));
+    new HtmlDraw(usrFilePath("Materials"), this);
 
     d->checkTimerId = startTimer(10000);
 
@@ -149,81 +145,75 @@ void ManagementModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel leve
 {
     Q_UNUSED(uid);
 
-    Q_D(ManagementModule);
-
     QString content = reason.isEmpty() ? tr("作为一个%1，你没有权限执行此操作。").arg(MasterLevels::levelName(level)) : reason;
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(tr("没有相关权限"), content);
 
-    QPixmap feedback = d->htmlFeedback->drawDangerText(html, 400, gid);
+    QPixmap feedback = HtmlDraw::drawDangerText(html, 400, gid);
     QString fileName = saveImage(feedback);
     sendGroupMessage(gid, cqImage(fileName));
 }
 
 void ManagementModule::showPrimary(qint64 gid, const QString &title, const QString &content)
 {
-    feedback(gid, title, content, HtmlFeedback::Primary);
+    feedback(gid, title, content, HtmlDraw::Primary);
 }
 
 void ManagementModule::showDanger(qint64 gid, const QString &title, const QString &content)
 {
-    feedback(gid, title, content, HtmlFeedback::Danger);
+    feedback(gid, title, content, HtmlDraw::Danger);
 }
 
 void ManagementModule::showWarning(qint64 gid, const QString &title, const QString &content)
 {
-    feedback(gid, title, content, HtmlFeedback::Warning);
+    feedback(gid, title, content, HtmlDraw::Warning);
 }
 
 void ManagementModule::showPrompt(qint64 gid, const QString &title, const QString &content)
 {
-    feedback(gid, title, content, HtmlFeedback::Prompt);
+    feedback(gid, title, content, HtmlDraw::Prompt);
 }
 
 void ManagementModule::showSuccess(qint64 gid, const QString &title, const QString &content)
 {
-    feedback(gid, title, content, HtmlFeedback::Success);
+    feedback(gid, title, content, HtmlDraw::Success);
 }
 
-void ManagementModule::feedback(qint64 gid, const QString &title, const QString &content, HtmlFeedback::Style style)
+void ManagementModule::feedback(qint64 gid, const QString &title, const QString &content, HtmlDraw::Style style)
 {
-    Q_D(ManagementModule);
-
     QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(title, content);
 
-    QPixmap feedback = d->htmlFeedback->drawText(html, 400, style, gid);
+    QPixmap feedback = HtmlDraw::drawText(html, style, 400, gid);
     QString fileName = saveImage(feedback);
     sendGroupMessage(gid, cqImage(fileName));
 }
 
 void ManagementModule::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
-    feedbackList(gid, title, members, level, HtmlFeedback::Primary);
+    feedbackList(gid, title, members, level, HtmlDraw::Primary);
 }
 
 void ManagementModule::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
-    feedbackList(gid, title, members, level, HtmlFeedback::Danger);
+    feedbackList(gid, title, members, level, HtmlDraw::Danger);
 }
 
 void ManagementModule::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
-    feedbackList(gid, title, members, level, HtmlFeedback::Warning);
+    feedbackList(gid, title, members, level, HtmlDraw::Warning);
 }
 
 void ManagementModule::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
-    feedbackList(gid, title, members, level, HtmlFeedback::Prompt);
+    feedbackList(gid, title, members, level, HtmlDraw::Prompt);
 }
 
 void ManagementModule::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
 {
-    feedbackList(gid, title, members, level, HtmlFeedback::Success);
+    feedbackList(gid, title, members, level, HtmlDraw::Success);
 }
 
-void ManagementModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlFeedback::Style style)
+void ManagementModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlDraw::Style style)
 {
-    Q_D(ManagementModule);
-
     for (int i = 0, part = 0; i < members.count();) {
         QString html;
         do {
@@ -266,7 +256,7 @@ void ManagementModule::feedbackList(qint64 gid, const QString &title, const Leve
             ds << "</div></body></html>";
         } while (false);
 
-        QPixmap feedback = d->htmlFeedback->drawText(html, 400, style, gid);
+        QPixmap feedback = HtmlDraw::drawText(html, style, 400, gid);
         QString fileName = saveImage(feedback);
         sendGroupMessage(gid, cqImage(fileName));
     }
@@ -314,9 +304,9 @@ void ManagementModule::saveWelcomes(qint64 gid, qint64 uid)
                     QFile file(fileInfo.absoluteFilePath());
                     if (file.open(QFile::ReadOnly)) {
                         auto html = QString::fromUtf8(file.readAll());
-                        auto styleEnum = QMetaEnum::fromType<HtmlFeedback::Style>();
+                        auto styleEnum = QMetaEnum::fromType<HtmlDraw::Style>();
                         auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
-                        auto image = d->htmlFeedback->drawText(html, 400, (HtmlFeedback::Style)style, gid);
+                        auto image = HtmlDraw::drawText(html, (HtmlDraw::Style)style, 400, gid);
                         auto fileName = imgFilePath(QString("Welcomes/%1.PNG").arg(nameParts.at(0)));
                         if (image.save(fileName, "PNG")) {
                             qInfo() << "Save Welcomes:" << fileName;
@@ -340,7 +330,7 @@ ManagementModulePrivate::ManagementModulePrivate()
     : levels(Q_NULLPTR)
     , watchlist(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
-    , htmlFeedback(Q_NULLPTR)
+    , htmlDraw(Q_NULLPTR)
     , checkTimerId(-1)
 {
 }
@@ -439,7 +429,7 @@ void ManagementModulePrivate::init(const QJsonObject &o)
     qInfo() << "banHongbaoGroups" << this->banHongbaoGroups;
 }
 
-void ManagementModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Style style)
+void ManagementModulePrivate::saveWelcomes(const QString &id, HtmlDraw::Style style)
 {
     Q_Q(ManagementModule);
 
@@ -447,7 +437,7 @@ void ManagementModulePrivate::saveWelcomes(const QString &id, HtmlFeedback::Styl
     if (file.open(QFile::ReadOnly)) {
         auto htmlText = QString::fromUtf8(file.readAll());
 
-        QPixmap image = htmlFeedback->drawText(htmlText, 400, style, 0);
+        QPixmap image = htmlDraw->drawText(htmlText, style, 400, 0);
         if (image.save(q->imgFilePath(QString("Welcomes/%1.png").arg(id)), "PNG")) {
             qInfo() << "Output 1";
         } else {
