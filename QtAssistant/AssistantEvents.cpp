@@ -91,7 +91,7 @@ bool AssistantModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
     QString msg;
     QTextStream ts(&msg);
 
-    QFileInfo rootInfo(imgFilePath("Welcomes"));
+    QFileInfo rootInfo(usrFilePath(QString("Welcomes/%1").arg(ev.from)));
     if (rootInfo.isDir()) {
         int i = 0;
         QDir root(rootInfo.absoluteFilePath());
@@ -115,8 +115,10 @@ bool AssistantModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
 
     ts.flush();
 
-    sendGroupMessage(ev.from, at(ev.member));
-    sendGroupMessage(ev.from, msg);
+    if (!msg.isEmpty()) {
+        sendGroupMessage(ev.from, at(ev.member));
+        sendGroupMessage(ev.from, msg);
+    }
 
     return false;
 }

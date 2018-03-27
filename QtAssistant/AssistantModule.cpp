@@ -49,18 +49,6 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
 
     d->levels->init(d->superUsers);
 
-    QFileInfo rootInfo(imgFilePath("Welcomes"));
-    if (rootInfo.isDir()) {
-        QDir root(rootInfo.absoluteFilePath());
-        for (auto fileInfo : root.entryInfoList(QDir::Files, QDir::Name)) {
-            if ((fileInfo.suffix().toLower() == "png") || (fileInfo.suffix().toLower() == "jpg")) {
-                auto fileName = fileInfo.absoluteFilePath();
-                fileName = fileName.mid(d->imagePath.count() + 1);
-                d->welcomeImages << QDir::toNativeSeparators(fileName);
-            }
-        }
-    }
-
     // Private Commands
 
     new PrivateRestartComputer(this);
@@ -268,11 +256,27 @@ void AssistantModule::showWelcomes(qint64 gid, qint64 uid)
     QString msg;
     QTextStream ts(&msg);
 
-    for (auto fileName : d->welcomeImages)
-        ts << image(fileName) << "\n";
-
-    auto keys = QUuid::createUuid().toRfc4122().toHex();
-    ts << QString::fromLatin1(keys).left(8) << " - " << at(uid);
+    QFileInfo rootInfo(usrFilePath(QString("Welcomes/%1").arg(gid)));
+    if (rootInfo.isDir()) {
+        int i = 0;
+        QDir root(rootInfo.absoluteFilePath());
+        for (auto fileInfo : root.entryInfoList(QDir::Files, QDir::Name)) {
+            if (fileInfo.suffix() == "txt") {
+                QStringList nameParts = fileInfo.fileName().split('.');
+                if (nameParts.count() == 3) {
+                    QFile file(fileInfo.absoluteFilePath());
+                    if (file.open(QFile::ReadOnly)) {
+                        auto html = QString::fromUtf8(file.readAll());
+                        auto styleEnum = QMetaEnum::fromType<HtmlDraw::Style>();
+                        auto style = styleEnum.keysToValue(nameParts.at(1).toLatin1());
+                        auto image = d->htmlDraw->drawText(html, (HtmlDraw::Style)style, 400, gid);
+                        if (++i > 1) ts << '\n';
+                        ts << this->image(saveImage(image));
+                    }
+                }
+            }
+        }
+    }
 
     ts.flush();
 

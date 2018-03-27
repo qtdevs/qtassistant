@@ -215,6 +215,7 @@ QStringList GroupCommandsAction::keywords() const
 
     keywords << QString(u8"命令清单");
     keywords << QString(u8"命令");
+    keywords << QString(u8"帮助");
     keywords << QString(u8"命令列表");
 
     return keywords;
