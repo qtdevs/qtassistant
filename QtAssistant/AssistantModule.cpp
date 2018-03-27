@@ -51,6 +51,7 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
 
     // Private Commands
 
+    new PrivateCleanDataCaches(this);
     new PrivateRestartComputer(this);
 
     new PrivateCreateStartupShortcut(this);

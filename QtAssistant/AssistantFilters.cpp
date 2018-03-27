@@ -3,6 +3,7 @@
 #include "AssistantModule.h"
 #include "AssistantModule_p.h"
 
+#include <QDir>
 #include <QtDebug>
 
 /*
@@ -51,6 +52,47 @@ bool AssistantFilters::discussMessageFilter(int i, const CoolQ::MessageEvent &ev
 }
 
 */
+
+// class PrivateCleanDataCaches
+
+PrivateCleanDataCaches::PrivateCleanDataCaches(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters PrivateCleanDataCaches::filters() const
+{
+    return PrivateFilter;
+}
+
+QStringList PrivateCleanDataCaches::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"清理缓存");
+    keywords << QString(u8"清理数据缓存");
+    keywords << QString(u8"缓存清理");
+
+    return keywords;
+}
+
+bool PrivateCleanDataCaches::privateMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    Q_UNUSED(i);
+
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        if (MasterLevel::ATField == mm->level(0, ev.sender)) {
+            QString filePath = module()->resFilePath("image");
+            for (auto fileInfo : QDir(filePath).entryInfoList(QDir::Files)) {
+                QFile::remove(fileInfo.absoluteFilePath());
+            }
+
+            mm->sendPrivateMessage(ev.sender, QString(u8"缓存清理完毕..."));
+        }
+    }
+
+    return true;
+}
 
 // class PrivateRestartComputer
 

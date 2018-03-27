@@ -26,6 +26,23 @@ public:
 
 */
 
+// class PrivateCleanDataCaches
+
+class PrivateCleanDataCaches : public CoolQ::MessageFilter
+{
+    Q_OBJECT
+
+public:
+    explicit PrivateCleanDataCaches(CoolQ::ServiceModule *parent);
+
+public:
+    Filters filters() const final;
+    QStringList keywords() const final;
+
+public:
+    bool privateMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
+};
+
 // class PrivateRestartComputer
 
 class PrivateRestartComputer : public CoolQ::MessageFilter
