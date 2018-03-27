@@ -1,4 +1,4 @@
-﻿/*! \class CqPersonInfo
+﻿/*! \class CoolQ::PersonInfo
  * \brief 个人信息
  */
 
@@ -120,6 +120,9 @@ QString PersonInfo::nickName() const
 
 // class CqPersonInfoData
 
+/*!
+ * \internal
+ */
 PersonInfoData::PersonInfoData()
     : uid(0)
     , sex(0)

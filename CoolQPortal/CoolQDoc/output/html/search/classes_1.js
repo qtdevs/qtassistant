@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['friendaddevent',['FriendAddEvent',['../struct_friend_add_event.html',1,'']]],
-  ['friendrequestevent',['FriendRequestEvent',['../struct_friend_request_event.html',1,'']]]
+  ['grouprequestevent',['GroupRequestEvent',['../struct_cool_q_1_1_group_request_event.html',1,'CoolQ']]]
 ];

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.14"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Qt for CoolQ: C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/CoolQSqliteService.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Qt for CoolQ
+   &#160;<span id="projectnumber">2.0</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.14 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/CoolQSqliteService.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef COOLQSQLITESERVICE_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define COOLQSQLITESERVICE_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QSqlQuery&gt;</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;CoolQInterface.h&quot;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_cool_q.html">CoolQ</a> {</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">class </span>SqliteServicePrivate;</div><div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="class_cool_q_1_1_sqlite_service.html">   11</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_cool_q_1_1_sqlite_service.html">SqliteService</a> : <span class="keyword">public</span> <a class="code" href="class_cool_q_1_1_interface.html">Interface</a></div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    Q_OBJECT</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    Q_DECLARE_PRIVATE(<a class="code" href="class_cool_q_1_1_sqlite_service.html">SqliteService</a>)</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <a class="code" href="class_cool_q_1_1_sqlite_service.html#a4447f168fdc794e403d1933efe640bd5">SqliteService</a>(SqliteServicePrivate &amp;dd, QObject *parent);</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#a4447f168fdc794e403d1933efe640bd5">SqliteService</a>(QObject *parent);</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#a3fb973f22143fddf50acaa5b0939002f">~SqliteService</a>();</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8">   24</a></span>&#160;    <span class="keyword">enum</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9">Result</a> { <a class="code" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb">NoChange</a>, <a class="code" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a32e0741d4fcdc01369bd44ddad2e9294">Done</a>, <a class="code" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8">SqlError</a> };</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#aebec9a0ef8f613fe71d5699763de9364">setFileName</a>(<span class="keyword">const</span> QString &amp;fileName);</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#a2147cd909c3bc60bd07f1b03b32f677d">prepare</a>(<span class="keyword">const</span> QString &amp;s);</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_sqlite_service.html#abb65d28fc16df7fa3be700fb6ff634b3">openDatabase</a>();</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">protected</span>:</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    QSqlQuery <a class="code" href="class_cool_q_1_1_sqlite_service.html#aac897a5219a5363f832da956b1f14082">query</a>(<span class="keyword">const</span> QString &amp;sql);</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    QSqlQuery <a class="code" href="class_cool_q_1_1_sqlite_service.html#aac897a5219a5363f832da956b1f14082">query</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *srcSql);</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;};</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;} <span class="comment">// namespace CoolQ</span></div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif // COOLQSQLITESERVICE_H</span></div><div class="ttc" id="class_cool_q_1_1_interface_html"><div class="ttname"><a href="class_cool_q_1_1_interface.html">CoolQ::Interface</a></div><div class="ttdoc">通用接口类 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:111</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a51eb5dba6ea3783e870af55c80aa08f9a32e0741d4fcdc01369bd44ddad2e9294"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a32e0741d4fcdc01369bd44ddad2e9294">CoolQ::SqliteService::Done</a></div><div class="ttdoc">已经完成 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.h:24</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8">CoolQ::SqliteService::SqlError</a></div><div class="ttdoc">数据库错误 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.h:24</div></div>
+<div class="ttc" id="namespace_cool_q_html"><div class="ttname"><a href="namespace_cool_q.html">CoolQ</a></div><div class="ttdef"><b>Definition:</b> CoolQInterface.cpp:290</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a2147cd909c3bc60bd07f1b03b32f677d"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a2147cd909c3bc60bd07f1b03b32f677d">CoolQ::SqliteService::prepare</a></div><div class="ttdeci">void prepare(const QString &amp;s)</div><div class="ttdoc">设置预处理 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:94</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_aebec9a0ef8f613fe71d5699763de9364"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#aebec9a0ef8f613fe71d5699763de9364">CoolQ::SqliteService::setFileName</a></div><div class="ttdeci">void setFileName(const QString &amp;fileName)</div><div class="ttdoc">设置文件名 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:82</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html">CoolQ::SqliteService</a></div><div class="ttdoc">数据存储类 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.h:11</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a51eb5dba6ea3783e870af55c80aa08f9"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9">CoolQ::SqliteService::Result</a></div><div class="ttdeci">Result</div><div class="ttdoc">CqSqlite 执行结果 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.h:24</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a4447f168fdc794e403d1933efe640bd5"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a4447f168fdc794e403d1933efe640bd5">CoolQ::SqliteService::SqliteService</a></div><div class="ttdeci">SqliteService(SqliteServicePrivate &amp;dd, QObject *parent)</div><div class="ttdoc">构造函数 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:57</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_aac897a5219a5363f832da956b1f14082"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#aac897a5219a5363f832da956b1f14082">CoolQ::SqliteService::query</a></div><div class="ttdeci">QSqlQuery query(const QString &amp;sql)</div><div class="ttdoc">执行 Sql 语句 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:145</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_abb65d28fc16df7fa3be700fb6ff634b3"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#abb65d28fc16df7fa3be700fb6ff634b3">CoolQ::SqliteService::openDatabase</a></div><div class="ttdeci">bool openDatabase()</div><div class="ttdoc">打开数据库 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:106</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a3fb973f22143fddf50acaa5b0939002f"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a3fb973f22143fddf50acaa5b0939002f">CoolQ::SqliteService::~SqliteService</a></div><div class="ttdeci">virtual ~SqliteService()</div><div class="ttdoc">析构函数 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.cpp:73</div></div>
+<div class="ttc" id="class_cool_q_1_1_sqlite_service_html_a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb"><div class="ttname"><a href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb">CoolQ::SqliteService::NoChange</a></div><div class="ttdoc">没有发生改变 </div><div class="ttdef"><b>Definition:</b> CoolQSqliteService.h:24</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.14
+</small></address>
+</body>
+</html>

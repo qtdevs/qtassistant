@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['gbkmsg',['gbkMsg',['../struct_message_event.html#aa0a1e26b4841d34bee410ce9c35042c2',1,'MessageEvent::gbkMsg()'],['../struct_friend_request_event.html#a6bffae3d2fba7500019916a2c196421b',1,'FriendRequestEvent::gbkMsg()'],['../struct_group_request_event.html#a0cb809e7df4b3f38865de3f40e64f3a0',1,'GroupRequestEvent::gbkMsg()']]],
-  ['gbktag',['gbkTag',['../struct_friend_request_event.html#ab72329054ef562faa646a002c29cf871',1,'FriendRequestEvent::gbkTag()'],['../struct_group_request_event.html#ae1960988343b87d53515ae76dfcdda90',1,'GroupRequestEvent::gbkTag()']]]
+  ['gbkmsg',['gbkMsg',['../struct_cool_q_1_1_message_event.html#a20021fea5e4fc8a39a7ceb58c7d14f3c',1,'CoolQ::MessageEvent::gbkMsg()'],['../struct_cool_q_1_1_friend_request_event.html#a62a8b43e1cc76ee7c10018768083c144',1,'CoolQ::FriendRequestEvent::gbkMsg()'],['../struct_cool_q_1_1_group_request_event.html#ae5ac65977df66e908955b3dfa5203baa',1,'CoolQ::GroupRequestEvent::gbkMsg()']]],
+  ['gbktag',['gbkTag',['../struct_cool_q_1_1_friend_request_event.html#abe36c697f60221ce13cd705f3a260c9c',1,'CoolQ::FriendRequestEvent::gbkTag()'],['../struct_cool_q_1_1_group_request_event.html#ada237d0ed97a219845a408519b219f20',1,'CoolQ::GroupRequestEvent::gbkTag()']]]
 ];

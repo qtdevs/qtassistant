@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['unknown',['Unknown',['../class_cq_portal.html#a38b12865e54051ddc202a2ffa68716b1a59751e79125e849ade908eac2918626f',1,'CqPortal']]]
+  ['privatefilter',['PrivateFilter',['../class_cool_q_1_1_message_filter.html#a784f510148c0565b783416c6e38151c6a63a530389f7674328d4f8790a943a0b0',1,'CoolQ::MessageFilter']]]
 ];

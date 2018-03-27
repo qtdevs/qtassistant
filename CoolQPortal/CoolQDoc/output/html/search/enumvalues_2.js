@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['sqlerror',['SqlError',['../class_cq_sqlite.html#a70ab8f02795bb5614a7ace2f025b82e3a069572925efb87950131dfc106cf07cc',1,'CqSqlite']]]
+  ['nochange',['NoChange',['../class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb',1,'CoolQ::SqliteService']]],
+  ['noerror',['NoError',['../class_cool_q_1_1_service_module.html#a92366efaccbe79f3af33fe167527128eabbdb25ae07ee4514cc48fb0274564b04',1,'CoolQ::ServiceModule']]]
 ];

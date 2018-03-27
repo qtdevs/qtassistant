@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['acceptrequest',['acceptRequest',['../class_cq_portal.html#a5282c6a0ed59642123e06309d5efc835',1,'CqPortal::acceptRequest(const char *gbkTag)'],['../class_cq_portal.html#acd5ba86bb2930634280b1abc7a2414f9',1,'CqPortal::acceptRequest(qint32 type, const char *gbkTag)']]],
-  ['admingroupmember',['adminGroupMember',['../class_cq_portal.html#aca2d7addd1b8d9de14005bad3c8be01b',1,'CqPortal']]],
-  ['age',['age',['../class_cq_member_info.html#aae56da225ce5c34f2eee73350046eecf',1,'CqMemberInfo::age()'],['../class_cq_person_info.html#a5af75e8e4d86fbb58cafc9cad997da9d',1,'CqPersonInfo::age()']]],
-  ['appfilepath',['appFilePath',['../class_cq_portal.html#af511438e74f95a97011f3bb3c91fbaa3',1,'CqPortal::appFilePath(const char *srcName) const'],['../class_cq_portal.html#af713d0021895240fc9f5291e3cc91972',1,'CqPortal::appFilePath(const QString &amp;name) const']]]
+  ['acceptrequest',['acceptRequest',['../class_cool_q_1_1_service_module.html#ac20ad9cfa3efaecc510ea04175faa978',1,'CoolQ::ServiceModule::acceptRequest(const char *gbkTag)'],['../class_cool_q_1_1_service_module.html#a290501138a7cff2fb31d089d195985dc',1,'CoolQ::ServiceModule::acceptRequest(qint32 type, const char *gbkTag)']]],
+  ['admingroupmember',['adminGroupMember',['../class_cool_q_1_1_service_module.html#a763d0a11a522f642f24c69e43e7cdaf3',1,'CoolQ::ServiceModule']]],
+  ['age',['age',['../class_cool_q_1_1_member_info.html#ae0433d20f9b48ded956876b16090b3aa',1,'CoolQ::MemberInfo::age()'],['../class_cool_q_1_1_person_info.html#aae0384ab9c13108240fede77f91d4503',1,'CoolQ::PersonInfo::age()']]],
+  ['appfilepath',['appFilePath',['../class_cool_q_1_1_service_module.html#a2c287cd40937e0f3767d144416719618',1,'CoolQ::ServiceModule::appFilePath(const char *srcName) const'],['../class_cool_q_1_1_service_module.html#ac8e906f9e1f257c46ede089d8bd6b561',1,'CoolQ::ServiceModule::appFilePath(const QString &amp;name) const']]],
+  ['at',['at',['../class_cool_q_1_1_service_module.html#aa39f7ec2a04b09c256e47c341c0662b3',1,'CoolQ::ServiceModule']]]
 ];

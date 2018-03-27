@@ -1,31 +1,31 @@
 ﻿/*!
- * \class CqSqlite
+ * \class CoolQ::SqliteService
  * \brief 数据存储类
  */
 
 /*!
- * \enum CqSqlite::Result
+ * \enum CoolQ::SqliteService::Result
  * \brief CqSqlite 执行结果
  *
  * 酷Q API 密切相关的执行函数都会返回此枚举作为结果表达。
  */
 
 /*!
- * \var CqSqlite::NoChange
+ * \var CoolQ::SqliteService::NoChange
  * \brief 没有发生改变
  *
  * 如果数据库内容没有发生变化，返回此枚举值。
  */
 
 /*!
- * \var CqSqlite::Done
+ * \var CoolQ::SqliteService::Done
  * \brief 已经完成
  *
  * 如果数据库操作执行成功，返回此枚举值。
  */
 
 /*!
- * \var CqSqlite::SqlError
+ * \var CoolQ::SqliteService::SqlError
  * \brief 数据库错误
  *
  * 如果数据库操作执行失败，返回此枚举值。更多信息可以看酷Q的日志。
@@ -59,6 +59,9 @@ SqliteService::SqliteService(SqliteServicePrivate &dd, QObject *parent)
 {
 }
 
+/*!
+ * \brief 构造函数
+ */
 SqliteService::SqliteService(QObject *parent)
     : Interface(*new SqliteServicePrivate(), parent)
 {
@@ -66,8 +69,6 @@ SqliteService::SqliteService(QObject *parent)
 
 /*!
  * \brief 析构函数
- *
- * \internal
  */
 SqliteService::~SqliteService()
 {
@@ -164,10 +165,16 @@ QSqlQuery SqliteService::query(const char *srcSql)
 
 QString SqliteServicePrivate::basePath;
 
+/*!
+ * \internal
+ */
 SqliteServicePrivate::SqliteServicePrivate()
 {
 }
 
+/*!
+ * \internal
+ */
 SqliteServicePrivate::~SqliteServicePrivate()
 {
 }

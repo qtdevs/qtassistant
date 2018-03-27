@@ -2,6 +2,7 @@
 #define COOLQPERSONINFO_H
 
 #include "CoolQInterface.h"
+
 #include <QSharedDataPointer>
 #include <QDateTime>
 

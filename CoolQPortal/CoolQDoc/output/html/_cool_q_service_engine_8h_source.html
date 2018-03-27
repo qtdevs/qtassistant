@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.14"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Qt for CoolQ: C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/CoolQServiceEngine.h 源文件</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Qt for CoolQ
+   &#160;<span id="projectnumber">2.0</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.14 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/CoolQServiceEngine.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef COOLQSERVICEENGINE_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define COOLQSERVICEENGINE_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;CoolQInterface.h&quot;</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;CoolQMemberInfo.h&quot;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;CoolQPersonInfo.h&quot;</span></div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_cool_q.html">CoolQ</a> {</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">class </span>ServiceModule;</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">class </span>ServiceEnginePrivate;</div><div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="class_cool_q_1_1_service_engine.html">   13</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_cool_q_1_1_service_engine.html">ServiceEngine</a> : <span class="keyword">public</span> <a class="code" href="class_cool_q_1_1_interface.html">Interface</a></div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    Q_OBJECT</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    Q_DECLARE_PRIVATE(<a class="code" href="class_cool_q_1_1_service_engine.html">ServiceEngine</a>)</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_cool_q_1_1_service_engine.html#aa4b6fe9c22cf718fa7ff751a8fe2b4d6">ServiceEngine</a>(QObject *parent);</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_cool_q_1_1_service_engine.html">ServiceEngine</a> *<a class="code" href="class_cool_q_1_1_service_engine.html#a0039428f19f148edd959f9edaa8ae87d">instance</a>();</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a4d69543cb88d3cbc04f1249769cd0dec">~ServiceEngine</a>();</div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#acf0631d90b011413a7f572f41eb250c7">initialize</a>() <span class="keyword">override</span>;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a886d670a155e0cb0ec069ab39abf54eb">privateMessageEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_message_event.html">MessageEvent</a> &amp;ev);</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a906496560eae3711e0d4f9be104ef2a1">groupMessageEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_message_event.html">MessageEvent</a> &amp;ev);</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a9f5ef58a228cd1ee1970f18b2607590a">discussMessageEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_message_event.html">MessageEvent</a> &amp;ev);</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a87c508a34ea34b5ce4f2121039833840">masterChangeEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_master_change_event.html">MasterChangeEvent</a> &amp;ev);</div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#aad86389fa612e90e345401be423c9a75">friendRequestEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_friend_request_event.html">FriendRequestEvent</a> &amp;ev);</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#adf227d835c99b6cff98e4337fcd7af4f">groupRequestEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_group_request_event.html">GroupRequestEvent</a> &amp;ev);</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a0eef476faa263b318a6c835c86d33d50">friendAddEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_friend_add_event.html">FriendAddEvent</a> &amp;ev);</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#aad68859ef2565df3ff0463126f6f09ab">memberJoinEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_member_join_event.html">MemberJoinEvent</a> &amp;ev);</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_cool_q_1_1_service_engine.html#a8890bc2a4536435f295635756d64e12c">memberLeaveEvent</a>(<span class="keyword">const</span> <a class="code" href="struct_cool_q_1_1_member_leave_event.html">MemberLeaveEvent</a> &amp;ev);</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;} <span class="comment">// namespace CoolQ</span></div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#endif // COOLQSERVICEENGINE_H</span></div><div class="ttc" id="class_cool_q_1_1_service_engine_html_a0039428f19f148edd959f9edaa8ae87d"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a0039428f19f148edd959f9edaa8ae87d">CoolQ::ServiceEngine::instance</a></div><div class="ttdeci">static ServiceEngine * instance()</div><div class="ttdoc">返回单例函数 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:41</div></div>
+<div class="ttc" id="class_cool_q_1_1_interface_html"><div class="ttname"><a href="class_cool_q_1_1_interface.html">CoolQ::Interface</a></div><div class="ttdoc">通用接口类 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:111</div></div>
+<div class="ttc" id="namespace_cool_q_html"><div class="ttname"><a href="namespace_cool_q.html">CoolQ</a></div><div class="ttdef"><b>Definition:</b> CoolQInterface.cpp:290</div></div>
+<div class="ttc" id="struct_cool_q_1_1_master_change_event_html"><div class="ttname"><a href="struct_cool_q_1_1_master_change_event.html">CoolQ::MasterChangeEvent</a></div><div class="ttdoc">管理变更事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:34</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a9f5ef58a228cd1ee1970f18b2607590a"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a9f5ef58a228cd1ee1970f18b2607590a">CoolQ::ServiceEngine::discussMessageEvent</a></div><div class="ttdeci">virtual bool discussMessageEvent(const MessageEvent &amp;ev)</div><div class="ttdoc">讨论组消息过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:124</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a0eef476faa263b318a6c835c86d33d50"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a0eef476faa263b318a6c835c86d33d50">CoolQ::ServiceEngine::friendAddEvent</a></div><div class="ttdeci">virtual bool friendAddEvent(const FriendAddEvent &amp;ev)</div><div class="ttdoc">好友添加事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:192</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a4d69543cb88d3cbc04f1249769cd0dec"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a4d69543cb88d3cbc04f1249769cd0dec">CoolQ::ServiceEngine::~ServiceEngine</a></div><div class="ttdeci">virtual ~ServiceEngine()</div><div class="ttdoc">析构函数 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:31</div></div>
+<div class="ttc" id="struct_cool_q_1_1_group_request_event_html"><div class="ttname"><a href="struct_cool_q_1_1_group_request_event.html">CoolQ::GroupRequestEvent</a></div><div class="ttdoc">群组请求事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:61</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html">CoolQ::ServiceEngine</a></div><div class="ttdoc">服务引擎类 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.h:13</div></div>
+<div class="ttc" id="struct_cool_q_1_1_member_leave_event_html"><div class="ttname"><a href="struct_cool_q_1_1_member_leave_event.html">CoolQ::MemberLeaveEvent</a></div><div class="ttdoc">成员离开事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:98</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_adf227d835c99b6cff98e4337fcd7af4f"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#adf227d835c99b6cff98e4337fcd7af4f">CoolQ::ServiceEngine::groupRequestEvent</a></div><div class="ttdeci">virtual bool groupRequestEvent(const GroupRequestEvent &amp;ev)</div><div class="ttdoc">加入群组事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:175</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a906496560eae3711e0d4f9be104ef2a1"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a906496560eae3711e0d4f9be104ef2a1">CoolQ::ServiceEngine::groupMessageEvent</a></div><div class="ttdeci">virtual bool groupMessageEvent(const MessageEvent &amp;ev)</div><div class="ttdoc">群组消息过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:107</div></div>
+<div class="ttc" id="struct_cool_q_1_1_friend_add_event_html"><div class="ttname"><a href="struct_cool_q_1_1_friend_add_event.html">CoolQ::FriendAddEvent</a></div><div class="ttdoc">好友添加事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:77</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a8890bc2a4536435f295635756d64e12c"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a8890bc2a4536435f295635756d64e12c">CoolQ::ServiceEngine::memberLeaveEvent</a></div><div class="ttdeci">virtual bool memberLeaveEvent(const MemberLeaveEvent &amp;ev)</div><div class="ttdoc">成员退出事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:226</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a886d670a155e0cb0ec069ab39abf54eb"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a886d670a155e0cb0ec069ab39abf54eb">CoolQ::ServiceEngine::privateMessageEvent</a></div><div class="ttdeci">virtual bool privateMessageEvent(const MessageEvent &amp;ev)</div><div class="ttdoc">私有消息过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:90</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_aad68859ef2565df3ff0463126f6f09ab"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#aad68859ef2565df3ff0463126f6f09ab">CoolQ::ServiceEngine::memberJoinEvent</a></div><div class="ttdeci">virtual bool memberJoinEvent(const MemberJoinEvent &amp;ev)</div><div class="ttdoc">成员添加事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:209</div></div>
+<div class="ttc" id="struct_cool_q_1_1_friend_request_event_html"><div class="ttname"><a href="struct_cool_q_1_1_friend_request_event.html">CoolQ::FriendRequestEvent</a></div><div class="ttdoc">好友请求事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:46</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_a87c508a34ea34b5ce4f2121039833840"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#a87c508a34ea34b5ce4f2121039833840">CoolQ::ServiceEngine::masterChangeEvent</a></div><div class="ttdeci">virtual bool masterChangeEvent(const MasterChangeEvent &amp;ev)</div><div class="ttdoc">管理员变更事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:141</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_acf0631d90b011413a7f572f41eb250c7"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#acf0631d90b011413a7f572f41eb250c7">CoolQ::ServiceEngine::initialize</a></div><div class="ttdeci">virtual bool initialize() override</div><div class="ttdoc">标准初始化函数 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:49</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_aa4b6fe9c22cf718fa7ff751a8fe2b4d6"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#aa4b6fe9c22cf718fa7ff751a8fe2b4d6">CoolQ::ServiceEngine::ServiceEngine</a></div><div class="ttdeci">ServiceEngine(QObject *parent)</div><div class="ttdoc">构造函数 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:21</div></div>
+<div class="ttc" id="struct_cool_q_1_1_member_join_event_html"><div class="ttname"><a href="struct_cool_q_1_1_member_join_event.html">CoolQ::MemberJoinEvent</a></div><div class="ttdoc">成员加入事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:86</div></div>
+<div class="ttc" id="class_cool_q_1_1_service_engine_html_aad86389fa612e90e345401be423c9a75"><div class="ttname"><a href="class_cool_q_1_1_service_engine.html#aad86389fa612e90e345401be423c9a75">CoolQ::ServiceEngine::friendRequestEvent</a></div><div class="ttdeci">virtual bool friendRequestEvent(const FriendRequestEvent &amp;ev)</div><div class="ttdoc">好友请求事件过滤器 </div><div class="ttdef"><b>Definition:</b> CoolQServiceEngine.cpp:158</div></div>
+<div class="ttc" id="struct_cool_q_1_1_message_event_html"><div class="ttname"><a href="struct_cool_q_1_1_message_event.html">CoolQ::MessageEvent</a></div><div class="ttdoc">通用消息事件 </div><div class="ttdef"><b>Definition:</b> CoolQInterface.h:18</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.14
+</small></address>
+</body>
+</html>

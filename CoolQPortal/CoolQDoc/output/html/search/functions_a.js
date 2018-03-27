@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['masterchangeeventfilter',['masterChangeEventFilter',['../class_cq_portal.html#a27ee8fb131dd1696ef82fd81d63ff4d0',1,'CqPortal']]],
-  ['memberinfo',['memberInfo',['../class_cq_portal.html#ae1762e59931cba7606b5eb2d3cdb2d0e',1,'CqPortal']]],
-  ['memberjoineventfilter',['memberJoinEventFilter',['../class_cq_portal.html#a91dc3767133ff5171bcdcc4502f5c8b1',1,'CqPortal']]],
-  ['memberleaveeventfilter',['memberLeaveEventFilter',['../class_cq_portal.html#aafe2ce017934250d8d8c435dbebfc538',1,'CqPortal']]],
-  ['mute',['mute',['../class_cq_portal.html#a11d8f57fb1301e2c7faef9254086294e',1,'CqPortal']]]
+  ['lastsent',['lastSent',['../class_cool_q_1_1_member_info.html#a20b480d9aa271a34960cf444fe60077f',1,'CoolQ::MemberInfo']]],
+  ['leavediscuss',['leaveDiscuss',['../class_cool_q_1_1_service_module.html#a294dccceb0f48c7e6f3f1a963970cab1',1,'CoolQ::ServiceModule']]],
+  ['leavegroup',['leaveGroup',['../class_cool_q_1_1_service_module.html#a4b37fce1339200b49a91b0ce01216808',1,'CoolQ::ServiceModule']]],
+  ['levelname',['levelName',['../class_cool_q_1_1_member_info.html#aecc993dcc6f2743ec14b3e7256a37560',1,'CoolQ::MemberInfo']]],
+  ['loadimage',['loadImage',['../class_cool_q_1_1_service_module.html#a015b863123e11617b9ffab0e35b24907',1,'CoolQ::ServiceModule']]],
+  ['location',['location',['../class_cool_q_1_1_member_info.html#a769e748cbaff764c65b883b27dd1db99',1,'CoolQ::MemberInfo']]]
 ];

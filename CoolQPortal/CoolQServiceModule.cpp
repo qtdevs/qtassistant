@@ -1,24 +1,24 @@
 ﻿/*!
- * \class ServiceModule
- * \brief 插件入口类
+ * \class CoolQ::ServiceModule
+ * \brief 服务模块类
  */
 
 /*!
- * \enum ServiceModule::Result
+ * \enum CoolQ::ServiceModule::Result
  * \brief ServiceModule 执行结果
  *
- * 酷Q API 密切相关的执行函数都会返回此枚举作为结果表达。
+ *  CoolQ  API 密切相关的执行函数都会返回此枚举作为结果表达。
  */
 
 /*!
- * \var ServiceModule::NoError
+ * \var CoolQ::ServiceModule::NoError
  * \brief 没有错误（成功）
  *
  * 如果函数执行成功，都会返回当前值。
  */
 
 /*!
- * \var ServiceModule::Unknown
+ * \var CoolQ::ServiceModule::Unknown
  * \brief 未知错误
  *
  * 不在当前枚举内的错误值，都会返回 Unknown。
@@ -69,6 +69,11 @@ ServiceModule::ServiceModule(ServiceModulePrivate &dd, ServiceEngine *parent)
     QDir().mkpath(SqliteServicePrivate::basePath);
 }
 
+/*!
+ * \brief 构造函数
+ *
+ * \internal
+ */
 ServiceModule::ServiceModule(ServiceEngine *parent)
     : Interface(*new ServiceModulePrivate(), parent)
 {
@@ -99,6 +104,11 @@ ServiceModule::~ServiceModule()
 {
 }
 
+/*!
+ * \brief 返回所属引擎
+ *
+ * 此函数将返回此模块所属的引擎。
+ */
 ServiceEngine *ServiceModule::engine() const
 {
     Q_D(const ServiceModule);
@@ -106,6 +116,11 @@ ServiceEngine *ServiceModule::engine() const
     return d->engine;
 }
 
+/*!
+ * \brief 标准初始化接口
+ *
+ * \internal
+ */
 bool ServiceModule::initialize()
 {
     Q_D(ServiceModule);
@@ -151,9 +166,9 @@ bool ServiceModule::initialize()
 }
 
 /*!
- * \brief 返回酷Q中@他人的字符串
+ * \brief 返回 CoolQ 中@他人的字符串
  *
- * 此函数将返回酷Q中@他人的字符串。
+ * 此函数将返回 CoolQ 中@他人的字符串。
  */
 QString ServiceModule::at(qint64 uid)
 {
@@ -161,9 +176,9 @@ QString ServiceModule::at(qint64 uid)
 }
 
 /*!
- * \brief 返回酷Q中的 emoji 表情
+ * \brief 返回 CoolQ 中的 emoji 表情的字符串
  *
- * 此函数将返回酷Q中的 emoji 表情。
+ * 此函数将返回 CoolQ 中的 emoji 表情的字符串。
  */
 QString ServiceModule::emoji(int emojiCode)
 {
@@ -171,9 +186,9 @@ QString ServiceModule::emoji(int emojiCode)
 }
 
 /*!
- * \brief 返回酷Q中发送图片的字符串
+ * \brief 返回 CoolQ 中发送图片的字符串
  *
- * 此函数将返回发送图片的字符串。此文件需要保存在酷Q待发送图片目录中。
+ * 此函数将返回发送图片的字符串。此文件需要保存在 CoolQ 待发送图片目录中。
  * \sa ServiceModule::loadImage ServiceModule::saveImage
  */
 QString ServiceModule::image(const QString &name)
@@ -181,9 +196,14 @@ QString ServiceModule::image(const QString &name)
     return QString::fromLatin1("[CQ:image,file=%1]").arg(name);
 }
 
-QString ServiceModule::face(int value)
+/*!
+ * \brief 返回 CoolQ 中的表情的字符串
+ *
+ * 此函数将返回 CoolQ 中的表情的字符串。
+ */
+QString ServiceModule::face(int face)
 {
-    return QString::fromLatin1("[CQ:face,id=%1]").arg(value);
+    return QString::fromLatin1("[CQ:face,id=%1]").arg(face);
 }
 
 /*!
@@ -272,6 +292,11 @@ QString ServiceModule::usrFilePath(const QString &name) const
     return QDir::cleanPath(d->basePath % '/' % QString::number(d->currentId) % '/' % name);
 }
 
+/*!
+ * \brief 返回 CoolQ 资源目录内的文件
+ *
+ * 将 CoolQ 资源目录与文件名 \a srcName 合并，返回在此资源目录下的文件名的绝对路径。
+ */
 QString ServiceModule::resFilePath(const char *srcName) const
 {
     Q_D(const ServiceModule);
@@ -279,6 +304,11 @@ QString ServiceModule::resFilePath(const char *srcName) const
     return QDir::cleanPath(d->resPath % '/' % QString::fromUtf8(srcName));
 }
 
+/*!
+ * \brief 返回 CoolQ 资源目录内的文件
+ *
+ * 将 CoolQ 资源目录与文件名 \a name 合并，返回在此资源目录下的文件名的绝对路径。
+ */
 QString ServiceModule::resFilePath(const QString &name) const
 {
     Q_D(const ServiceModule);
@@ -286,6 +316,11 @@ QString ServiceModule::resFilePath(const QString &name) const
     return QDir::cleanPath(d->resPath % '/' % name);
 }
 
+/*!
+ * \brief 返回 CoolQ 图片缓存目录内的文件
+ *
+ * 将 CoolQ 图片缓存目录与文件名 \a srcName 合并，返回在此缓存目录下的文件名的绝对路径。
+ */
 QString ServiceModule::imgFilePath(const char *srcName) const
 {
     Q_D(const ServiceModule);
@@ -293,6 +328,11 @@ QString ServiceModule::imgFilePath(const char *srcName) const
     return QDir::cleanPath(d->imagePath % '/' % QString::number(d->currentId) % '/' % QString::fromUtf8(srcName));
 }
 
+/*!
+ * \brief 返回 CoolQ 图片缓存目录内的文件
+ *
+ * 将 CoolQ 图片缓存目录与文件名 \a name 合并，返回在此缓存目录下的文件名的绝对路径。
+ */
 QString ServiceModule::imgFilePath(const QString &name) const
 {
     Q_D(const ServiceModule);
@@ -758,7 +798,7 @@ MemberInfo ServiceModule::memberInfo(qint64 gid, qint64 uid, bool cached)
 /*!
  * \brief 保存图片
  *
- * 将图片 \a data 保存到酷Q待发送图片目录。如果成功，返回自动生成的文件名。
+ * 将图片 \a data 保存到 CoolQ 待发送图片目录。如果成功，返回自动生成的文件名。
  */
 QString ServiceModule::saveImage(const QPixmap &data) const
 {
@@ -776,7 +816,7 @@ QString ServiceModule::saveImage(const QPixmap &data) const
 /*!
  * \brief 载入图片
  *
- * 将载入酷Q待发送图片目录内文件名为 \a name 的图片，如果成功，返回此图片对象。
+ * 将载入 CoolQ 待发送图片目录内文件名为 \a name 的图片，如果成功，返回此图片对象。
  */
 QPixmap ServiceModule::loadImage(const QString &name) const
 {
@@ -786,6 +826,9 @@ QPixmap ServiceModule::loadImage(const QString &name) const
 
 // class ServiceModulePrivate
 
+/*!
+ * \internal
+ */
 ServiceModulePrivate::ServiceModulePrivate()
     : engine(nullptr)
     , currentId(0)
@@ -804,10 +847,16 @@ ServiceModulePrivate::ServiceModulePrivate()
 {
 }
 
+/*!
+ * \internal
+ */
 ServiceModulePrivate::~ServiceModulePrivate()
 {
 }
 
+/*!
+ * \internal
+ */
 void ServiceModulePrivate::installFilter(MessageFilter *filter)
 {
     Q_CHECK_PTR(filter);
@@ -815,7 +864,9 @@ void ServiceModulePrivate::installFilter(MessageFilter *filter)
     filters.append(filter);
 }
 
-
+/*!
+ * \internal
+ */
 ServiceModule::Result ServiceModulePrivate::result(qint32 r)
 {
     switch (r) {

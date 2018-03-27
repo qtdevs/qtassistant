@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['gbkmsg',['gbkMsg',['../struct_message_event.html#aa0a1e26b4841d34bee410ce9c35042c2',1,'MessageEvent::gbkMsg()'],['../struct_friend_request_event.html#a6bffae3d2fba7500019916a2c196421b',1,'FriendRequestEvent::gbkMsg()'],['../struct_group_request_event.html#a0cb809e7df4b3f38865de3f40e64f3a0',1,'GroupRequestEvent::gbkMsg()']]],
-  ['gbktag',['gbkTag',['../struct_friend_request_event.html#ab72329054ef562faa646a002c29cf871',1,'FriendRequestEvent::gbkTag()'],['../struct_group_request_event.html#ae1960988343b87d53515ae76dfcdda90',1,'GroupRequestEvent::gbkTag()']]],
-  ['gid',['gid',['../class_cq_member_info.html#a2fd52357406f80bf74bc9e6bc5798a40',1,'CqMemberInfo']]],
-  ['groupmessageeventfilter',['groupMessageEventFilter',['../class_cq_portal.html#ab70f6d9b16e5d99d4fdecd0007d4bdc8',1,'CqPortal']]],
-  ['grouprequestevent',['GroupRequestEvent',['../struct_group_request_event.html',1,'']]],
-  ['grouprequesteventfilter',['groupRequestEventFilter',['../class_cq_portal.html#a94a65b90442829c4ede8d059a5d0bd2e',1,'CqPortal']]]
+  ['face',['face',['../class_cool_q_1_1_service_module.html#a53860c11dd1864f5bb15ec29b715df75',1,'CoolQ::ServiceModule']]],
+  ['filters',['filters',['../class_cool_q_1_1_message_filter.html#a426ba8708c2173998375de184da9907e',1,'CoolQ::MessageFilter']]],
+  ['filtertype',['FilterType',['../class_cool_q_1_1_message_filter.html#a784f510148c0565b783416c6e38151c6',1,'CoolQ::MessageFilter']]],
+  ['font',['font',['../struct_cool_q_1_1_message_event.html#acfb37016f7413d9fc9d49a3f49fc46b2',1,'CoolQ::MessageEvent']]],
+  ['friendaddevent',['FriendAddEvent',['../struct_cool_q_1_1_friend_add_event.html',1,'CoolQ::FriendAddEvent'],['../class_cool_q_1_1_service_engine.html#a0eef476faa263b318a6c835c86d33d50',1,'CoolQ::ServiceEngine::friendAddEvent()'],['../class_cool_q_1_1_service_module.html#ab2f31e9680fd092dafdd50d29c0e45eb',1,'CoolQ::ServiceModule::friendAddEvent()']]],
+  ['friendrequestevent',['FriendRequestEvent',['../struct_cool_q_1_1_friend_request_event.html',1,'CoolQ::FriendRequestEvent'],['../class_cool_q_1_1_service_engine.html#aad86389fa612e90e345401be423c9a75',1,'CoolQ::ServiceEngine::friendRequestEvent()'],['../class_cool_q_1_1_service_module.html#ab1f591416a0e8361b9e157e0da159dfc',1,'CoolQ::ServiceModule::friendRequestEvent()']]],
+  ['from',['from',['../struct_cool_q_1_1_message_event.html#a0b1300aa1f689146f32219e6a8ff241a',1,'CoolQ::MessageEvent::from()'],['../struct_cool_q_1_1_master_change_event.html#a6576ef762f245515a694a554823d4f81',1,'CoolQ::MasterChangeEvent::from()'],['../struct_cool_q_1_1_friend_request_event.html#a06e26717e54d270eea360da7fd924a62',1,'CoolQ::FriendRequestEvent::from()'],['../struct_cool_q_1_1_group_request_event.html#adc8aa58238ed4e6bdb421ffe7545367b',1,'CoolQ::GroupRequestEvent::from()'],['../struct_cool_q_1_1_friend_add_event.html#a6ba11a946dc63815f433728987a0e4f7',1,'CoolQ::FriendAddEvent::from()'],['../struct_cool_q_1_1_member_join_event.html#a137ae7ed9527b3a291fcd6190abf9c7b',1,'CoolQ::MemberJoinEvent::from()'],['../struct_cool_q_1_1_member_leave_event.html#acb13587fd84ade7cf596abbcac3186fc',1,'CoolQ::MemberLeaveEvent::from()']]]
 ];

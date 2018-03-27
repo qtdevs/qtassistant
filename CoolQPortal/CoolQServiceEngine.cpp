@@ -1,4 +1,9 @@
-﻿#include "CoolQServiceEngine.h"
+﻿/*!
+ * \class CoolQ::ServiceEngine
+ * \brief 服务引擎类
+ */
+
+#include "CoolQServiceEngine.h"
 #include "CoolQServiceEngine_p.h"
 
 #include "CoolQServiceModule.h"
@@ -8,6 +13,11 @@ namespace CoolQ {
 
 // class ServiceEngine
 
+/*!
+ * \brief 构造函数
+ *
+ * 构造一个 ServiceEngine，同时只允许一个 Engine 的存在。
+ */
 ServiceEngine::ServiceEngine(QObject *parent)
     : Interface(*new ServiceEnginePrivate(), parent)
 {
@@ -15,16 +25,27 @@ ServiceEngine::ServiceEngine(QObject *parent)
     ServiceEnginePrivate::instance = this;
 }
 
+/*!
+ * \brief 析构函数
+ */
 ServiceEngine::~ServiceEngine()
 {
     ServiceEnginePrivate::instance = nullptr;
 }
 
+/*!
+ * \brief 返回单例函数
+ *
+ * 返回当前引擎的单例，这个单例必须是手动创建的，此方法不会主动创建任何对象。
+ */
 ServiceEngine *ServiceEngine::instance()
 {
     return ServiceEnginePrivate::instance;
 }
 
+/*!
+ * \brief 标准初始化函数
+ */
 bool ServiceEngine::initialize()
 {
     Q_D(ServiceEngine);
@@ -60,6 +81,12 @@ bool ServiceEngine::initialize()
     return true;
 }
 
+/*!
+ * \brief 私有消息过滤器
+ *
+ * 过滤私有消息。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::privateMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -71,6 +98,12 @@ bool ServiceEngine::privateMessageEvent(const MessageEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 群组消息过滤器
+ *
+ * 过滤群组消息。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::groupMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -82,6 +115,12 @@ bool ServiceEngine::groupMessageEvent(const MessageEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 讨论组消息过滤器
+ *
+ * 过滤讨论组消息。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::discussMessageEvent(const MessageEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -93,6 +132,12 @@ bool ServiceEngine::discussMessageEvent(const MessageEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 管理员变更事件过滤器
+ *
+ * 过滤管理员变更的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::masterChangeEvent(const MasterChangeEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -104,6 +149,12 @@ bool ServiceEngine::masterChangeEvent(const MasterChangeEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 好友请求事件过滤器
+ *
+ * 过滤好友请求的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::friendRequestEvent(const FriendRequestEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -115,6 +166,12 @@ bool ServiceEngine::friendRequestEvent(const FriendRequestEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 加入群组事件过滤器
+ *
+ * 过滤加入群组的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::groupRequestEvent(const GroupRequestEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -126,6 +183,12 @@ bool ServiceEngine::groupRequestEvent(const GroupRequestEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 好友添加事件过滤器
+ *
+ * 过滤好友添加的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::friendAddEvent(const FriendAddEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -137,6 +200,12 @@ bool ServiceEngine::friendAddEvent(const FriendAddEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 成员添加事件过滤器
+ *
+ * 过滤成员添加的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::memberJoinEvent(const MemberJoinEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -148,6 +217,12 @@ bool ServiceEngine::memberJoinEvent(const MemberJoinEvent &ev)
     return false;
 }
 
+/*!
+ * \brief 成员退出事件过滤器
+ *
+ * 过滤成员退出的事件。如果返回 true，就代表过滤；返回 false，代表不过滤。
+ * 此方法默认有调用模块的实现，如果继承，需要调用基类的此方法。
+ */
 bool ServiceEngine::memberLeaveEvent(const MemberLeaveEvent &ev)
 {
     Q_D(ServiceEngine);
@@ -165,14 +240,23 @@ ServiceEngine *ServiceEnginePrivate::instance = nullptr;
 
 qint32 ServiceEnginePrivate::accessToken = 0;
 
+/*!
+ * \internal
+ */
 ServiceEnginePrivate::ServiceEnginePrivate()
 {
 }
 
+/*!
+ * \internal
+ */
 ServiceEnginePrivate::~ServiceEnginePrivate()
 {
 }
 
+/*!
+ * \internal
+ */
 void ServiceEnginePrivate::installModule(ServiceModule *module)
 {
     Q_CHECK_PTR(module);

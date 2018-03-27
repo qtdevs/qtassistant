@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.14"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Qt for CoolQ: CoolQ::SqliteService类 参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Qt for CoolQ
+   &#160;<span id="projectnumber">2.0</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.8.14 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'搜索');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>CoolQ</b></li><li class="navelem"><a class="el" href="class_cool_q_1_1_sqlite_service.html">SqliteService</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public 类型</a> &#124;
+<a href="#pub-methods">Public 成员函数</a> &#124;
+<a href="#pro-methods">Protected 成员函数</a> &#124;
+<a href="class_cool_q_1_1_sqlite_service-members.html">所有成员列表</a>  </div>
+  <div class="headertitle">
+<div class="title">CoolQ::SqliteService类 参考</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>数据存储类  
+ <a href="class_cool_q_1_1_sqlite_service.html#details">更多...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public 类型</h2></td></tr>
+<tr class="memitem:a51eb5dba6ea3783e870af55c80aa08f9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9">Result</a> { <a class="el" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb">NoChange</a>, 
+<a class="el" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9a32e0741d4fcdc01369bd44ddad2e9294">Done</a>, 
+<a class="el" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8">SqlError</a>
+ }</td></tr>
+<tr class="memdesc:a51eb5dba6ea3783e870af55c80aa08f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">CqSqlite 执行结果  <a href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9">更多...</a><br /></td></tr>
+<tr class="separator:a51eb5dba6ea3783e870af55c80aa08f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public 成员函数</h2></td></tr>
+<tr class="memitem:af68f84e65598c6ccdaa7f63d5095db0b"><td class="memItemLeft" align="right" valign="top"><a id="af68f84e65598c6ccdaa7f63d5095db0b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#af68f84e65598c6ccdaa7f63d5095db0b">SqliteService</a> (QObject *parent)</td></tr>
+<tr class="memdesc:af68f84e65598c6ccdaa7f63d5095db0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数 <br /></td></tr>
+<tr class="separator:af68f84e65598c6ccdaa7f63d5095db0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fb973f22143fddf50acaa5b0939002f"><td class="memItemLeft" align="right" valign="top"><a id="a3fb973f22143fddf50acaa5b0939002f"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#a3fb973f22143fddf50acaa5b0939002f">~SqliteService</a> ()</td></tr>
+<tr class="memdesc:a3fb973f22143fddf50acaa5b0939002f"><td class="mdescLeft">&#160;</td><td class="mdescRight">析构函数 <br /></td></tr>
+<tr class="separator:a3fb973f22143fddf50acaa5b0939002f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_cool_q_1_1_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_cool_q_1_1_interface')"><img src="closed.png" alt="-"/>&#160;Public 成员函数 继承自 <a class="el" href="class_cool_q_1_1_interface.html">CoolQ::Interface</a></td></tr>
+<tr class="memitem:a285ff6696f33f6149830be528068fbaa inherit pub_methods_class_cool_q_1_1_interface"><td class="memItemLeft" align="right" valign="top"><a id="a285ff6696f33f6149830be528068fbaa"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_interface.html#a285ff6696f33f6149830be528068fbaa">~Interface</a> ()</td></tr>
+<tr class="memdesc:a285ff6696f33f6149830be528068fbaa inherit pub_methods_class_cool_q_1_1_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">析构函数 <br /></td></tr>
+<tr class="separator:a285ff6696f33f6149830be528068fbaa inherit pub_methods_class_cool_q_1_1_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c25d1ac03e3914718cbed74c23618eb inherit pub_methods_class_cool_q_1_1_interface"><td class="memItemLeft" align="right" valign="top"><a id="a7c25d1ac03e3914718cbed74c23618eb"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_interface.html#a7c25d1ac03e3914718cbed74c23618eb">initialize</a> ()</td></tr>
+<tr class="memdesc:a7c25d1ac03e3914718cbed74c23618eb inherit pub_methods_class_cool_q_1_1_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">标准初始化函数 <br /></td></tr>
+<tr class="separator:a7c25d1ac03e3914718cbed74c23618eb inherit pub_methods_class_cool_q_1_1_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected 成员函数</h2></td></tr>
+<tr class="memitem:a4447f168fdc794e403d1933efe640bd5"><td class="memItemLeft" align="right" valign="top"><a id="a4447f168fdc794e403d1933efe640bd5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#a4447f168fdc794e403d1933efe640bd5">SqliteService</a> (SqliteServicePrivate &amp;dd, QObject *parent)</td></tr>
+<tr class="memdesc:a4447f168fdc794e403d1933efe640bd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数 <br /></td></tr>
+<tr class="separator:a4447f168fdc794e403d1933efe640bd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebec9a0ef8f613fe71d5699763de9364"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#aebec9a0ef8f613fe71d5699763de9364">setFileName</a> (const QString &amp;fileName)</td></tr>
+<tr class="memdesc:aebec9a0ef8f613fe71d5699763de9364"><td class="mdescLeft">&#160;</td><td class="mdescRight">设置文件名  <a href="#aebec9a0ef8f613fe71d5699763de9364">更多...</a><br /></td></tr>
+<tr class="separator:aebec9a0ef8f613fe71d5699763de9364"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2147cd909c3bc60bd07f1b03b32f677d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#a2147cd909c3bc60bd07f1b03b32f677d">prepare</a> (const QString &amp;s)</td></tr>
+<tr class="memdesc:a2147cd909c3bc60bd07f1b03b32f677d"><td class="mdescLeft">&#160;</td><td class="mdescRight">设置预处理  <a href="#a2147cd909c3bc60bd07f1b03b32f677d">更多...</a><br /></td></tr>
+<tr class="separator:a2147cd909c3bc60bd07f1b03b32f677d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb65d28fc16df7fa3be700fb6ff634b3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#abb65d28fc16df7fa3be700fb6ff634b3">openDatabase</a> ()</td></tr>
+<tr class="memdesc:abb65d28fc16df7fa3be700fb6ff634b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">打开数据库  <a href="#abb65d28fc16df7fa3be700fb6ff634b3">更多...</a><br /></td></tr>
+<tr class="separator:abb65d28fc16df7fa3be700fb6ff634b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac897a5219a5363f832da956b1f14082"><td class="memItemLeft" align="right" valign="top">QSqlQuery&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#aac897a5219a5363f832da956b1f14082">query</a> (const QString &amp;sql)</td></tr>
+<tr class="memdesc:aac897a5219a5363f832da956b1f14082"><td class="mdescLeft">&#160;</td><td class="mdescRight">执行 Sql 语句  <a href="#aac897a5219a5363f832da956b1f14082">更多...</a><br /></td></tr>
+<tr class="separator:aac897a5219a5363f832da956b1f14082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a573bb3d40819a08d8eea004ea86d859d"><td class="memItemLeft" align="right" valign="top">QSqlQuery&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_sqlite_service.html#a573bb3d40819a08d8eea004ea86d859d">query</a> (const char *srcSql)</td></tr>
+<tr class="memdesc:a573bb3d40819a08d8eea004ea86d859d"><td class="mdescLeft">&#160;</td><td class="mdescRight">执行 Sql 语句  <a href="#a573bb3d40819a08d8eea004ea86d859d">更多...</a><br /></td></tr>
+<tr class="separator:a573bb3d40819a08d8eea004ea86d859d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_cool_q_1_1_interface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_cool_q_1_1_interface')"><img src="closed.png" alt="-"/>&#160;Protected 成员函数 继承自 <a class="el" href="class_cool_q_1_1_interface.html">CoolQ::Interface</a></td></tr>
+<tr class="memitem:af3872b8d3be740401c3540ca99f04df9 inherit pro_methods_class_cool_q_1_1_interface"><td class="memItemLeft" align="right" valign="top"><a id="af3872b8d3be740401c3540ca99f04df9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cool_q_1_1_interface.html#af3872b8d3be740401c3540ca99f04df9">Interface</a> (InterfacePrivate &amp;dd, QObject *parent)</td></tr>
+<tr class="memdesc:af3872b8d3be740401c3540ca99f04df9 inherit pro_methods_class_cool_q_1_1_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">构造函数 <br /></td></tr>
+<tr class="separator:af3872b8d3be740401c3540ca99f04df9 inherit pro_methods_class_cool_q_1_1_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">详细描述</h2>
+<div class="textblock"><p>数据存储类 </p>
+</div><div class="dynheader">
+类 CoolQ::SqliteService 继承关系图:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_cool_q_1_1_sqlite_service.png" usemap="#CoolQ::SqliteService_map" alt=""/>
+  <map id="CoolQ::SqliteService_map" name="CoolQ::SqliteService_map">
+<area href="class_cool_q_1_1_interface.html" title="通用接口类 " alt="CoolQ::Interface" shape="rect" coords="0,0,128,24"/>
+</map>
+ </div></div>
+<h2 class="groupheader">成员枚举类型说明</h2>
+<a id="a51eb5dba6ea3783e870af55c80aa08f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51eb5dba6ea3783e870af55c80aa08f9">&#9670;&nbsp;</a></span>Result</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_cool_q_1_1_sqlite_service.html#a51eb5dba6ea3783e870af55c80aa08f9">CoolQ::SqliteService::Result</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>CqSqlite 执行结果 </p>
+<p>酷Q API 密切相关的执行函数都会返回此枚举作为结果表达。 </p>
+<table class="fieldtable">
+<tr><th colspan="2">枚举值</th></tr><tr><td class="fieldname"><a id="a51eb5dba6ea3783e870af55c80aa08f9a52d00fa2ea700fc6780c94c7f69a5feb"></a>NoChange&#160;</td><td class="fielddoc"><p>没有发生改变 </p>
+<p>如果数据库内容没有发生变化，返回此枚举值。 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a51eb5dba6ea3783e870af55c80aa08f9a32e0741d4fcdc01369bd44ddad2e9294"></a>Done&#160;</td><td class="fielddoc"><p>已经完成 </p>
+<p>如果数据库操作执行成功，返回此枚举值。 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a51eb5dba6ea3783e870af55c80aa08f9acf51b9eac73cb00b2007b06f362055c8"></a>SqlError&#160;</td><td class="fielddoc"><p>数据库错误 </p>
+<p>如果数据库操作执行失败，返回此枚举值。更多信息可以看酷Q的日志。 </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">成员函数说明</h2>
+<a id="abb65d28fc16df7fa3be700fb6ff634b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb65d28fc16df7fa3be700fb6ff634b3">&#9670;&nbsp;</a></span>openDatabase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CoolQ::SqliteService::openDatabase </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>打开数据库 </p>
+<p>此方法将打开数据库文件，如果成功返回 true；否则返回 false。 </p>
+
+</div>
+</div>
+<a id="a2147cd909c3bc60bd07f1b03b32f677d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2147cd909c3bc60bd07f1b03b32f677d">&#9670;&nbsp;</a></span>prepare()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CoolQ::SqliteService::prepare </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>设置预处理 </p>
+<p>添加预处理命令。每次文件加载后都将执行 <em>s</em> 语句。可以添加多条语句。 </p>
+
+</div>
+</div>
+<a id="aac897a5219a5363f832da956b1f14082"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac897a5219a5363f832da956b1f14082">&#9670;&nbsp;</a></span>query() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">QSqlQuery CoolQ::SqliteService::query </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>sql</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>执行 Sql 语句 </p>
+<p>此方法将创建一个 QSqlQuery 并返回该对象，该对象将执行 <em>sql</em> 语句。 </p>
+
+</div>
+</div>
+<a id="a573bb3d40819a08d8eea004ea86d859d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a573bb3d40819a08d8eea004ea86d859d">&#9670;&nbsp;</a></span>query() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">QSqlQuery CoolQ::SqliteService::query </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>srcSql</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>执行 Sql 语句 </p>
+<p>此方法将创建一个 QSqlQuery 并返回该对象，该对象将执行 UTF-8 编码的 <em>srcSql</em> 语句。 </p>
+
+</div>
+</div>
+<a id="aebec9a0ef8f613fe71d5699763de9364"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebec9a0ef8f613fe71d5699763de9364">&#9670;&nbsp;</a></span>setFileName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CoolQ::SqliteService::setFileName </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>fileName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>设置文件名 </p>
+<p>这里的文件名 <em>fileName</em> 不包含路径，只有文件名和扩展名；文件位置在插件目录内。 </p>
+
+</div>
+</div>
+<hr/>该类的文档由以下文件生成:<ul>
+<li>C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/<a class="el" href="_cool_q_sqlite_service_8h_source.html">CoolQSqliteService.h</a></li>
+<li>C:/Users/echow/Documents/GitHub/qtassistant/CoolQPortal/CoolQSqliteService.cpp</li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者 &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.14
+</small></address>
+</body>
+</html>

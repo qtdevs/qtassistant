@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['grouprequestevent',['GroupRequestEvent',['../struct_group_request_event.html',1,'']]]
+  ['interface',['Interface',['../class_cool_q_1_1_interface.html',1,'CoolQ']]]
 ];

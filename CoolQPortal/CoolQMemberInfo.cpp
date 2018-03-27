@@ -1,5 +1,5 @@
 ﻿/*!
- * \class CqMemberInfo
+ * \class CoolQ::MemberInfo
  * \brief 成员信息
  */
 
@@ -254,6 +254,11 @@ QDateTime MemberInfo::lastSent() const
     return data->lastSent;
 }
 
+/*!
+ * \brief 返回安全名称
+ *
+ * 如果名片有效，返回名片本身；否则返回昵称。
+ */
 QString MemberInfo::safetyName() const
 {
     QString name = data->nameCard.trimmed();
@@ -262,6 +267,9 @@ QString MemberInfo::safetyName() const
 
 // class MemberInfoData
 
+/*!
+ * \internal
+ */
 MemberInfoData::MemberInfoData()
     : gid(0)
     , uid(0)
