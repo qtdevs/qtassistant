@@ -6,7 +6,7 @@
 
 核心代码为基于 Qt 的**酷 Q 机器人**插件库，此库已经完全文档化。
 
-核心代码文档位置：`./cqportal/cqdoc/output/html/index.html`（请签出后用浏览器打开）。
+核心代码文档位置：`./CoolQPortal/CoolQDoc/output/html/index.html`（请签出后用浏览器打开）。
 
 由于本项目只服务于 Qt 群助手项目，所以有些插件功能没有封装，有需要的可以自行封装。
 
