@@ -42,10 +42,9 @@ private:
 public:
     void groupHelpAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
-    void groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupRename(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args);
-    void groupMember(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupRenameAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupLevelAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+    void groupFormatAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
     void groupBanAction(const CoolQ::MessageEvent &ev, const QStringList &args);
     void groupKickAction(const CoolQ::MessageEvent &ev, const QStringList &args);
@@ -57,11 +56,12 @@ public:
     void groupWatchlistAction(const CoolQ::MessageEvent &ev, const QStringList &args);
     void groupBlacklistAction(const CoolQ::MessageEvent &ev, const QStringList &args);
 
+    void groupMemberAction(const CoolQ::MessageEvent &ev, const QStringList &args);
+
 public:
-    void groupLevelHelp(qint64 gid);
-    void groupRenameHelp(qint64 gid);
-    void groupFormatHelp(qint64 gid);
-    void groupMemberHelp(qint64 gid);
+    void groupRenameHelpAction(qint64 gid);
+    void groupLevelHelpAction(qint64 gid);
+    void groupFormatHelpAction(qint64 gid);
 
     void groupBanHelpAction(qint64 gid);
     void groupKickHelpAction(qint64 gid);
@@ -72,6 +72,8 @@ public:
 
     void groupWatchlistHelpAction(qint64 gid);
     void groupBlacklistHelpAction(qint64 gid);
+
+    void groupMemberHelpAction(qint64 gid);
 
 public:
     void permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason = QString());

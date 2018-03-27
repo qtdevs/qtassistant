@@ -288,6 +288,100 @@ bool GroupCommandsAction::groupMessageFilter(int i, const CoolQ::MessageEvent &e
     return true;
 }
 
+// class GroupRenameMemberAction
+
+GroupRenameMemberAction::GroupRenameMemberAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupRenameMemberAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupRenameMemberAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"重命名");
+
+    return keywords;
+}
+
+bool GroupRenameMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupRenameAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupMemberLevelAction
+
+GroupMemberLevelAction::GroupMemberLevelAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupMemberLevelAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupMemberLevelAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"等级");
+
+    return keywords;
+}
+
+bool GroupMemberLevelAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupLevelAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupFormatMemberAction
+
+GroupFormatMemberAction::GroupFormatMemberAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupFormatMemberAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupFormatMemberAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"格式化");
+    keywords << QString(u8"标准化");
+
+    return keywords;
+}
+
+bool GroupFormatMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupFormatAction(ev, args);
+    }
+
+    return true;
+}
+
 // class GroupBanMemberAction
 
 GroupBanMemberAction::GroupBanMemberAction(CoolQ::ServiceModule *parent)
@@ -478,6 +572,7 @@ bool GroupWatchlistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &
 
     return true;
 }
+
 // class GroupBlacklistAction
 
 GroupBlacklistAction::GroupBlacklistAction(CoolQ::ServiceModule *parent)
@@ -505,6 +600,134 @@ bool GroupBlacklistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &
         QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
         mm->groupBlacklistAction(ev, args);
     }
+
+    return true;
+}
+
+// class GroupMemberInfoAction
+
+GroupMemberInfoAction::GroupMemberInfoAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupMemberInfoAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupMemberInfoAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"成员信息");
+
+    return keywords;
+}
+
+bool GroupMemberInfoAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupMemberAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupRenameMemberHelpAction
+
+GroupRenameMemberHelpAction::GroupRenameMemberHelpAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupRenameMemberHelpAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupRenameMemberHelpAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"重命名命令");
+    keywords << QString(u8"重命名的用法");
+    keywords << QString(u8"重命名用法");
+
+    return keywords;
+}
+
+bool GroupRenameMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    Q_UNUSED(i);
+
+    if (auto mm = qobject_cast<AssistantModule *>(module()))
+        mm->groupRenameHelpAction(ev.from);
+
+    return true;
+}
+
+// class GroupMemberLevelHelpAction
+
+GroupMemberLevelHelpAction::GroupMemberLevelHelpAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupMemberLevelHelpAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupMemberLevelHelpAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"等级查询");
+
+    return keywords;
+}
+
+bool GroupMemberLevelHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    Q_UNUSED(i);
+
+    if (auto mm = qobject_cast<AssistantModule *>(module()))
+        mm->groupLevelHelpAction(ev.from);
+
+    return true;
+}
+
+// class GroupFormatMemberHelpAction
+
+GroupFormatMemberHelpAction::GroupFormatMemberHelpAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupFormatMemberHelpAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupFormatMemberHelpAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"格式化命令");
+    keywords << QString(u8"格式化的用法");
+    keywords << QString(u8"格式化用法");
+
+    return keywords;
+}
+
+bool GroupFormatMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    Q_UNUSED(i);
+
+    if (auto mm = qobject_cast<AssistantModule *>(module()))
+        mm->groupFormatHelpAction(ev.from);
 
     return true;
 }
@@ -744,6 +967,37 @@ bool GroupBlacklistHelpAction::groupMessageFilter(int i, const CoolQ::MessageEve
 
     if (auto mm = qobject_cast<AssistantModule *>(module()))
         mm->groupBlacklistHelpAction(ev.from);
+
+    return true;
+}
+
+// class GroupMemberInfoHelpAction
+
+GroupMemberInfoHelpAction::GroupMemberInfoHelpAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupMemberInfoHelpAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupMemberInfoHelpAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"成员信息命令");
+
+    return keywords;
+}
+
+bool GroupMemberInfoHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    Q_UNUSED(i);
+
+    if (auto mm = qobject_cast<AssistantModule *>(module()))
+        mm->groupMemberHelpAction(ev.from);
 
     return true;
 }

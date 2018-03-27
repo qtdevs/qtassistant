@@ -40,10 +40,9 @@ bool AssistantModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
         return true;
     }
 
-    if (CoolQ::ServiceModule::groupMessageEvent(ev)) {
-        return true;
-    }
+    return CoolQ::ServiceModule::groupMessageEvent(ev);
 
+    /*
     // 分离参数。
     QStringList args;
     if ((ev.gbkMsg[0] == '!')) {
@@ -62,19 +61,19 @@ bool AssistantModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
         QString c = args.value(0);
 
         if ((c == "l") || (c == "level")) {
-            groupLevel(ev, args.mid(1));
+            groupLevelAction(ev, args.mid(1));
             return true;
         }
         if ((c == "r") || (c == "rename")) {
-            groupRename(ev, args.mid(1));
+            groupRenameAction(ev, args.mid(1));
             return true;
         }
         if ((c == "f") || (c == "format")) {
-            groupFormat(ev, args.mid(1));
+            groupFormatAction(ev, args.mid(1));
             return true;
         }
         if ((c == "m") || (c == "member")) {
-            groupMember(ev, args.mid(1));
+            groupMemberAction(ev, args.mid(1));
             return true;
         }
 
@@ -87,6 +86,7 @@ bool AssistantModule::groupMessageEvent(const CoolQ::MessageEvent &ev)
             return true;
         }
     }
+    */
 
     return false;
 }
@@ -121,9 +121,10 @@ void AssistantModule::groupHelpAction(const CoolQ::MessageEvent &ev, const QStri
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    // ts << "<code>  </code>" << QString(u8"等级查询") << " <code>( *): level    (l)</code>\n";
-    // ts << "<code>  </code>" << QString(u8"修改名片") << " <code>(5+): rename   (r)</code>\n";
-    // ts << "<code>  </code>" << QString(u8"格式名片") << " <code>(5+): format   (f)</code>\n";
+    ts << "<code>  </code>" << QString(u8"重命名命令") << QString(u8" <code>(5+): 重命名 [@成员]  新名片</code>\n");
+    ts << "<code>  </code>" << QString(u8"等级查询") << QString(u8"    <code>(5+): 等级 [参数] [@成员] [@...]</code>\n");
+    ts << "<code>  </code>" << QString(u8"格式化命令") << QString(u8" <code>(5+): 格式化 [@成员] [@...]</code>\n");
+    ts << "\n";
     ts << "<code>  </code>" << QString(u8"禁言命令") << QString(u8" <code>(5+): 禁言 @成员 @...</code>\n");
     ts << "<code>  </code>" << QString(u8"解禁命令") << QString(u8" <code>(5+): 解禁 @成员 @...</code>\n");
     ts << "<code>  </code>" << QString(u8"踢出命令") << QString(u8" <code>(3+): 踢出 @成员 @...</code>\n");
@@ -139,89 +140,7 @@ void AssistantModule::groupHelpAction(const CoolQ::MessageEvent &ev, const QStri
     showPrompt(ev.from, QString(u8"命令清单"), usage);
 }
 
-void AssistantModule::groupLevel(const CoolQ::MessageEvent &ev, const QStringList &args)
-{
-    Q_D(AssistantModule);
-
-    LevelInfoList ll = d->findUsers(args);
-    MasterLevel level = d->levels->level(ev.from, ev.sender);
-
-    // 分析其他命令行参数
-
-    bool argvGlobal = false;
-    bool argvList = false;
-
-    bool invalidArg = false;
-    int c = args.count() - ll.count();
-    for (int i = 0; i < c; ++i) {
-        const auto &argv = args.at(i);
-
-        if ((argv == "g") || (argv == "global")) {
-            if (argvGlobal) {
-                invalidArg = true;
-                break;
-            }
-            argvGlobal = true;
-        } else if ((argv == "l") || (argv == "list")) {
-            if (argvList) {
-                invalidArg = true;
-                break;
-            }
-            argvList = true;
-        } else {
-            invalidArg = true;
-            break;
-        }
-    }
-    if (invalidArg) {
-        groupLevelHelp(ev.from);
-        return;
-    }
-
-    // 执行具体操作
-
-    if (ll.isEmpty()) {
-        if (argvList) {
-            if (MasterLevel::Unknown != level) {
-                ll = d->levels->levels(argvGlobal ? 0 : ev.from);
-                if (ll.isEmpty()) {
-                    if (argvGlobal) {
-                        showPrompt(ev.from, QString(u8"跨群等级列表"), QString(u8"等级列表中没有任何成员"));
-                    } else {
-                        showPrompt(ev.from, QString(u8"本群等级列表"), QString(u8"等级列表中没有任何成员"));
-                    }
-                } else {
-                    if (argvGlobal) {
-                        showPromptList(ev.from, QString(u8"跨群等级列表"), ll, true);
-                    } else {
-                        showPromptList(ev.from, QString(u8"本群等级列表"), ll, true);
-                    }
-                }
-            }
-        } else {
-            MasterLevel level = d->levels->level(argvGlobal ? 0 : ev.from, ev.sender);
-            ll.append(LevelInfo(ev.sender, level));
-            if (argvGlobal) {
-                showPromptList(ev.from, QString(u8"跨群等级"), ll, true);
-            } else {
-                showPromptList(ev.from, QString(u8"本群等级"), ll, true);
-            }
-        }
-    } else if (!argvList) {
-        if (MasterLevel::Unknown != level) {
-            d->levels->update(argvGlobal ? 0 : ev.from, ll);
-            if (argvGlobal) {
-                showPromptList(ev.from, QString(u8"跨群等级"), ll, true);
-            } else {
-                showPromptList(ev.from, QString(u8"本群等级"), ll, true);
-            }
-        }
-    } else {
-        groupLevelHelp(ev.from);
-    }
-}
-
-void AssistantModule::groupRename(const CoolQ::MessageEvent &ev, const QStringList &args)
+void AssistantModule::groupRenameAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(AssistantModule);
 
@@ -273,8 +192,8 @@ void AssistantModule::groupRename(const CoolQ::MessageEvent &ev, const QStringLi
             prefixFound = true;
         }
     }
-    if (invalidArgs) {
-        groupRenameHelp(ev.from);
+    if (args.isEmpty() || invalidArgs) {
+        groupRenameHelpAction(ev.from);
         return;
     }
 
@@ -287,7 +206,7 @@ void AssistantModule::groupRename(const CoolQ::MessageEvent &ev, const QStringLi
     d->formatNameCard(nameCard);
 
     if (nameCard.isEmpty()) {
-        groupRenameHelp(ev.from);
+        groupRenameHelpAction(ev.from);
         return;
     }
 
@@ -302,7 +221,89 @@ void AssistantModule::groupRename(const CoolQ::MessageEvent &ev, const QStringLi
     showSuccess(ev.from, QString(u8"修改名片"), QString(u8"新的名片：%1").arg(nameCard));
 }
 
-void AssistantModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringList &args)
+void AssistantModule::groupLevelAction(const CoolQ::MessageEvent &ev, const QStringList &args)
+{
+    Q_D(AssistantModule);
+
+    LevelInfoList ll = d->findUsers(args);
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+
+    // 分析其他命令行参数
+
+    bool argvGlobal = false;
+    bool argvList = false;
+
+    bool invalidArg = false;
+    int c = args.count() - ll.count();
+    for (int i = 0; i < c; ++i) {
+        const auto &argv = args.at(i);
+
+        if ((argv == "g") || (argv == QString(u8"全局"))) {
+            if (argvGlobal) {
+                invalidArg = true;
+                break;
+            }
+            argvGlobal = true;
+        } else if ((argv == "l") || (argv == QString(u8"列表")) || (argv == QString(u8"名单"))) {
+            if (argvList) {
+                invalidArg = true;
+                break;
+            }
+            argvList = true;
+        } else {
+            invalidArg = true;
+            break;
+        }
+    }
+    if (invalidArg) {
+        groupLevelHelpAction(ev.from);
+        return;
+    }
+
+    // 执行具体操作
+
+    if (ll.isEmpty()) {
+        if (argvList) {
+            if (MasterLevel::Unknown != level) {
+                ll = d->levels->levels(argvGlobal ? 0 : ev.from);
+                if (ll.isEmpty()) {
+                    if (argvGlobal) {
+                        showPrompt(ev.from, QString(u8"跨群等级列表"), QString(u8"等级列表中没有任何成员"));
+                    } else {
+                        showPrompt(ev.from, QString(u8"本群等级列表"), QString(u8"等级列表中没有任何成员"));
+                    }
+                } else {
+                    if (argvGlobal) {
+                        showPromptList(ev.from, QString(u8"跨群等级列表"), ll, true);
+                    } else {
+                        showPromptList(ev.from, QString(u8"本群等级列表"), ll, true);
+                    }
+                }
+            }
+        } else {
+            MasterLevel level = d->levels->level(argvGlobal ? 0 : ev.from, ev.sender);
+            ll.append(LevelInfo(ev.sender, level));
+            if (argvGlobal) {
+                showPromptList(ev.from, QString(u8"跨群等级"), ll, true);
+            } else {
+                showPromptList(ev.from, QString(u8"本群等级"), ll, true);
+            }
+        }
+    } else if (!argvList) {
+        if (MasterLevel::Unknown != level) {
+            d->levels->update(argvGlobal ? 0 : ev.from, ll);
+            if (argvGlobal) {
+                showPromptList(ev.from, QString(u8"跨群等级"), ll, true);
+            } else {
+                showPromptList(ev.from, QString(u8"本群等级"), ll, true);
+            }
+        }
+    } else {
+        groupLevelHelpAction(ev.from);
+    }
+}
+
+void AssistantModule::groupFormatAction(const CoolQ::MessageEvent &ev, const QStringList &args)
 {
     Q_D(AssistantModule);
 
@@ -420,63 +421,6 @@ void AssistantModule::groupFormat(const CoolQ::MessageEvent &ev, const QStringLi
         } else {
             showDanger(ev.from, QString(u8"修改名片"), QString(u8"数据同步错误，请重试。"));
         }
-    }
-}
-
-void AssistantModule::groupMember(const CoolQ::MessageEvent &ev, const QStringList &args)
-{
-    Q_D(AssistantModule);
-
-    // 普通成员不应答。
-    MasterLevel level = d->levels->level(ev.from, ev.sender);
-    if (MasterLevel::Unknown == level) {
-        return;
-    }
-    // 绝对领域及以上。
-    if (level > MasterLevel::ATField) {
-        permissionDenied(ev.from, ev.sender, level);
-        return;
-    }
-
-    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
-    LevelInfoList ll = d->findUsers(args);
-    if (ll.isEmpty()) {
-        groupMemberHelp(ev.from);
-        return;
-    }
-
-    // 检查参数有效性。
-    if (args.count() != ll.count()) {
-        groupMemberHelp(ev.from);
-        return;
-    }
-
-    // 执行具体操作
-
-    for (const LevelInfo &li : ll) {
-        CoolQ::MemberInfo mi = memberInfo(ev.from, li.uid, false);
-
-        QString reports;
-        QTextStream ts(&reports);
-
-        ts << "<pre>";
-        ts << "<code>qint64 gid: " << mi.gid() << "</code>\n";
-        ts << "<code>qint64 uid: " << mi.uid() << "</code>\n";
-        ts << "<code>qint32 sex: " << mi.sex() << "</code>\n";
-        ts << "<code>qint32 age: " << mi.age() << "</code>\n";
-        ts << "<code>QString nickName: </code>" << mi.nickName() << "\n";
-        ts << "<code>QString nameCard: </code>" << mi.nameCard() << "\n";
-        ts << "<code>QString location: </code>" << mi.location() << "\n";
-        ts << "<code>QString levelName: </code>" << mi.levelName() << "\n";
-        ts << "<code>qint32 permission: " << mi.permission() << "</code>\n";
-        ts << "<code>qint32 unfriendly: " << mi.unfriendly() << "</code>\n";
-        ts << "<code>QDateTime joinTime:\n  " << mi.joinTime().toString(Qt::ISODate) << "</code>\n";
-        ts << "<code>QDateTime lastSent:\n  " << mi.lastSent().toString(Qt::ISODate) << "</code>\n";
-        ts << "</pre>";
-
-        ts.flush();
-
-        showPrimary(ev.from, QString::number(li.uid), reports);
     }
 }
 
@@ -1084,68 +1028,112 @@ void AssistantModule::groupBlacklistAction(const CoolQ::MessageEvent &ev, const 
     }
 }
 
-void AssistantModule::groupLevelHelp(qint64 gid)
+void AssistantModule::groupMemberAction(const CoolQ::MessageEvent &ev, const QStringList &args)
+{
+    Q_D(AssistantModule);
+
+    // 普通成员不应答。
+    MasterLevel level = d->levels->level(ev.from, ev.sender);
+    if (MasterLevel::Unknown == level) {
+        return;
+    }
+    // 绝对领域及以上。
+    if (level > MasterLevel::ATField) {
+        permissionDenied(ev.from, ev.sender, level);
+        return;
+    }
+
+    // 获取目标成员的等级信息，此操作必须有至少一个目标成员。
+    LevelInfoList ll = d->findUsers(args);
+    if (ll.isEmpty()) {
+        groupMemberHelpAction(ev.from);
+        return;
+    }
+
+    // 检查参数有效性。
+    if (args.count() != ll.count()) {
+        groupMemberHelpAction(ev.from);
+        return;
+    }
+
+    // 执行具体操作
+
+    for (const LevelInfo &li : ll) {
+        CoolQ::MemberInfo mi = memberInfo(ev.from, li.uid, false);
+
+        QString reports;
+        QTextStream ts(&reports);
+
+        ts << "<pre>";
+        ts << "<code>qint64 gid: " << mi.gid() << "</code>\n";
+        ts << "<code>qint64 uid: " << mi.uid() << "</code>\n";
+        ts << "<code>qint32 sex: " << mi.sex() << "</code>\n";
+        ts << "<code>qint32 age: " << mi.age() << "</code>\n";
+        ts << "<code>QString nickName: </code>" << mi.nickName() << "\n";
+        ts << "<code>QString nameCard: </code>" << mi.nameCard() << "\n";
+        ts << "<code>QString location: </code>" << mi.location() << "\n";
+        ts << "<code>QString levelName: </code>" << mi.levelName() << "\n";
+        ts << "<code>qint32 permission: " << mi.permission() << "</code>\n";
+        ts << "<code>qint32 unfriendly: " << mi.unfriendly() << "</code>\n";
+        ts << "<code>QDateTime joinTime:\n  " << mi.joinTime().toString(Qt::ISODate) << "</code>\n";
+        ts << "<code>QDateTime lastSent:\n  " << mi.lastSent().toString(Qt::ISODate) << "</code>\n";
+        ts << "</pre>";
+
+        ts.flush();
+
+        showPrimary(ev.from, QString::number(li.uid), reports);
+    }
+}
+
+void AssistantModule::groupRenameHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo level(l) [" << QString(u8"参数") << "] [" << QString(u8"成员") << "]</code>\n";
+    ts << QString(u8"命令：<code>重命名 [@成员] 新的名片</code>\n");
     ts << QString(u8"权限要求：") << "5+\n";
+    ts << "<code>  </code>" << QString(u8"如果不@其他成员，则重命名自己的名片。") << "\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, QString(u8"重命名命令"), usage);
+}
+
+void AssistantModule::groupLevelHelpAction(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString(u8"命令：<code>等级 [参数] [@成员]</code>\n");
+    ts << QString(u8"权限要求：") << "5+\n";
+    ts << "<code>  </code>" << QString(u8"如果不@其他成员，则查询自己的等级。") << "\n";
     ts << QString(u8"参数列表：") << "\n";
-    ts << "<code>  global(g) </code>" << QString(u8"跨群查询") << "\n";
-    ts << "<code>  list(l)   </code>" << QString(u8"列表查询") << "\n";
+    ts << QString(u8"<code>  全局(g) </code>") << QString(u8"全局查询") << "\n";
+    ts << QString(u8"<code>  名单(l) </code>") << QString(u8"名单查询") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, QString(u8"等级查询的用法"), usage);
+    showPrompt(gid, QString(u8"等级查询"), usage);
 }
 
-void AssistantModule::groupRenameHelp(qint64 gid)
+void AssistantModule::groupFormatHelpAction(qint64 gid)
 {
     QString usage;
     QTextStream ts(&usage);
 
     ts << "<pre>";
-    ts << "<code>sudo rename(r) [" << QString(u8"成员") << "] " << QString(u8"名片") << "</code>\n";
+    ts << QString(u8"命令：<code>格式化 [@成员]</code>\n");
     ts << QString(u8"权限要求：") << "5+\n";
-    ts << "<code>  </code>" << QString(u8"新的名片将会被格式化为统一样式，不允许出现空格。") << "\n";
+    ts << "<code>  </code>" << QString(u8"如果不@其他成员，则格式化自己的名片。") << "\n";
     ts << "</pre>";
 
     ts.flush();
 
-    showPrompt(gid, "修改名片的用法", usage);
-}
-
-void AssistantModule::groupFormatHelp(qint64 gid)
-{
-    QString usage;
-    QTextStream ts(&usage);
-
-    ts << "<pre>";
-    ts << "<code>sudo format(f) [" << QString(u8"成员") << "] ...</code>\n";
-    ts << QString(u8"权限要求：") << "5+\n";
-    ts << "</pre>";
-
-    ts.flush();
-
-    showPrompt(gid, QString(u8"格式名片的用法"), usage);
-}
-
-void AssistantModule::groupMemberHelp(qint64 gid)
-{
-    QString usage;
-    QTextStream ts(&usage);
-
-    ts << "<pre>";
-    ts << "<code>sudo member(m) [" << QString(u8"成员") << "] ...</code>\n";
-    ts << QString(u8"权限要求：") << "5+\n";
-    ts << "</pre>";
-
-    ts.flush();
-
-    showPrompt(gid, QString(u8"成员信息的用法"), usage);
+    showPrompt(gid, QString(u8"格式化命令"), usage);
 }
 
 void AssistantModule::groupBanHelpAction(qint64 gid)
@@ -1262,3 +1250,20 @@ void AssistantModule::groupBlacklistHelpAction(qint64 gid)
 
     showPrompt(gid, QString(u8"黑名单命令"), usage);
 }
+
+
+void AssistantModule::groupMemberHelpAction(qint64 gid)
+{
+    QString usage;
+    QTextStream ts(&usage);
+
+    ts << "<pre>";
+    ts << QString(u8"命令：<code>成员信息 @成员</code>") << "\n";
+    ts << QString(u8"权限要求：") << "5+\n";
+    ts << "</pre>";
+
+    ts.flush();
+
+    showPrompt(gid, QString(u8"成员信息命令"), usage);
+}
+

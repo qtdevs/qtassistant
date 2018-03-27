@@ -63,6 +63,10 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
 
     new GroupCommandsAction(this);
 
+    new GroupRenameMemberAction(this);
+    new GroupMemberLevelAction(this);
+    new GroupFormatMemberAction(this);
+
     new GroupBanMemberAction(this);
     new GroupKickMemberAction(this);
     new GroupRaiseMemberAction(this);
@@ -73,7 +77,13 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
     new GroupWatchlistAction(this);
     new GroupBlacklistAction(this);
 
+    new GroupMemberInfoAction(this);
+
     // Group Help Commands
+
+    new GroupRenameMemberHelpAction(this);
+    new GroupMemberLevelHelpAction(this);
+    new GroupFormatMemberHelpAction(this);
 
     new GroupBanMemberHelpAction(this);
     new GroupKickMemberHelpAction(this);
@@ -84,6 +94,8 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
 
     new GroupWatchlistHelpAction(this);
     new GroupBlacklistHelpAction(this);
+
+    new GroupMemberInfoHelpAction(this);
 }
 
 AssistantModule::~AssistantModule()
@@ -423,9 +435,9 @@ void AssistantModulePrivate::init(const QJsonObject &o)
     for (int i = 0; i < banHongbaoGroups.count(); ++i)
         this->banHongbaoGroups.insert(banHongbaoGroups.at(i).toString().toLongLong());
 
-    qInfo() << "superUsers" << this->superUsers;
-    qInfo() << "managedGroups" << this->managedGroups;
-    qInfo() << "banHongbaoGroups" << this->banHongbaoGroups;
+    qInfo() << QString(u8"超级用户") << this->superUsers;
+    qInfo() << QString(u8"管理群组") << this->managedGroups;
+    qInfo() << QString(u8"屏蔽红包") << this->banHongbaoGroups;
 }
 
 void AssistantModulePrivate::saveWelcomes(const QString &id, HtmlDraw::Style style)
