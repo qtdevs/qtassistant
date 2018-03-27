@@ -5,6 +5,8 @@
 
 #include <QDir>
 #include <QtDebug>
+#include <QStandardPaths>
+#include <QCoreApplication>
 
 /*
 
@@ -147,8 +149,8 @@ QStringList PrivateCreateStartupShortcut::keywords() const
 {
     QStringList keywords;
 
-    keywords << QString(u8"启动登录启动");
-    keywords << QString(u8"启动自动启动");
+    keywords << QString(u8"创建登录启动");
+    keywords << QString(u8"创建自动启动");
     keywords << QString(u8"开启登录启动");
     keywords << QString(u8"开启自动启动");
     keywords << QString(u8"禁用登录启动");
@@ -163,7 +165,13 @@ bool PrivateCreateStartupShortcut::privateMessageFilter(int i, const CoolQ::Mess
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
         if (MasterLevel::ATField == mm->level(0, ev.sender)) {
-            mm->sendPrivateMessage(ev.sender, QString(u8"已经开启登录启动"));
+            QString execFileName = QCoreApplication::applicationFilePath();
+            QString linkPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
+            if (QFile::link(execFileName, linkPath + QString(u8"/Startup/Qt 助手.lnk"))) {
+                mm->sendPrivateMessage(ev.sender, QString(u8"开启自动启动成功..."));
+            } else {
+                mm->sendPrivateMessage(ev.sender, QString(u8"开启自动启动失败..."));
+            }
         }
     }
 
@@ -200,7 +208,12 @@ bool PrivateDeleteStartupShortcut::privateMessageFilter(int i, const CoolQ::Mess
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
         if (MasterLevel::ATField == mm->level(0, ev.sender)) {
-            mm->sendPrivateMessage(ev.sender, QString(u8"已经关闭登录启动"));
+            QString linkPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
+            if (QFile::remove(linkPath + QString(u8"/Startup/Qt 助手.lnk"))) {
+                mm->sendPrivateMessage(ev.sender, QString(u8"关闭自动启动成功..."));
+            } else {
+                mm->sendPrivateMessage(ev.sender, QString(u8"关闭自动启动失败..."));
+            }
         }
     }
 
