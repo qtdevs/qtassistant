@@ -83,7 +83,7 @@ bool PrivateCleanDataCaches::privateMessageFilter(int i, const CoolQ::MessageEve
     Q_UNUSED(i);
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        if (MasterLevel::ATField == mm->level(0, ev.sender)) {
+        if (mm->isSuperUser(ev.sender)) {
             QString filePath = module()->resFilePath("image");
             for (auto fileInfo : QDir(filePath).entryInfoList(QDir::Files)) {
                 QFile::remove(fileInfo.absoluteFilePath());
@@ -125,7 +125,7 @@ bool PrivateRestartComputer::privateMessageFilter(int i, const CoolQ::MessageEve
     Q_UNUSED(i);
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        if (MasterLevel::ATField == mm->level(0, ev.sender)) {
+        if (mm->isSuperUser(ev.sender)) {
             mm->sendPrivateMessage(ev.sender, QString(u8"系统即将重启..."));
         }
     }
@@ -164,7 +164,7 @@ bool PrivateCreateStartupShortcut::privateMessageFilter(int i, const CoolQ::Mess
     Q_UNUSED(i);
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        if (MasterLevel::ATField == mm->level(0, ev.sender)) {
+        if (mm->isSuperUser(ev.sender)) {
             QString execFileName = QCoreApplication::applicationFilePath();
             QString linkPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
             if (QFile::link(execFileName, linkPath + QString(u8"/Startup/Qt 助手.lnk"))) {
@@ -207,7 +207,7 @@ bool PrivateDeleteStartupShortcut::privateMessageFilter(int i, const CoolQ::Mess
     Q_UNUSED(i);
 
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        if (MasterLevel::ATField == mm->level(0, ev.sender)) {
+        if (mm->isSuperUser(ev.sender)) {
             QString linkPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
             if (QFile::remove(linkPath + QString(u8"/Startup/Qt 助手.lnk"))) {
                 mm->sendPrivateMessage(ev.sender, QString(u8"关闭自动启动成功..."));
@@ -319,37 +319,6 @@ bool GroupRenameMemberAction::groupMessageFilter(int i, const CoolQ::MessageEven
     return true;
 }
 
-// class GroupMemberLevelAction
-
-GroupMemberLevelAction::GroupMemberLevelAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupMemberLevelAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupMemberLevelAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"等级");
-
-    return keywords;
-}
-
-bool GroupMemberLevelAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
-        mm->groupLevelAction(ev, args);
-    }
-
-    return true;
-}
-
 // class GroupFormatMemberAction
 
 GroupFormatMemberAction::GroupFormatMemberAction(CoolQ::ServiceModule *parent)
@@ -446,38 +415,6 @@ bool GroupKickMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent 
     return true;
 }
 
-// class GroupRaiseMemberAction
-
-GroupRaiseMemberAction::GroupRaiseMemberAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupRaiseMemberAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupRaiseMemberAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"提权");
-    keywords << QString(u8"升级");
-
-    return keywords;
-}
-
-bool GroupRaiseMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
-        mm->groupRaiseAction(ev, args);
-    }
-
-    return true;
-}
-
 // class GroupUnbanMemberAction
 
 GroupUnbanMemberAction::GroupUnbanMemberAction(CoolQ::ServiceModule *parent)
@@ -509,38 +446,6 @@ bool GroupUnbanMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent
     return true;
 }
 
-// class GroupLowerMemberAction
-
-GroupLowerMemberAction::GroupLowerMemberAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupLowerMemberAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupLowerMemberAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"降权");
-    keywords << QString(u8"降级");
-
-    return keywords;
-}
-
-bool GroupLowerMemberAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    if (auto mm = qobject_cast<AssistantModule *>(module())) {
-        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
-        mm->groupLowerAction(ev, args);
-    }
-
-    return true;
-}
-
 // class GroupWatchlistAction
 
 GroupWatchlistAction::GroupWatchlistAction(CoolQ::ServiceModule *parent)
@@ -557,8 +462,8 @@ QStringList GroupWatchlistAction::keywords() const
 {
     QStringList keywords;
 
-    keywords << QString(u8"监控表");
-    keywords << QString(u8"监视表");
+    keywords << QString(u8"观察室");
+    keywords << QString(u8"观察室");
 
     return keywords;
 }
@@ -568,6 +473,70 @@ bool GroupWatchlistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
         QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
         mm->groupWatchlistAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupAddWatchlistAction
+
+GroupAddWatchlistAction::GroupAddWatchlistAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupAddWatchlistAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupAddWatchlistAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"添加观察");
+    keywords << QString(u8"加入观察");
+
+    return keywords;
+}
+
+bool GroupAddWatchlistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupAddWatchlistAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupRemoveWatchlistAction
+
+GroupRemoveWatchlistAction::GroupRemoveWatchlistAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupRemoveWatchlistAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupRemoveWatchlistAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"删除观察");
+    keywords << QString(u8"取消观察");
+
+    return keywords;
+}
+
+bool GroupRemoveWatchlistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupRemoveWatchlistAction(ev, args);
     }
 
     return true;
@@ -599,6 +568,73 @@ bool GroupBlacklistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &
     if (auto mm = qobject_cast<AssistantModule *>(module())) {
         QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
         mm->groupBlacklistAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupAddBlacklistAction
+
+GroupAddBlacklistAction::GroupAddBlacklistAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupAddBlacklistAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupAddBlacklistAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"添加黑名单");
+    keywords << QString(u8"加入黑名单");
+    keywords << QString(u8"拉黑成员");
+    keywords << QString(u8"拉黑");
+
+    return keywords;
+}
+
+bool GroupAddBlacklistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupAddBlacklistAction(ev, args);
+    }
+
+    return true;
+}
+
+// class GroupRemoveBlacklistAction
+
+GroupRemoveBlacklistAction::GroupRemoveBlacklistAction(CoolQ::ServiceModule *parent)
+    : MessageFilter(parent)
+{
+}
+
+CoolQ::MessageFilter::Filters GroupRemoveBlacklistAction::filters() const
+{
+    return GroupFilter;
+}
+
+QStringList GroupRemoveBlacklistAction::keywords() const
+{
+    QStringList keywords;
+
+    keywords << QString(u8"删除黑名单");
+    keywords << QString(u8"取消黑名单");
+    keywords << QString(u8"取消拉黑");
+
+    return keywords;
+}
+
+bool GroupRemoveBlacklistAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
+{
+    if (auto mm = qobject_cast<AssistantModule *>(module())) {
+        QStringList args = CoolQ::trGbk(&ev.gbkMsg[i]).split(' ', QString::SkipEmptyParts);
+        mm->groupRemoveBlacklistAction(ev, args);
     }
 
     return true;
@@ -664,37 +700,6 @@ bool GroupRenameMemberHelpAction::groupMessageFilter(int i, const CoolQ::Message
 
     if (auto mm = qobject_cast<AssistantModule *>(module()))
         mm->groupRenameHelpAction(ev.from);
-
-    return true;
-}
-
-// class GroupMemberLevelHelpAction
-
-GroupMemberLevelHelpAction::GroupMemberLevelHelpAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupMemberLevelHelpAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupMemberLevelHelpAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"等级查询");
-
-    return keywords;
-}
-
-bool GroupMemberLevelHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    Q_UNUSED(i);
-
-    if (auto mm = qobject_cast<AssistantModule *>(module()))
-        mm->groupLevelHelpAction(ev.from);
 
     return true;
 }
@@ -802,39 +807,6 @@ bool GroupKickMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageEv
     return true;
 }
 
-// class GroupRaiseMemberHelpAction
-
-GroupRaiseMemberHelpAction::GroupRaiseMemberHelpAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupRaiseMemberHelpAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupRaiseMemberHelpAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"提权命令");
-    keywords << QString(u8"提权的用法");
-    keywords << QString(u8"提权用法");
-
-    return keywords;
-}
-
-bool GroupRaiseMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    Q_UNUSED(i);
-
-    if (auto mm = qobject_cast<AssistantModule *>(module()))
-        mm->groupRaiseHelpAction(ev.from);
-
-    return true;
-}
-
 // class GroupUnbanMemberHelpAction
 
 GroupUnbanMemberHelpAction::GroupUnbanMemberHelpAction(CoolQ::ServiceModule *parent)
@@ -868,39 +840,6 @@ bool GroupUnbanMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageE
     return true;
 }
 
-// class GroupLowerMemberHelpAction
-
-GroupLowerMemberHelpAction::GroupLowerMemberHelpAction(CoolQ::ServiceModule *parent)
-    : MessageFilter(parent)
-{
-}
-
-CoolQ::MessageFilter::Filters GroupLowerMemberHelpAction::filters() const
-{
-    return GroupFilter;
-}
-
-QStringList GroupLowerMemberHelpAction::keywords() const
-{
-    QStringList keywords;
-
-    keywords << QString(u8"降权命令");
-    keywords << QString(u8"降权的用法");
-    keywords << QString(u8"降权用法");
-
-    return keywords;
-}
-
-bool GroupLowerMemberHelpAction::groupMessageFilter(int i, const CoolQ::MessageEvent &ev)
-{
-    Q_UNUSED(i);
-
-    if (auto mm = qobject_cast<AssistantModule *>(module()))
-        mm->groupLowerHelpAction(ev.from);
-
-    return true;
-}
-
 // class GroupWatchlistHelpAction
 
 GroupWatchlistHelpAction::GroupWatchlistHelpAction(CoolQ::ServiceModule *parent)
@@ -917,13 +856,13 @@ QStringList GroupWatchlistHelpAction::keywords() const
 {
     QStringList keywords;
 
-    keywords << QString(u8"监控表命令");
-    keywords << QString(u8"监控表的用法");
-    keywords << QString(u8"监控表用法");
+    keywords << QString(u8"观察室命令");
+    keywords << QString(u8"观察室的用法");
+    keywords << QString(u8"观察室用法");
 
-    keywords << QString(u8"监视表命令");
-    keywords << QString(u8"监视表的用法");
-    keywords << QString(u8"监视表用法");
+    keywords << QString(u8"观察室命令");
+    keywords << QString(u8"观察室的用法");
+    keywords << QString(u8"观察室用法");
 
     return keywords;
 }

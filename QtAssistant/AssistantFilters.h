@@ -147,23 +147,6 @@ public:
     bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
 };
 
-// class GroupMemberLevelAction
-
-class GroupMemberLevelAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupMemberLevelAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
 // class GroupFormatMemberAction
 
 class GroupFormatMemberAction : public CoolQ::MessageFilter
@@ -198,7 +181,7 @@ public:
     bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
 };
 
-// class KillMemberAction
+// class KickMemberAction
 
 class GroupKickMemberAction : public CoolQ::MessageFilter
 {
@@ -206,23 +189,6 @@ class GroupKickMemberAction : public CoolQ::MessageFilter
 
 public:
     explicit GroupKickMemberAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
-// class GroupRaiseMemberAction
-
-class GroupRaiseMemberAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupRaiseMemberAction(CoolQ::ServiceModule *parent);
 
 public:
     Filters filters() const final;
@@ -249,23 +215,6 @@ public:
     bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
 };
 
-// class GroupLowerMemberAction
-
-class GroupLowerMemberAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupLowerMemberAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
 // class GroupWatchlistAction
 
 class GroupWatchlistAction : public CoolQ::MessageFilter
@@ -283,6 +232,40 @@ public:
     bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
 };
 
+// class GroupWatchlistAction
+
+class GroupAddWatchlistAction : public CoolQ::MessageFilter
+{
+    Q_OBJECT
+
+public:
+    explicit GroupAddWatchlistAction(CoolQ::ServiceModule *parent);
+
+public:
+    Filters filters() const final;
+    QStringList keywords() const final;
+
+public:
+    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
+};
+
+// class GroupWatchlistAction
+
+class GroupRemoveWatchlistAction : public CoolQ::MessageFilter
+{
+    Q_OBJECT
+
+public:
+    explicit GroupRemoveWatchlistAction(CoolQ::ServiceModule *parent);
+
+public:
+    Filters filters() const final;
+    QStringList keywords() const final;
+
+public:
+    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
+};
+
 // class GroupBlacklistAction
 
 class GroupBlacklistAction : public CoolQ::MessageFilter
@@ -291,6 +274,40 @@ class GroupBlacklistAction : public CoolQ::MessageFilter
 
 public:
     explicit GroupBlacklistAction(CoolQ::ServiceModule *parent);
+
+public:
+    Filters filters() const final;
+    QStringList keywords() const final;
+
+public:
+    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
+};
+
+// class GroupAddBlacklistAction
+
+class GroupAddBlacklistAction : public CoolQ::MessageFilter
+{
+    Q_OBJECT
+
+public:
+    explicit GroupAddBlacklistAction(CoolQ::ServiceModule *parent);
+
+public:
+    Filters filters() const final;
+    QStringList keywords() const final;
+
+public:
+    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
+};
+
+// class GroupRemoveBlacklistAction
+
+class GroupRemoveBlacklistAction : public CoolQ::MessageFilter
+{
+    Q_OBJECT
+
+public:
+    explicit GroupRemoveBlacklistAction(CoolQ::ServiceModule *parent);
 
 public:
     Filters filters() const final;
@@ -325,23 +342,6 @@ class GroupRenameMemberHelpAction : public CoolQ::MessageFilter
 
 public:
     explicit GroupRenameMemberHelpAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
-// class GroupMemberLevelHelpAction
-
-class GroupMemberLevelHelpAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupMemberLevelHelpAction(CoolQ::ServiceModule *parent);
 
 public:
     Filters filters() const final;
@@ -402,23 +402,6 @@ public:
     bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
 };
 
-// class GroupRaiseMemberHelpAction
-
-class GroupRaiseMemberHelpAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupRaiseMemberHelpAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
 // class GroupUnbanMemberHelpAction
 
 class GroupUnbanMemberHelpAction : public CoolQ::MessageFilter
@@ -427,23 +410,6 @@ class GroupUnbanMemberHelpAction : public CoolQ::MessageFilter
 
 public:
     explicit GroupUnbanMemberHelpAction(CoolQ::ServiceModule *parent);
-
-public:
-    Filters filters() const final;
-    QStringList keywords() const final;
-
-public:
-    bool groupMessageFilter(int i, const CoolQ::MessageEvent &ev) final;
-};
-
-// class GroupLowerMemberHelpAction
-
-class GroupLowerMemberHelpAction : public CoolQ::MessageFilter
-{
-    Q_OBJECT
-
-public:
-    explicit GroupLowerMemberHelpAction(CoolQ::ServiceModule *parent);
 
 public:
     Filters filters() const final;

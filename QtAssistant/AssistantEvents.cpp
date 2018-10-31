@@ -9,7 +9,6 @@
 #include <QUuid>
 #include <QDir>
 
-#include "SqlDatas/MasterLevels.h"
 #include "SqlDatas/MemberBlacklist.h"
 #include "SqlDatas/MemberWatchlist.h"
 
@@ -66,7 +65,7 @@ bool AssistantModule::memberJoinEvent(const CoolQ::MemberJoinEvent &ev)
         return false;
     }
 
-    // 加入新手监控，监视首次发言。
+    // 加入新手观察，观察首次发言。
     d->watchlist->addMember(ev.from, ev.member);
 
     // 尝试修改昵称。
@@ -131,7 +130,7 @@ bool AssistantModule::memberLeaveEvent(const CoolQ::MemberLeaveEvent &ev)
         return false;
     }
 
-    // 移出新手监控，不再进行监视。
+    // 移出新手观察，不再进行观察。
     d->watchlist->removeMember(ev.from, ev.member);
 
     return false;

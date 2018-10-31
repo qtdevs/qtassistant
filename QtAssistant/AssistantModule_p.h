@@ -6,7 +6,6 @@
 #include "CoolQServiceModule_p.h"
 #include "AssistantModule.h"
 
-class MasterLevels;
 class MemberWatchlist;
 class MemberBlacklist;
 
@@ -22,7 +21,7 @@ protected:
     static AssistantModule *instance;
 
 public:
-    static LevelInfoList findUsers(const QStringList &args);
+    static QList<qint64> findUsers(const QStringList &args);
 
     static void safetyNameCard(QString &nameCard);
     static void formatNameCard(QString &nameCard);
@@ -35,13 +34,10 @@ private:
     QSet<qint64> managedGroups;
     QSet<qint64> banHongbaoGroups;
 
-    QStringList  welcomeImages;
-
 protected:
     void saveWelcomes(const QString &id, HtmlDraw::Style style);
 
 private:
-    MasterLevels *levels;
     MemberWatchlist *watchlist;
     MemberBlacklist *blacklist;
 

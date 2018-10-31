@@ -870,6 +870,8 @@ void ServiceModulePrivate::installFilter(MessageFilter *filter)
 ServiceModule::Result ServiceModulePrivate::result(qint32 r)
 {
     switch (r) {
+    case 0:
+        return ServiceModule::NoError;
     case 1:
         break;
     default:

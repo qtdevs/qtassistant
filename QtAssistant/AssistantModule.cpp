@@ -14,9 +14,8 @@
 #include <QtDebug>
 #include <QMetaEnum>
 
-#include "SqlDatas/MasterLevels.h"
-#include "SqlDatas/MemberBlacklist.h"
 #include "SqlDatas/MemberWatchlist.h"
+#include "SqlDatas/MemberBlacklist.h"
 
 #include "HtmlDraw/HtmlDraw.h"
 #include "AssistantFilters.h"
@@ -31,7 +30,6 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
 
     Q_D(AssistantModule);
 
-    d->levels = new MasterLevels(this);
     d->blacklist = new MemberBlacklist(this);
     d->watchlist = new MemberWatchlist(this);
 
@@ -46,8 +44,6 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
             d->init(doc.object());
         }
     }
-
-    d->levels->init(d->superUsers);
 
     // Private Commands
 
@@ -64,33 +60,30 @@ AssistantModule::AssistantModule(CoolQ::ServiceEngine *engine)
     new GroupCommandsAction(this);
 
     new GroupRenameMemberAction(this);
-    new GroupMemberLevelAction(this);
     new GroupFormatMemberAction(this);
 
     new GroupBanMemberAction(this);
     new GroupKickMemberAction(this);
-    new GroupRaiseMemberAction(this);
-
     new GroupUnbanMemberAction(this);
-    new GroupLowerMemberAction(this);
 
     new GroupWatchlistAction(this);
+    new GroupAddWatchlistAction(this);
+    new GroupRemoveWatchlistAction(this);
+
     new GroupBlacklistAction(this);
+    new GroupAddBlacklistAction(this);
+    new GroupRemoveBlacklistAction(this);
 
     new GroupMemberInfoAction(this);
 
     // Group Help Commands
 
     new GroupRenameMemberHelpAction(this);
-    new GroupMemberLevelHelpAction(this);
     new GroupFormatMemberHelpAction(this);
 
     new GroupBanMemberHelpAction(this);
     new GroupKickMemberHelpAction(this);
-    new GroupRaiseMemberHelpAction(this);
-
     new GroupUnbanMemberHelpAction(this);
-    new GroupLowerMemberHelpAction(this);
 
     new GroupWatchlistHelpAction(this);
     new GroupBlacklistHelpAction(this);
@@ -112,13 +105,6 @@ AssistantModule *AssistantModule::instance()
     return AssistantModulePrivate::instance;
 }
 
-MasterLevel AssistantModule::level(qint64 gid, qint64 uid) const
-{
-    Q_D(const AssistantModule);
-
-    return d->levels->level(gid, uid);
-}
-
 void AssistantModule::timerEvent(QTimerEvent *)
 {
     Q_D(AssistantModule);
@@ -134,18 +120,6 @@ void AssistantModule::timerEvent(QTimerEvent *)
             }
         }
     } while (false);
-}
-
-void AssistantModule::permissionDenied(qint64 gid, qint64 uid, MasterLevel level, const QString &reason)
-{
-    Q_UNUSED(uid);
-
-    QString content = reason.isEmpty() ? QString(u8"作为一个%1，你没有权限执行此操作。").arg(MasterLevels::levelName(level)) : reason;
-    QString html = QString("<html><body><span class=\"t\">%1</span><p class=\"c\">%2</p></body></html>").arg(QString(u8"没有相关权限"), content);
-
-    QPixmap feedback = HtmlDraw::drawDangerText(html, 400, gid);
-    QString fileName = saveImage(feedback);
-    sendGroupMessage(gid, image(fileName));
 }
 
 void AssistantModule::showPrimary(qint64 gid, const QString &title, const QString &content)
@@ -182,32 +156,32 @@ void AssistantModule::feedback(qint64 gid, const QString &title, const QString &
     sendGroupMessage(gid, image(fileName));
 }
 
-void AssistantModule::showPrimaryList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void AssistantModule::showPrimaryList(qint64 gid, const QString &title, const QList<qint64> &members)
 {
-    feedbackList(gid, title, members, level, HtmlDraw::Primary);
+    feedbackList(gid, title, members, HtmlDraw::Primary);
 }
 
-void AssistantModule::showDangerList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void AssistantModule::showDangerList(qint64 gid, const QString &title, const QList<qint64> &members)
 {
-    feedbackList(gid, title, members, level, HtmlDraw::Danger);
+    feedbackList(gid, title, members, HtmlDraw::Danger);
 }
 
-void AssistantModule::showWarningList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void AssistantModule::showWarningList(qint64 gid, const QString &title, const QList<qint64> &members)
 {
-    feedbackList(gid, title, members, level, HtmlDraw::Warning);
+    feedbackList(gid, title, members, HtmlDraw::Warning);
 }
 
-void AssistantModule::showPromptList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void AssistantModule::showPromptList(qint64 gid, const QString &title, const QList<qint64> &members)
 {
-    feedbackList(gid, title, members, level, HtmlDraw::Prompt);
+    feedbackList(gid, title, members, HtmlDraw::Prompt);
 }
 
-void AssistantModule::showSuccessList(qint64 gid, const QString &title, const LevelInfoList &members, bool level)
+void AssistantModule::showSuccessList(qint64 gid, const QString &title, const QList<qint64> &members)
 {
-    feedbackList(gid, title, members, level, HtmlDraw::Success);
+    feedbackList(gid, title, members, HtmlDraw::Success);
 }
 
-void AssistantModule::feedbackList(qint64 gid, const QString &title, const LevelInfoList &members, bool level, HtmlDraw::Style style)
+void AssistantModule::feedbackList(qint64 gid, const QString &title, const QList<qint64> &members, HtmlDraw::Style style)
 {
     for (int i = 0, part = 0; i < members.count();) {
         QString html;
@@ -220,12 +194,9 @@ void AssistantModule::feedbackList(qint64 gid, const QString &title, const Level
             }
             ds << "</span><div>";
             for (; i < members.count(); ++i) {
-                const LevelInfo &li = members.at(i);
+                qint64 uid = members.at(i);
                 ds << "<p class=\"c\">";
-                if (level) {
-                    ds << MasterLevels::levelName(li.level) << QString(u8": ");
-                }
-                CoolQ::MemberInfo mi = memberInfo(gid, li.uid);
+                CoolQ::MemberInfo mi = memberInfo(gid, uid);
                 if (mi.isValid()) {
                     if (!mi.nameCard().isEmpty()) {
                         ds << mi.nameCard();
@@ -233,11 +204,11 @@ void AssistantModule::feedbackList(qint64 gid, const QString &title, const Level
                         ds << mi.nickName();
                     }
                 } else {
-                    CoolQ::PersonInfo pi = personInfo(li.uid);
+                    CoolQ::PersonInfo pi = personInfo(uid);
                     if (pi.isValid()) {
                         ds << pi.nickName();
                     } else {
-                        ds << QString::number(li.uid);
+                        ds << QString::number(uid);
                     }
                     ds << "<span>(" << QString(u8"不在本群") << ")</span>";
                 }
@@ -261,8 +232,7 @@ void AssistantModule::showWelcomes(qint64 gid, qint64 uid)
 {
     Q_D(AssistantModule);
 
-    MasterLevel level = d->levels->level(gid, uid);
-    if (MasterLevel::ATField < level) {
+    if (!isSuperUser(uid)) {
         return;
     }
 
@@ -293,15 +263,15 @@ void AssistantModule::showWelcomes(qint64 gid, qint64 uid)
 
     ts.flush();
 
-    sendGroupMessage(gid, msg);
+    if (!msg.isEmpty())
+        sendGroupMessage(gid, msg);
 }
 
 void AssistantModule::saveWelcomes(qint64 gid, qint64 uid)
 {
     Q_D(AssistantModule);
 
-    MasterLevel level = d->levels->level(gid, uid);
-    if (MasterLevel::ATField < level) {
+    if (!isSuperUser(uid)) {
         return;
     }
 
@@ -333,13 +303,19 @@ void AssistantModule::saveWelcomes(qint64 gid, qint64 uid)
     sendGroupMessage(gid, QString(u8"Save Welcomes finished"));
 }
 
+bool AssistantModule::isSuperUser(qint64 uid) const
+{
+    Q_D(const AssistantModule);
+
+    return d->superUsers.contains(uid);
+}
+
 // class AssistantModulePrivate
 
 AssistantModule *AssistantModulePrivate::instance = nullptr;
 
 AssistantModulePrivate::AssistantModulePrivate()
-    : levels(Q_NULLPTR)
-    , watchlist(Q_NULLPTR)
+    : watchlist(Q_NULLPTR)
     , blacklist(Q_NULLPTR)
     , htmlDraw(Q_NULLPTR)
     , checkTimerId(-1)
@@ -350,10 +326,10 @@ AssistantModulePrivate::~AssistantModulePrivate()
 {
 }
 
-LevelInfoList AssistantModulePrivate::findUsers(const QStringList &args)
+QList<qint64> AssistantModulePrivate::findUsers(const QStringList &args)
 {
     QListIterator<QString> i(args);
-    LevelInfoList levels;
+    QSet<qint64> uids;
     i.toBack();
 
     while (i.hasPrevious()) {
@@ -364,36 +340,18 @@ LevelInfoList AssistantModulePrivate::findUsers(const QStringList &args)
                 break;
             }
 
-            bool noFound = true;
-            for (const LevelInfo &li : levels) {
-                if (li.uid == uid) {
-                    noFound = false;
-                    break;
-                }
-            }
-            if (noFound) {
-                levels.prepend(LevelInfo(uid, MasterLevel::Unknown));
-            }
+            uids.insert(uid);
         } else {
             qint64 uid = arg.toLongLong();
             if (100000 > uid) {
                 break;
             }
 
-            bool noFound = true;
-            for (const LevelInfo &li : levels) {
-                if (li.uid == uid) {
-                    noFound = false;
-                    break;
-                }
-            }
-            if (noFound) {
-                levels.prepend(LevelInfo(uid, MasterLevel::Unknown));
-            }
+            uids.insert(uid);
         }
     }
 
-    return levels;
+    return uids.toList();
 }
 
 void AssistantModulePrivate::safetyNameCard(QString &nameCard)
